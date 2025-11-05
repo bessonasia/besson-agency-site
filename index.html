@@ -252,18 +252,29 @@
       ring.style.transform = `translate(${x}px,${y}px)`;
       requestAnimationFrame(anim);
     }());
+  });
 
-   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.17/build/js/intlTelInput.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.17/build/js/intlTelInput.min.js"></script>
 <script>
   const phoneInput = document.querySelector("#phone");
   const iti = window.intlTelInput(phoneInput, {
     preferredCountries: ["kz", "ru", "uz", "kg", "am", "az", "ge"],
     onlyCountries: ["kz", "ru", "uz", "kg", "am", "az", "ge"],
-  nationalMode: false,  nnationalModeationalMode: false,
+    nationalMode: false,
     separateDialCode: true,
     utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.17/build/js/utils.js"
   });
-
+  // Fix flag spacing
+  const style = document.createElement("style");
+  style.textContent = `
+    .iti__flag-container { padding-left: 6px; }
+    .iti__selected-flag { padding: 0 10px 0 6px; background: transparent !important; }
+    .iti__selected-dial-code { margin-left: 4px; color: #fff; }
+  `;
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
   // Фикс от слипания флага
   const style = document.createElement("style");
   style.textContent = `

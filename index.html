@@ -629,6 +629,18 @@ section.visible {
   <link rel="icon" href="/assets/fav/favicon.ico">
 </head>
 <body>
+ <!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Besson Agency — Premium Event, Creative, BTL, POSM</title>
+  <meta name="description" content="Besson Agency — Event и BTL агентство. Организация мероприятий, активаций и креативных кампаний в Казахстане, Узбекистане и по всей Центральной Азии.">
+  <link rel="canonical" href="https://besson.asia/">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="/assets/fav/favicon.ico">
+</head>
+<body>
   <header class="nav">
     <a href="index.html" class="brand__mark" aria-label="Главная страница">BESSON</a>
 
@@ -704,6 +716,29 @@ section.visible {
 
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
+<script>
+document.getElementById("leadForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+    const res = await fetch(form.action, { method: "POST", body: formData });
+    const result = await res.text();
+
+    if (result.trim() === "success") {
+      alert("Заявка успешно отправлена!");
+      form.reset();
+    } else if (result.trim() === "empty") {
+      alert("Заполните все поля.");
+    } else {
+      alert("Ошибка при отправке. Попробуйте позже.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Ошибка сети. Проверьте подключение.");
+  }
+});
 <script>
 document.getElementById("leadForm").addEventListener("submit", async function(e) {
   e.preventDefault();

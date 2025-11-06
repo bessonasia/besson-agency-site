@@ -21,8 +21,45 @@
     .brand__mark{font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:inherit;text-decoration:none;cursor:pointer;transition:text-shadow .3s ease,transform .3s ease}
     .brand__mark:hover{text-shadow:0 0 8px rgba(255,255,255,0.4);transform:translateY(-1px)}
     .nav__group{display:flex;align-items:center;gap:18px}
+    .menu-toggle{display:none}
+    .mobile-menu{display:none}
     @media (max-width:768px){
       .nav__group{margin-top:16px}
+      .nav__group{display:none}
+      .menu-toggle{
+        display:flex;flex-direction:column;justify-content:center;gap:6px;
+        width:28px;height:24px;background:none;border:0;cursor:pointer;z-index:1100
+      }
+      .menu-toggle span{
+        display:block;width:100%;height:2px;background:#fff;
+        transition:transform .35s ease,opacity .35s ease
+      }
+      .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+      .menu-toggle.active span:nth-child(2){opacity:0}
+      .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
+
+      .mobile-menu{
+        display:flex;position:fixed;inset:0;background:rgba(10,10,10,.85);
+        backdrop-filter:blur(12px);
+        align-items:center;justify-content:center;flex-direction:column;
+        opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.19,1,.22,1);
+        z-index:1000
+      }
+      .mobile-menu.active{opacity:1;pointer-events:auto;animation:fadeInScale .8s cubic-bezier(.19,1,.22,1)}
+      @keyframes fadeInScale{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+
+      .mobile-menu ul{list-style:none;margin:0;padding:0;text-align:center}
+      .mobile-menu li{margin:18px 0;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.19,1,.22,1)}
+      .mobile-menu.active li{opacity:1;transform:translateY(0)}
+      .mobile-menu a{
+        color:#fff;font-size:1.4rem;letter-spacing:.08em;text-transform:uppercase;
+        font-weight:500;text-decoration:none;position:relative
+      }
+      .mobile-menu a::after{
+        content:"";position:absolute;left:0;bottom:-4px;width:100%;height:1px;background:#fff;
+        transform:scaleX(0);transform-origin:right;transition:transform .3s ease
+      }
+      .mobile-menu a:hover::after{transform:scaleX(1);transform-origin:left}
     }
     .link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
     .link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
@@ -98,6 +135,22 @@
     .footer-contact a:hover .mail-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.45));transform:translateY(-1px)}
 
     /* Premium cursor */
+    @media (max-width:768px){
+      #logoText{display:inline-block;transform-origin:center;will-change:transform}
+      #logoText span{
+        display:inline-block;transition:transform .4s cubic-bezier(.19,1,.22,1),text-shadow .5s ease,filter .5s ease;
+        will-change:transform,filter
+      }
+      #logoText.breathe span{animation:microPulse 1.8s ease-in-out infinite alternate}
+      @keyframes microPulse{
+        0%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
+        50%{transform:translateX(var(--tx,0)) scale(calc(var(--sc,1.03)));filter:brightness(1.12)}
+        100%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
+      }
+      #about{opacity:0;transform:translateY(60px);transition:all 1s cubic-bezier(.19,1,.22,1)}
+      #about.visible{opacity:1;transform:translateY(0)}
+    }
+
     @media (hover:hover) and (pointer:fine){
       body{cursor:none}
       .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
@@ -111,6 +164,16 @@
 <body>
   <header class="nav">
     <a href="#" class="brand__mark">BESSON</a>
+    <button class="menu-toggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="#about">Об агентстве</a></li>
+        <li><a href="#work">Проекты</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
     <nav class="nav__group">
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
@@ -221,114 +284,120 @@
       });
     });
 
-    const motionMedia = window.matchMedia("(max-width: 768px)");
-    let lastTouchY = null;
-    let lastScrollY = window.scrollY;
-    let resetTimeout;
-    let holdTimeout;
+    (function(){
+      if (window.innerWidth > 768) return;
+      const toggle = document.querySelector('.menu-toggle');
+      const menu = document.querySelector('#mobileMenu');
+      if(!toggle || !menu) return;
+      const items = menu.querySelectorAll('li');
 
-    const resetLogoMotion = () => {
-      interactiveLogoSpans.forEach((span) => {
-        span.style.transform = "";
-        span.style.textShadow = "";
-      });
-    };
-
-    const scheduleReset = (delay = 180) => {
-      clearTimeout(resetTimeout);
-      resetTimeout = setTimeout(resetLogoMotion, delay);
-    };
-
-    const applyLogoMotion = (deltaY) => {
-      if (!motionMedia.matches) {
-        resetLogoMotion();
-        return;
+      function setStagger(active){
+        items.forEach((li,i)=>{
+          li.style.transitionDelay = active ? `${i * 0.1}s` : '0s';
+        });
       }
 
-      if (deltaY <= 0) {
-        scheduleReset();
-        return;
-      }
-
-      const intensity = Math.min(Math.abs(deltaY) / 60, 1);
-      const scale = 1 + 0.25 * intensity;
-      const shadowBlur = 8 * intensity;
-      const shadowOpacity = 0.35 * intensity;
-
-      interactiveLogoSpans.forEach((span, index) => {
-        const direction = index % 2 === 0 ? 1 : -1;
-        const offset = direction * 12 * intensity;
-        span.style.transform = `translate3d(${offset}px,0,0) scale(${scale})`;
-        span.style.textShadow = shadowBlur
-          ? `0 0 ${shadowBlur}px rgba(255,255,255,${shadowOpacity})`
-          : "";
+      toggle.addEventListener('click', ()=>{
+        const active = !toggle.classList.contains('active');
+        toggle.classList.toggle('active', active);
+        menu.classList.toggle('active', active);
+        menu.setAttribute('aria-hidden', String(!active));
+        setStagger(active);
       });
 
-      scheduleReset(240);
-    };
+      menu.addEventListener('click', (e)=>{
+        if(e.target.matches('a')){
+          toggle.classList.remove('active');
+          menu.classList.remove('active');
+          menu.setAttribute('aria-hidden','true');
+          setStagger(false);
+        }
+      });
+    })();
 
-    const cancelBreathe = () => {
-      clearTimeout(holdTimeout);
-      logoText.classList.remove("breathe");
-    };
+    (function(){
+      if (window.innerWidth > 768) return;
+      const logo = document.querySelector('#logoText');
+      if(!logo) return;
+      const spans = Array.from(logo.querySelectorAll('span'));
+      const maxScroll = Math.max(window.innerHeight * 1.1, 600);
+      let breathing = false;
 
-    logoText.addEventListener("touchstart", (event) => {
-      if (!motionMedia.matches) return;
-      if (event.touches.length === 0) return;
+      function applySpread(){
+        const s = Math.min(window.scrollY, maxScroll);
+        const p = s / maxScroll;
+        const scale = 1 + p * 1.6;
+        const spread = p * 120;
+        const glow = 8 + p * 32;
 
-      lastTouchY = event.touches[0].clientY;
-      clearTimeout(holdTimeout);
-      holdTimeout = setTimeout(() => {
-        logoText.classList.add("breathe");
-      }, 450);
-    }, { passive: true });
+        let index = 0;
+        spans.forEach((span)=>{
+          const isSpace = span.dataset.space === 'true' || span.textContent.trim() === '';
+          if(isSpace){
+            span.style.setProperty('--tx','0px');
+            span.style.setProperty('--sc','1');
+            span.style.transform = 'translateX(0) scale(1)';
+            span.style.textShadow = 'none';
+            return;
+          }
 
-    logoText.addEventListener("touchmove", (event) => {
-      if (!motionMedia.matches) return;
-      if (event.touches.length === 0) return;
+          const dir = (index % 2 === 0) ? -1 : 1;
+          const tx = dir * spread;
+          span.style.setProperty('--tx', `${tx}px`);
+          span.style.setProperty('--sc', scale);
+          span.style.transform = `translateX(${tx}px) scale(${scale})`;
+          span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.10 + p * 0.5})`;
+          index += 1;
+        });
 
-      const currentY = event.touches[0].clientY;
-      if (lastTouchY === null) {
-        lastTouchY = currentY;
-        return;
+        if(p > 0.95 && !breathing){
+          logo.classList.add('breathe');
+          breathing = true;
+        }
+        if(p < 0.90 && breathing){
+          logo.classList.remove('breathe');
+          breathing = false;
+        }
       }
 
-      const delta = currentY - lastTouchY;
-      if (Math.abs(delta) > 4) {
-        cancelBreathe();
+      let ticking = false;
+      window.addEventListener('scroll', ()=>{
+        if(!ticking){
+          requestAnimationFrame(()=>{
+            applySpread();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, {passive:true});
+
+      applySpread();
+    })();
+
+    (function(){
+      if (window.innerWidth > 768) return;
+      const about = document.querySelector('#about');
+      if(!about) return;
+
+      function reveal(){
+        const rect = about.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.85){
+          about.classList.add('visible');
+          window.removeEventListener('scroll', onScroll);
+        }
       }
-      applyLogoMotion(delta);
-      lastTouchY = currentY;
-    }, { passive: true });
 
-    const endTouch = () => {
-      if (!motionMedia.matches) return;
-      lastTouchY = null;
-      scheduleReset(200);
-      cancelBreathe();
-    };
+      function onScroll(){
+        if('requestIdleCallback' in window){
+          requestIdleCallback(reveal, {timeout:200});
+        }else{
+          requestAnimationFrame(reveal);
+        }
+      }
 
-    logoText.addEventListener("touchend", endTouch);
-    logoText.addEventListener("touchcancel", endTouch);
-
-    window.addEventListener("scroll", () => {
-      if (!motionMedia.matches) return;
-      const deltaScroll = lastScrollY - window.scrollY;
-      lastScrollY = window.scrollY;
-      applyLogoMotion(deltaScroll);
-    }, { passive: true });
-
-    const onMotionMediaChange = () => {
-      lastScrollY = window.scrollY;
-      resetLogoMotion();
-      cancelBreathe();
-    };
-
-    if (typeof motionMedia.addEventListener === "function") {
-      motionMedia.addEventListener("change", onMotionMediaChange);
-    } else if (typeof motionMedia.addListener === "function") {
-      motionMedia.addListener(onMotionMediaChange);
-    }
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+    })();
 
     // смена слов Event / Creative / BTL / POSM
     const words = ["Event.", "Creative.", "BTL.", "POSM."];
@@ -410,12 +479,6 @@
       el.addEventListener("mouseenter", () => ring.classList.add("cursor--hover"));
       el.addEventListener("mouseleave", () => ring.classList.remove("cursor--hover"));
     });
-
-    // появление секций при скролле
-    const observer = new IntersectionObserver((entries)=>{
-      entries.forEach((entry)=>{ if(entry.isIntersecting){ entry.target.classList.add("visible"); }});
-    }, {threshold:0.1});
-    document.querySelectorAll("section").forEach((section)=>observer.observe(section));
   </script>
 </body>
 </html>

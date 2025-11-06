@@ -66,6 +66,9 @@
     .input:focus{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
     .label{position:absolute;left:16px;top:14px;padding:2px 6px;border-radius:8px;font-size:.85rem;color:#a9a9a9;background:rgba(255,255,255,.02);transform-origin:left top;transition:transform .2s,opacity .2s}
     .field.filled .label,.input:focus + .label{transform:translateY(-18px) scale(.88);opacity:.9;color:#fff}
+    .form__status{min-height:20px;font-size:.9rem;color:var(--muted);margin-top:6px;transition:opacity .3s}
+    .form__status--success{color:#9be7c4}
+    .form__status--error{color:#ff8a80}
     .actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px;flex-wrap:wrap}
     .btn{position:relative;padding:16px 22px;border-radius:999px;border:1px solid #fff;background:#fff;color:#000;font-weight:700;text-transform:uppercase;cursor:pointer;transition:transform .25s,box-shadow .25s}
     .btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1)}
@@ -139,7 +142,7 @@
     <div class="contact__grid">
       <h2 class="contact__lead">Оставьте заявку</h2>
       <p class="contact__sub"><span class="line">Укажите имя и номер телефона.</span><span class="line">Мы свяжемся в рабочие часы.</span></p>
-      <form class="form" id="leadForm">
+      <form class="form" id="leadForm" novalidate>
         <div class="row">
           <div class="field"><input class="input" id="name" name="name" placeholder=" " required><label class="label" for="name">Имя</label></div>
           <div class="field"><input class="input" id="phone" name="phone" type="tel" placeholder=" " required><label class="label" for="phone">Телефон</label></div>
@@ -150,6 +153,7 @@
             <svg viewBox="0 0 32 32"><path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z"/></svg>
           </a>
         </div>
+        <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -187,7 +191,54 @@
     // плавающие лейблы
     document.querySelectorAll(".input").forEach((inp) => {
       const f = inp.parentNode;
-      inp.addEventListener("input", () => f.classList.toggle("filled", !!inp.value));
+      const toggle = () => f.classList.toggle("filled", !!inp.value.trim());
+      toggle();
+      inp.addEventListener("input", toggle);
+      inp.addEventListener("blur", toggle);
+    });
+
+    // отправка формы
+    const leadForm = document.getElementById("leadForm");
+    const statusNode = document.getElementById("formStatus");
+    const submitBtn = leadForm.querySelector(".btn");
+    const endpoint = "https://formsubmit.co/ajax/hello@besson.asia";
+
+    function updateStatus(message = "", mode = ""){
+      statusNode.textContent = message;
+      statusNode.className = `form__status ${mode ? `form__status--${mode}` : ""}`.trim();
+    }
+
+    leadForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!leadForm.reportValidity()) {
+        return;
+      }
+
+      const formData = new FormData(leadForm);
+      submitBtn.disabled = true;
+      updateStatus("Отправляем…");
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Accept": "application/json" },
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        updateStatus("Спасибо! Мы свяжемся с вами в ближайшее время.", "success");
+        leadForm.reset();
+        leadForm.querySelectorAll(".field").forEach((field) => field.classList.remove("filled"));
+      } catch (error) {
+        console.error(error);
+        updateStatus("Не удалось отправить заявку. Попробуйте снова или свяжитесь по WhatsApp.", "error");
+      } finally {
+        submitBtn.disabled = false;
+      }
     });
 
     // премиальный курсор

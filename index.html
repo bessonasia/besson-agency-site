@@ -9,101 +9,629 @@
   <meta name="theme-color" content="#0a0a0a">
   <link rel="icon" href="/assets/fav/favicon.ico">
   <style>
-    *{box-sizing:border-box;margin:0}
-    html,body{height:100%;scroll-behavior:smooth}
-    :root{--bg:#0a0a0a;--fg:#f5f5f5;--muted:#bdbdbd;--pad:clamp(16px,2.4vw,32px);--grid:max(68rem,74vw)}
-    body{font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-    a{color:inherit;text-decoration:none}
+    * {
+  box-sizing: border-box;
+  margin: 0;
+}
+html,
+body {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+:root {
+  --bg: #0a0a0a;
+  --fg: #f5f5f5;
+  --muted: #bdbdbd;
+  --pad: clamp(16px, 2.4vw, 32px);
+  --grid: max(68rem, 74vw);
+}
+body {
+  font-family: "Inter", "Helvetica Neue", "Segoe UI", "Roboto", sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-    /* NAV */
-    .nav{position:fixed;top:0;left:0;right:0;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);z-index:1000;background:linear-gradient(180deg,rgba(10,10,10,.85),rgba(10,10,10,0));backdrop-filter:saturate(140%) blur(6px)}
-    .brand__mark{font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--pad);
+  z-index: 1000;
+  background: linear-gradient(180deg, rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0));
+  backdrop-filter: saturate(140%) blur(6px);
+}
+.brand__mark {
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.nav__group {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.link {
+  position: relative;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+}
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background: #fff;
+  opacity: 0.25;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s ease, opacity 0.35s;
+}
+.link:hover::after {
+  transform: scaleX(1);
+  opacity: 0.5;
+}
 
-    .nav__group{display:flex;align-items:center;gap:18px}
-    .link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
-    .link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
-    .link:hover::after{transform:scaleX(1);opacity:.5}
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+.hero__content {
+  text-align: center;
+  padding: 120px var(--pad) 60px;
+}
+.hero__name {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero__slogan {
+  margin-top: 24px;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  animation: heroSloganIntro 1.2s ease forwards 0.4s, fontShimmer 7.5s linear infinite 1.2s,
+    glowPulse 10s ease-in-out infinite 1.2s;
+  background: linear-gradient(90deg, #cfcfcf, #ffffff, #bfbfbf, #ffffff, #cfcfcf);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@keyframes heroSloganIntro {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes fontShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+@keyframes glowPulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.08));
+  }
+}
 
-    /* HERO */
-    .hero{min-height:100vh;display:grid;place-items:center}
-    .hero__content{text-align:center;padding:120px var(--pad) 60px}
-    .hero__name{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
-    .hero__slogan{
-      margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);
-      letter-spacing:.22em;text-transform:uppercase;
-      opacity:0;transform:translateY(8px) scale(.98);
-      animation:heroSloganIntro 1.2s ease forwards .4s, fontShimmer 7.5s linear infinite 1.2s, glowPulse 10s ease-in-out infinite 1.2s;
-      background:linear-gradient(90deg,#cfcfcf,#ffffff,#bfbfbf,#ffffff,#cfcfcf);
-      background-size:300% 100%;
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent
-    }
-    @keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1)}}
-    @keyframes fontShimmer{0%{background-position:0% 50%}100%{background-position:100% 50%}}
-    @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{filter:drop-shadow(0 0 10px rgba(255,255,255,.08))}}
+/* INTERLUDE */
+.interlude {
+  background: #fff;
+  color: #0a0a0a;
+  text-align: center;
+  padding: 140px var(--pad);
+}
+.hero__title {
+  font-size: clamp(3rem, 9.6vw, 7rem);
+  line-height: 0.9;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.swap {
+  display: inline-block;
+  position: relative;
+}
 
-    /* INTERLUDE */
-    .interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad)}
-    .hero__title{font-size:clamp(3rem,9.6vw,7rem);line-height:.9;font-weight:800;letter-spacing:-.02em}
-    .swap{display:inline-block;position:relative}
+/* ABOUT */
+.stage {
+  background: #fff;
+  color: #0a0a0a;
+  padding: 160px var(--pad);
+  text-align: center;
+}
+.stage__title {
+  font-family: "Inter", "Helvetica Neue", "Segoe UI", "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  max-width: 68ch;
+  margin: 0 auto;
+  color: #111;
+}
 
-    /* ABOUT */
-    .stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center}
-    .stage__title{font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',sans-serif;font-weight:500;font-size:1.35rem;line-height:1.6;letter-spacing:.01em;max-width:68ch;margin:0 auto;color:#111}
+/* PROJECTS */
+#work {
+  padding: 0;
+}
+.wall {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+.tile {
+  grid-column: span 4;
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 1100px) {
+  .tile {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 680px) {
+  .tile {
+    grid-column: 1/-1;
+  }
+}
+.tile img {
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  display: block;
+  background: #111;
+  transition: transform 0.7s ease;
+}
+.tile:hover img {
+  transform: scale(1.06);
+}
+.tile__caption {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  text-align: center;
+  padding: 12px;
+}
+.tile:hover .tile__caption {
+  opacity: 1;
+  backdrop-filter: blur(2px);
+}
 
-    /* PROJECTS */
-    #work{padding:0}
-    .wall{width:100vw;margin-left:calc(50% - 50vw);display:grid;grid-template-columns:repeat(12,1fr)}
-    .tile{grid-column:span 4;position:relative;overflow:hidden}
-    @media (max-width:1100px){.tile{grid-column:span 6}}
-    @media (max-width:680px){.tile{grid-column:1/-1}}
-    .tile img{width:100%;height:auto;min-height:300px;display:block;background:#111;transition:transform .7s ease}
-    .tile:hover img{transform:scale(1.06)}
-    .tile__caption{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .35s ease,backdrop-filter .35s ease;background:rgba(0,0,0,.45);color:#fff;text-align:center;padding:12px}
-    .tile:hover .tile__caption{opacity:1;backdrop-filter:blur(2px)}
+/* CONTACT */
+.contact {
+  padding: 120px var(--pad);
+  text-align: center;
+}
+.contact__grid {
+  max-width: var(--grid);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.contact__lead {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: clamp(1.4rem, 3.6vw, 2.2rem);
+}
+.contact__sub {
+  color: var(--muted);
+  margin-top: 10px;
+  max-width: 52ch;
+}
+.contact__sub .line {
+  display: block;
+}
 
-    /* CONTACT */
-    .contact{padding:120px var(--pad);text-align:center}
-    .contact__grid{max-width:var(--grid);margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:28px}
-    .contact__lead{font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:clamp(1.4rem,3.6vw,2.2rem)}
-    .contact__sub{color:var(--muted);margin-top:10px;max-width:52ch}
-    .contact__sub .line{display:block}
+.form {
+  background: linear-gradient(180deg, #0e0e0e, #0a0a0a);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  max-width: 460px;
+  width: 100%;
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field {
+  position: relative;
+}
+.input {
+  width: 100%;
+  padding: 18px 14px;
+  border-radius: 14px;
+  border: 1px solid #1b1b1b;
+  background: #0f0f0f;
+  color: #fff;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.input:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+.label {
+  position: absolute;
+  left: 16px;
+  top: 14px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #a9a9a9;
+  background: rgba(255, 255, 255, 0.02);
+  transform-origin: left top;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.field.filled .label,
+.input:focus + .label {
+  transform: translateY(-18px) scale(0.88);
+  opacity: 0.9;
+  color: #fff;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.btn {
+  position: relative;
+  padding: 16px 22px;
+  border-radius: 999px;
+  border: 1px solid #fff;
+  background: #fff;
+  color: #000;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+}
+.btn .glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: radial-gradient(
+    280px 160px at var(--x, 50%) var(--y, 50%),
+    rgba(255, 255, 255, 0.35),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.btn:hover .glow {
+  opacity: 1;
+}
 
-    .form{background:linear-gradient(180deg,#0e0e0e,#0a0a0a);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:460px;width:100%}
-    .row{display:flex;flex-direction:column;gap:18px}
-    .field{position:relative}
-    .input{width:100%;padding:18px 14px;border-radius:14px;border:1px solid #1b1b1b;background:#0f0f0f;color:#fff;transition:border-color .25s,box-shadow .25s}
-    .input:focus{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
-    .label{position:absolute;left:16px;top:14px;padding:2px 6px;border-radius:8px;font-size:.85rem;color:#a9a9a9;background:rgba(255,255,255,.02);transform-origin:left top;transition:transform .2s,opacity .2s}
-    .field.filled .label,.input:focus + .label{transform:translateY(-18px) scale(.88);opacity:.9;color:#fff}
-    .actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px;flex-wrap:wrap}
-    .btn{position:relative;padding:16px 22px;border-radius:999px;border:1px solid #fff;background:#fff;color:#000;font-weight:700;text-transform:uppercase;cursor:pointer;transition:transform .25s,box-shadow .25s}
-    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1)}
-    .btn .glow{position:absolute;inset:-2px;border-radius:inherit;background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);opacity:0;transition:opacity .25s}
-    .btn:hover .glow{opacity:1}
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid #1b1b1b;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f0f0f;
+  color: #fff;
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+}
+.icon-btn:hover {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
 
-    .icon-btn{width:44px;height:44px;border:1px solid #1b1b1b;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#0f0f0f;color:#fff;transition:background .25s,border-color .25s,transform .2s}
-    .icon-btn:hover{background:#fff;color:#000;border-color:#fff;transform:translateY(-2px)}
-    .icon-btn svg{width:20px;height:20px;fill:currentColor}
+/* FOOTER */
+footer {
+  padding: 48px var(--pad);
+  color: #bdbdbd;
+  text-align: center;
+}
+.footer-left {
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+.footer-contact {
+  font-size: 0.9rem;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+}
+.footer-contact svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+}
 
-    footer{padding:48px var(--pad);color:#bdbdbd;text-align:center}
-    .footer-left{font-weight:700;letter-spacing:.18em}
-    .footer-contact{font-size:.9rem;display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
-    .footer-contact svg{width:16px;height:16px;opacity:.8}
+/* Премиальный курсор */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  .cursor-dot,
+  .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 2000;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    mix-blend-mode: difference;
+    transition: opacity 0.25s, transform 0.08s;
+  }
+  .cursor-ring {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    mix-blend-mode: difference;
+    transition: opacity 0.3s, transform 0.2s, border-color 0.2s;
+  }
+  .cursor--hidden {
+    opacity: 0;
+  }
+  .cursor--hover .cursor-ring {
+    transform: translate(-50%, -50%) scale(1.4);
+    border-color: #fff;
+  }
+}
 
-    /* \u041f\u0440\u0435\u043c\u0438\u0430\u043b\u044c\u043d\u044b\u0439 \u043a\u0443\u0440\u0441\u043e\u0440 */
-    @media (hover:hover) and (pointer:fine){
-      body{cursor:none}
-      .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
-      .cursor-dot{width:8px;height:8px;border-radius:50%;background:#fff;mix-blend-mode:difference;transition:opacity .25s,transform .08s}
-      .cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.7);mix-blend-mode:difference;transition:opacity .3s,transform .2s,border-color .2s}
-      .cursor--hidden{opacity:0}
-      .cursor--hover .cursor-ring{transform:translate(-50%,-50%) scale(1.4);border-color:#fff}
-    }
+/* Footer mail icon glow */
+.mail-icon {
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.mail-icon:hover {
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+  transform: translateY(-1px);
+}
+.footer-contact a:hover span {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+} 
+section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  will-change: opacity, transform;
+  position: relative;
+  z-index: 1;
+}
+
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+  mix-blend-mode: difference !important;
+}
+/* Убираем сдвиг для светлых секций, чтобы не было "прыжка" */
+.interlude,
+.stage {
+  transform: none !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+/* === Анимация логотипа BESSON === */
+.brand__mark {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: brandIntro 1.6s ease forwards 1.2s;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #ffffff, #cfcfcf, #ffffff);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes brandIntro {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(2px);
+    background-position: 0% 50%;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    background-position: 100% 50%;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    background-position: 50% 50%;
+  }
+}
+
+/* При наведении — лёгкое свечение и смещение */
+.brand__mark:hover {
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+.brand__mark {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: text-shadow 0.3s ease, transform 0.3s ease;
+}
+.brand__mark:hover {
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  transform: translateY(-1px);
+}
+
+/* Усиленный перелив и премиальное "дыхание" слогана */
+.hero__slogan {
+  margin-top: 24px;
+  font-size: clamp(1.1rem, 2.4vw, 1.6rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
+  animation:
+    heroSloganIntro 1.2s ease forwards 0.4s,
+    fontShimmer 5s linear infinite 1.2s,
+    glowPulse 6s ease-in-out infinite 1.2s,
+    floatPulse 12s ease-in-out infinite 1.2s;
+  background: linear-gradient(
+    90deg,
+    #cfcfcf 0%,
+    #ffffff 25%,
+    #d9d9d9 50%,
+    #ffffff 75%,
+    #cfcfcf 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes heroSloganIntro {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* более интенсивное движение света */
+@keyframes fontShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* мягкое "дыхание" свечения */
+@keyframes glowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.12));
+  }
+}
+
+/* лёгкое покачивание — будто текст колышется в воздухе */
+@keyframes floatPulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+/* Премиальная анимация ссылки почты в футере */
+.footer-contact a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f5f5f5;
+  text-decoration: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.footer-contact a:hover {
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+}
+
+/* Подсветка иконки и текста одновременно */
+.mail-icon {
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+.footer-contact a:hover .mail-icon {
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.45));
+  transform: translateY(-1px);
+}
   </style>
+</head>
+<!-- Agent Intro / System Boot -->
+<div id="boot" class="boot" aria-hidden="true">
+  <div class="boot__panel">
+    <div class="boot__hdr">BESSON.AGENCY // SYSTEM BOOT</div>
+    <div class="boot__out" id="bootOut"></div>
+    <div class="boot__scan"></div>
+  </div>
+</div>
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Besson Agency — Premium Event, Creative, BTL, POSM</title>
+  <meta name="description" content="Besson Agency — Event и BTL агентство. Организация мероприятий, активаций и креативных кампаний в Казахстане, Узбекистане и по всей Центральной Азии.">
+  <link rel="canonical" href="https://besson.asia/">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="/assets/fav/favicon.ico">
 </head>
 <body>
   <header class="nav">
-    <div class="brand__mark">BESSON</div>
+    <a href="index.html" class="brand__mark" aria-label="Главная страница">BESSON</a>
+
     <nav class="nav__group">
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
@@ -126,65 +654,26 @@
 
   <section id="work">
     <div class="wall" id="wall">
-      <a class="tile" href="project1.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" alt="Project 1">
-        <div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project2.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" alt="Project 2">
-        <div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project3.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" alt="Project 3">
-        <div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project4.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" alt="Project 4">
-        <div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project5.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" alt="Project 5">
-        <div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project6.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" alt="Project 6">
-        <div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project7.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" alt="Project 7">
-        <div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project8.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" alt="Project 8">
-        <div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project9.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" alt="Project 9">
-        <div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project10.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" alt="Project 10">
-        <div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project11.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" alt="Project 11">
-        <div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div>
-      </a>
-      <a class="tile" href="project12.html">
-        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" alt="Project 12">
-        <div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div>
-      </a>
+      <a class="tile" href="project1.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project2.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" alt="Project 2"><div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project3.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" alt="Project 3"><div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project4.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" alt="Project 4"><div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project5.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" alt="Project 5"><div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project6.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" alt="Project 6"><div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project7.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" alt="Project 7"><div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project8.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" alt="Project 8"><div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project9.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" alt="Project 9"><div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project10.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" alt="Project 10"><div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project11.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" alt="Project 11"><div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div></a>
+      <a class="tile" href="project12.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" alt="Project 12"><div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div></a>
     </div>
   </section>
 
   <section class="contact" id="contact">
     <div class="contact__grid">
       <h2 class="contact__lead">Оставьте заявку</h2>
-      <p class="contact__sub">
-        <span class="line">Укажите имя и номер телефона.</span>
-        <span class="line">Мы свяжемся в рабочие часы.</span>
-      </p>
-      <form class="form" id="leadForm">
+      <p class="contact__sub"><span class="line">Укажите имя и номер телефона.</span><span class="line">Мы свяжемся в рабочие часы.</span></p>
+      <form class="form" id="leadForm" method="POST" action="sendmail.php">
         <div class="row">
           <div class="field"><input class="input" id="name" name="name" placeholder=" " required><label class="label" for="name">Имя</label></div>
           <div class="field"><input class="input" id="phone" name="phone" type="tel" placeholder=" " required><label class="label" for="phone">Телефон</label></div>
@@ -201,16 +690,113 @@
 
   <footer>
     <div class="footer-left">BESSON AGENCY</div>
-    <div class="footer-contact">
-      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11A2.5 2.5 0 0 1 19.5 20h-15A2.5 2.5 0 0 1 2 17.5v-11Z"/></svg>
-      <a href="mailto:hello@besson.asia">hello@besson.asia</a>
+    <div class="footer-contact" style="margin-bottom: 20px; line-height: 1.8;">
+      <a href="mailto:hello@besson.asia" style="display:flex; align-items:center; gap:10px; color:#f5f5f5; text-decoration:none;">
+        <svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span style="font-weight:500; letter-spacing:0.03em;">hello@besson.asia</span>
+      </a>
     </div>
-    <p>© <span id="year"></span> Besson Agency — Besson.asia</p>
-
+    <p style="margin-top: 10px;">© <span id="year"></span> Besson Agency</p>
   </footer>
 
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
+<script>
+document.getElementById("leadForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+    const res = await fetch(form.action, { method: "POST", body: formData });
+    const result = await res.text();
+
+    if (result.trim() === "success") {
+      alert("Заявка успешно отправлена!");
+      form.reset();
+    } else if (result.trim() === "empty") {
+      alert("Заполните все поля.");
+    } else {
+      alert("Ошибка при отправке. Попробуйте позже.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Ошибка сети. Проверьте подключение.");
+  }
+});
+</script>
+// Устанавливаем текущий год в подвал
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Анимация смены слов Event / Creative / BTL / POSM
+const words = ["Event.", "Creative.", "BTL.", "POSM."];
+const el = document.getElementById("swap");
+let i = 0;
+setInterval(() => {
+  el.textContent = words[i];
+  el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 600 });
+  i = (i + 1) % words.length;
+}, 1800);
+
+// Эффект "плавающих" меток формы
+document.querySelectorAll(".input").forEach((inp) => {
+  const f = inp.parentNode;
+  inp.addEventListener("input", () => f.classList.toggle("filled", !!inp.value));
+});
+
+// Премиальный курсор
+const dot = document.getElementById("cursorDot"),
+  ring = document.getElementById("cursorRing");
+let tx = 0,
+  ty = 0,
+  x = 0,
+  y = 0;
+
+// Слежение за движением мыши
+window.addEventListener("mousemove", (e) => {
+  tx = e.clientX;
+  ty = e.clientY;
+});
+
+// Анимация курсора
+(function anim() {
+  x += (tx - x) * 0.2;
+  y += (ty - y) * 0.2;
+  dot.style.transform = `translate(${x}px, ${y}px)`;
+  ring.style.transform = `translate(${x}px, ${y}px)`;
+  requestAnimationFrame(anim);
+})();
+
+// Добавим эффект hover для ссылок (наведение увеличивает кольцо)
+document.querySelectorAll("a, button, .input").forEach((el) => {
+  el.addEventListener("mouseenter", () => ring.classList.add("cursor--hover"));
+  el.addEventListener("mouseleave", () => ring.classList.remove("cursor--hover"));
+});
+
+// Плавное появление секций при скролле (Intersection Observer)
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+      }
+    });
+  },
+  { threshold: 0.1 }
+);
+
+// Применяем к секциям
+document.querySelectorAll("section").forEach((section) => {
+  observer.observe(section);
+});
+// Запускаем анимацию логотипа после загрузки страницы
+window.addEventListener("load", () => {
+  const brand = document.querySelector(".brand__mark");
+  brand.classList.add("animate");
+});
 
   <script>
     document.getElementById('year').textContent=new Date().getFullYear();

@@ -29,6 +29,7 @@
     .hero{min-height:100vh;display:grid;place-items:center}
     .hero__content{text-align:center;padding:120px var(--pad) 60px}
     .hero__name{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
+    #logoText span{display:inline-block;transition:transform .25s cubic-bezier(.25,1,.3,1),text-shadow .25s ease}
     .hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s,fontShimmer 5s linear infinite 1.2s,glowPulse 6s ease-in-out infinite 1.2s,floatPulse 12s ease-in-out infinite 1.2s;background:linear-gradient(90deg,#cfcfcf 0%,#ffffff 25%,#d9d9d9 50%,#ffffff 75%,#cfcfcf 100%);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
     @keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes fontShimmer{0%{background-position:0% 50%}100%{background-position:100% 50%}}
@@ -110,7 +111,7 @@
 
   <section class="hero">
     <div class="hero__content">
-      <div class="hero__name">BESSON AGENCY</div>
+      <div class="hero__name" id="logoText"></div>
       <div class="hero__slogan">Не спим за деньги</div>
     </div>
   </section>
@@ -177,6 +178,26 @@
   <script defer>
     // год в футере
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Анимация логотипа BESSON AGENCY (эффект Dock)
+    const logoText = document.getElementById("logoText");
+    const logoString = "BESSON AGENCY";
+
+    logoText.innerHTML = logoString
+      .split("")
+      .map((ch) => (ch === " " ? "&nbsp;" : `<span>${ch}</span>`))
+      .join("");
+
+    document.querySelectorAll("#logoText span").forEach((span) => {
+      span.addEventListener("mouseenter", () => {
+        span.style.transform = "translateY(-4px) scale(1.25)";
+        span.style.textShadow = "0 0 18px rgba(255,255,255,0.35)";
+      });
+      span.addEventListener("mouseleave", () => {
+        span.style.transform = "translateY(0) scale(1)";
+        span.style.textShadow = "none";
+      });
+    });
 
     // смена слов Event / Creative / BTL / POSM
     const words = ["Event.", "Creative.", "BTL.", "POSM."];

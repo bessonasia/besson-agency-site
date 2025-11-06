@@ -4,46 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Besson Agency — Premium Event, Creative, BTL, POSM</title>
-  <meta name="description" content="Besson Agency — премиальное Event и BTL агентство. Организация мероприятий, бренд-активаций и креативных кампаний в Казахстане, Узбекистане и по всей Центральной Азии.">
-  <meta name="keywords" content="ивент агентство, BTL Казахстан, организация мероприятий, Besson Agency, event Алматы, корпоративные мероприятия, бренд активации, креативное агентство">
+  <meta name="description" content="Besson Agency — Event и BTL агентство. Организация мероприятий, активаций и креативных кампаний в Казахстане, Узбекистане и по всей Центральной Азии.">
   <link rel="canonical" href="https://besson.asia/">
   <meta name="theme-color" content="#0a0a0a">
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Besson Agency — Premium Event, Creative, BTL, POSM">
-  <meta property="og:description" content="Премиальное агентство по организации мероприятий и BTL-активаций в Казахстане и Центральной Азии.">
-  <meta property="og:image" content="https://besson.asia/assets/preview.jpg">
-  <meta property="og:url" content="https://besson.asia/">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <!-- Favicon -->
-  <link rel="icon" href="/assets/fav/favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="/assets/fav/apple-touch-icon.png">
-  <link rel="manifest" href="/assets/fav/manifest.json">
-
-  <!-- Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Besson Agency",
-    "url": "https://besson.asia",
-    "logo": "https://besson.asia/assets/logo.png",
-    "sameAs": ["https://www.instagram.com/yurybessonoff"],
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Алматы",
-      "addressCountry": "Казахстан"
-    },
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+7-705-888-0678",
-      "contactType": "sales"
-    }
-  }
-  </script>
-
+  <link rel="icon" href="/assets/fav/favicon.ico">
   <style>
     *{box-sizing:border-box;margin:0}
     html,body{height:100%;scroll-behavior:smooth}
@@ -53,7 +17,8 @@
 
     /* NAV */
     .nav{position:fixed;top:0;left:0;right:0;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);z-index:1000;background:linear-gradient(180deg,rgba(10,10,10,.85),rgba(10,10,10,0));backdrop-filter:saturate(140%) blur(6px)}
-    .brand__mark{font-weight:800;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+    .brand__mark{font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+
     .nav__group{display:flex;align-items:center;gap:18px}
     .link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
     .link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
@@ -83,13 +48,12 @@
 
     /* ABOUT */
     .stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center}
-    .stage__title{font-weight:500;font-size:1.35rem;line-height:1.6;letter-spacing:.01em;max-width:68ch;margin:0 auto;color:#111}
+    .stage__title{font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',sans-serif;font-weight:500;font-size:1.35rem;line-height:1.6;letter-spacing:.01em;max-width:68ch;margin:0 auto;color:#111}
 
     /* PROJECTS */
     #work{padding:0}
     .wall{width:100vw;margin-left:calc(50% - 50vw);display:grid;grid-template-columns:repeat(12,1fr)}
-    .tile{grid-column:span 4;position:relative;overflow:hidden;opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
-    .tile.visible{opacity:1;transform:translateY(0)}
+    .tile{grid-column:span 4;position:relative;overflow:hidden}
     @media (max-width:1100px){.tile{grid-column:span 6}}
     @media (max-width:680px){.tile{grid-column:1/-1}}
     .tile img{width:100%;height:auto;min-height:300px;display:block;background:#111;transition:transform .7s ease}
@@ -98,8 +62,7 @@
     .tile:hover .tile__caption{opacity:1;backdrop-filter:blur(2px)}
 
     /* CONTACT */
-    .contact{padding:120px var(--pad);text-align:center;opacity:0;transform:translateY(40px);transition:opacity 1s ease,transform 1s ease}
-    .contact.visible{opacity:1;transform:translateY(0)}
+    .contact{padding:120px var(--pad);text-align:center}
     .contact__grid{max-width:var(--grid);margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:28px}
     .contact__lead{font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:clamp(1.4rem,3.6vw,2.2rem)}
     .contact__sub{color:var(--muted);margin-top:10px;max-width:52ch}
@@ -127,7 +90,7 @@
     .footer-contact{font-size:.9rem;display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
     .footer-contact svg{width:16px;height:16px;opacity:.8}
 
-    /* Premium Cursor */
+    /* \u041f\u0440\u0435\u043c\u0438\u0430\u043b\u044c\u043d\u044b\u0439 \u043a\u0443\u0440\u0441\u043e\u0440 */
     @media (hover:hover) and (pointer:fine){
       body{cursor:none}
       .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
@@ -138,10 +101,9 @@
     }
   </style>
 </head>
-
 <body>
   <header class="nav">
-    <a href="index.html" class="brand__mark">BESSON</a>
+    <div class="brand__mark">BESSON</div>
     <nav class="nav__group">
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
@@ -150,31 +112,78 @@
   </header>
 
   <section class="hero">
-    <div class="hero__content fade">
+    <div class="hero__content">
       <div class="hero__name">BESSON AGENCY</div>
       <div class="hero__slogan">Не спим за деньги</div>
     </div>
   </section>
 
-  <section class="interlude fade"><h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1></section>
+  <section class="interlude"><h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1></section>
 
-  <section class="stage fade" id="about">
+  <section class="stage" id="about">
     <h2 class="stage__title">Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события. Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.</h2>
   </section>
 
   <section id="work">
     <div class="wall" id="wall">
-      <a class="tile fade" href="project1.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
-      <a class="tile fade" href="project2.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" alt="Project 2"><div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div></a>
-      <a class="tile fade" href="project3.html"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" alt="Project 3"><div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div></a>
-      <!-- остальные плитки аналогично -->
+      <a class="tile" href="project1.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" alt="Project 1">
+        <div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project2.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" alt="Project 2">
+        <div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project3.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" alt="Project 3">
+        <div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project4.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" alt="Project 4">
+        <div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project5.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" alt="Project 5">
+        <div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project6.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" alt="Project 6">
+        <div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project7.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" alt="Project 7">
+        <div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project8.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" alt="Project 8">
+        <div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project9.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" alt="Project 9">
+        <div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project10.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" alt="Project 10">
+        <div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project11.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" alt="Project 11">
+        <div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div>
+      </a>
+      <a class="tile" href="project12.html">
+        <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" alt="Project 12">
+        <div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div>
+      </a>
     </div>
   </section>
 
-  <section class="contact fade" id="contact">
+  <section class="contact" id="contact">
     <div class="contact__grid">
       <h2 class="contact__lead">Оставьте заявку</h2>
-      <p class="contact__sub"><span class="line">Укажите имя и номер телефона.</span><span class="line">Мы свяжемся в рабочие часы.</span></p>
+      <p class="contact__sub">
+        <span class="line">Укажите имя и номер телефона.</span>
+        <span class="line">Мы свяжемся в рабочие часы.</span>
+      </p>
       <form class="form" id="leadForm">
         <div class="row">
           <div class="field"><input class="input" id="name" name="name" placeholder=" " required><label class="label" for="name">Имя</label></div>
@@ -193,4 +202,26 @@
   <footer>
     <div class="footer-left">BESSON AGENCY</div>
     <div class="footer-contact">
-      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11A2.5 2.5 0 0 1 
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M2 6.5A2.5 2.5 0 0 1 4.5 4h15A2.5 2.5 0 0 1 22 6.5v11A2.5 2.5 0 0 1 19.5 20h-15A2.5 2.5 0 0 1 2 17.5v-11Z"/></svg>
+      <a href="mailto:hello@besson.asia">hello@besson.asia</a>
+    </div>
+    <p>© <span id="year"></span> Besson Agency — Besson.asia</p>
+  </footer>
+
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <script>
+    document.getElementById('year').textContent=new Date().getFullYear();
+    const words=['Event.','Creative.','BTL.','POSM.'];const el=document.getElementById('swap');let i=0;
+    setInterval(()=>{el.textContent=words[i];el.animate([{opacity:0},{opacity:1}],{duration:600});i=(i+1)%words.length},1800);
+
+    document.querySelectorAll('.input').forEach(inp=>{const f=inp.parentNode;inp.addEventListener('input',()=>f.classList.toggle('filled',!!inp.value));});
+
+    const dot=document.getElementById('cursorDot'),ring=document.getElementById('cursorRing');
+    let tx=0,ty=0,x=0,y=0;
+    window.addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;});
+    (function anim(){x+=(tx-x)*0.2;y+=(ty-y)*0.2;dot.style.transform=`translate(${x}px,${y}px)`;ring.style.transform=`translate(${x}px,${y}px)`;requestAnimationFrame(anim);}());
+  </script>
+</body>
+</html>

@@ -30,11 +30,14 @@
     .hero__content{text-align:center;padding:120px var(--pad) 60px}
     .hero__name{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
     #logoText span{display:inline-block;transition:transform .25s cubic-bezier(.25,1,.3,1),text-shadow .25s ease}
-    .hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s,fontShimmer 5s linear infinite 1.2s,glowPulse 6s ease-in-out infinite 1.2s,floatPulse 12s ease-in-out infinite 1.2s;background:linear-gradient(90deg,#cfcfcf 0%,#ffffff 25%,#d9d9d9 50%,#ffffff 75%,#cfcfcf 100%);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s;display:flex;justify-content:center;flex-wrap:wrap;gap:.6em;cursor:default}
+    .hero__slogan span{display:inline-block;transition:color .4s ease,text-shadow .4s ease;animation:subtleGlow 6s ease-in-out infinite alternate}
+    .hero__slogan span:hover{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.45),0 0 20px rgba(255,255,255,.25),0 0 30px rgba(255,255,255,.15)}
     @keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes fontShimmer{0%{background-position:0% 50%}100%{background-position:100% 50%}}
     @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{filter:drop-shadow(0 0 12px rgba(255,255,255,0.12))}}
     @keyframes floatPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+    @keyframes subtleGlow{0%,100%{text-shadow:none}50%{text-shadow:0 0 6px rgba(255,255,255,0.15)}}
 
     /* INTERLUDE */
     .interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad)}
@@ -112,7 +115,12 @@
   <section class="hero">
     <div class="hero__content">
       <div class="hero__name" id="logoText"></div>
-      <div class="hero__slogan">Не спим за деньги</div>
+      <div class="hero__slogan" id="slogan">
+        <span>Не</span>
+        <span>спим</span>
+        <span>за</span>
+        <span>деньги</span>
+      </div>
     </div>
   </section>
 

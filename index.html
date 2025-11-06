@@ -273,6 +273,34 @@
   `;
   document.head.appendChild(style);
 </script>
+  <!-- Premium Custom Cursor -->
+<div class="cursor"></div>
+<script>
+  const cursor = document.querySelector('.cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+</script>
+<style>
+  .cursor {
+    position: fixed;
+    top: 0; left: 0;
+    width: 18px; height: 18px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: transform 0.08s ease-out, opacity 0.2s;
+    z-index: 9999;
+  }
+  body { cursor: none; }
+  a:hover ~ .cursor,
+  button:hover ~ .cursor {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: .7;
+  }
+</style>
 </body>
 </html>
   // Фикс от слипания флага

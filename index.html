@@ -21,46 +21,9 @@
     .brand__mark{font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:inherit;text-decoration:none;cursor:pointer;transition:text-shadow .3s ease,transform .3s ease}
     .brand__mark:hover{text-shadow:0 0 8px rgba(255,255,255,0.4);transform:translateY(-1px)}
     .nav__group{display:flex;align-items:center;gap:18px}
-    .menu-toggle{display:none}
+    .menu-toggle{display:none;background:none;border:0;padding:0;cursor:pointer}
+    .menu-toggle span{display:block;width:26px;height:2px;background:#fff;border-radius:2px}
     .mobile-menu{display:none}
-    @media (max-width:768px){
-      .nav__group{margin-top:16px}
-      .nav__group{display:none}
-      .menu-toggle{
-        display:flex;flex-direction:column;justify-content:center;gap:6px;
-        width:28px;height:24px;background:none;border:0;cursor:pointer;z-index:1100
-      }
-      .menu-toggle span{
-        display:block;width:100%;height:2px;background:#fff;
-        transition:transform .35s ease,opacity .35s ease
-      }
-      .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(45deg)}
-      .menu-toggle.active span:nth-child(2){opacity:0}
-      .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
-
-      .mobile-menu{
-        display:flex;position:fixed;inset:0;background:rgba(10,10,10,.85);
-        backdrop-filter:blur(12px);
-        align-items:center;justify-content:center;flex-direction:column;
-        opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.19,1,.22,1);
-        z-index:1000
-      }
-      .mobile-menu.active{opacity:1;pointer-events:auto;animation:fadeInScale .8s cubic-bezier(.19,1,.22,1)}
-      @keyframes fadeInScale{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
-
-      .mobile-menu ul{list-style:none;margin:0;padding:0;text-align:center}
-      .mobile-menu li{margin:18px 0;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.19,1,.22,1)}
-      .mobile-menu.active li{opacity:1;transform:translateY(0)}
-      .mobile-menu a{
-        color:#fff;font-size:1.4rem;letter-spacing:.08em;text-transform:uppercase;
-        font-weight:500;text-decoration:none;position:relative
-      }
-      .mobile-menu a::after{
-        content:"";position:absolute;left:0;bottom:-4px;width:100%;height:1px;background:#fff;
-        transform:scaleX(0);transform-origin:right;transition:transform .3s ease
-      }
-      .mobile-menu a:hover::after{transform:scaleX(1);transform-origin:left}
-    }
     .link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
     .link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
     .link:hover::after{transform:scaleX(1);opacity:.5}
@@ -69,18 +32,18 @@
     .hero{min-height:100vh;display:grid;place-items:center}
     .hero__content{text-align:center;padding:120px var(--pad) 60px}
     .hero__name{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
-    #logoText span{display:inline-block;transition:transform .25s ease-out,text-shadow .3s ease-out}
+    #logoText{display:inline-flex;gap:.18em}
+    #logoText span{display:inline-block;transition:transform .28s ease,text-shadow .28s ease}
     #logoText span[data-space="true"]{pointer-events:none}
-    .hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s;display:flex;justify-content:center;flex-wrap:wrap;gap:.6em;cursor:default}
-    .hero__slogan span{display:inline-block;transition:color .4s ease,text-shadow .4s ease;animation:subtleGlow 6s ease-in-out infinite alternate}
-    .hero__slogan span:hover{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.45),0 0 20px rgba(255,255,255,.25),0 0 30px rgba(255,255,255,.15)}
-    #logoText.breathe span{animation:breathe 1.4s ease-in-out infinite alternate}
+    .hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s,fontShimmer 5s linear infinite 1.2s,glowPulse 6s ease-in-out infinite 1.2s,floatPulse 12s ease-in-out infinite 1.2s;background:linear-gradient(90deg,#cfcfcf 0%,#ffffff 25%,#d9d9d9 50%,#ffffff 75%,#cfcfcf 100%);background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    #slogan{display:flex;justify-content:center;flex-wrap:wrap;gap:.6em}
+    #slogan .word{display:inline-flex;gap:.08em;position:relative;cursor:default}
+    #slogan .word .letter{display:inline-block;transition:color .3s ease,text-shadow .3s ease,opacity .3s ease;opacity:.78;-webkit-text-fill-color:inherit;background:inherit}
+    #slogan .word .letter.is-lit{color:#fff;text-shadow:0 0 12px rgba(255,255,255,.45);opacity:1}
     @keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1)}}
     @keyframes fontShimmer{0%{background-position:0% 50%}100%{background-position:100% 50%}}
     @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{filter:drop-shadow(0 0 12px rgba(255,255,255,0.12))}}
     @keyframes floatPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
-    @keyframes subtleGlow{0%,100%{text-shadow:none}50%{text-shadow:0 0 6px rgba(255,255,255,0.15)}}
-    @keyframes breathe{0%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.05);filter:brightness(1.25)}100%{transform:scale(1);filter:brightness(1)}}
 
     /* INTERLUDE */
     .interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad)}
@@ -89,6 +52,7 @@
     /* ABOUT */
     .stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center}
     .stage__title{font-weight:500;font-size:1.35rem;line-height:1.6;max-width:68ch;margin:0 auto;color:#111}
+    .about-line{display:inline}
 
     /* PROJECTS */
     #work{padding:0}
@@ -113,9 +77,6 @@
     .input:focus{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
     .label{position:absolute;left:16px;top:14px;padding:2px 6px;border-radius:8px;font-size:.85rem;color:#a9a9a9;background:rgba(255,255,255,.02);transform-origin:left top;transition:transform .2s,opacity .2s}
     .field.filled .label,.input:focus + .label{transform:translateY(-18px) scale(.88);opacity:.9;color:#fff}
-    .form__status{min-height:20px;font-size:.9rem;color:var(--muted);margin-top:6px;transition:opacity .3s}
-    .form__status--success{color:#9be7c4}
-    .form__status--error{color:#ff8a80}
     .actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px;flex-wrap:wrap}
     .btn{position:relative;padding:16px 22px;border-radius:999px;border:1px solid #fff;background:#fff;color:#000;font-weight:700;text-transform:uppercase;cursor:pointer;transition:transform .25s,box-shadow .25s}
     .btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1)}
@@ -135,22 +96,6 @@
     .footer-contact a:hover .mail-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.45));transform:translateY(-1px)}
 
     /* Premium cursor */
-    @media (max-width:768px){
-      #logoText{display:inline-block;transform-origin:center;will-change:transform}
-      #logoText span{
-        display:inline-block;transition:transform .4s cubic-bezier(.19,1,.22,1),text-shadow .5s ease,filter .5s ease;
-        will-change:transform,filter
-      }
-      #logoText.breathe span{animation:microPulse 1.8s ease-in-out infinite alternate}
-      @keyframes microPulse{
-        0%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
-        50%{transform:translateX(var(--tx,0)) scale(calc(var(--sc,1.03)));filter:brightness(1.12)}
-        100%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
-      }
-      #about{opacity:0;transform:translateY(60px);transition:all 1s cubic-bezier(.19,1,.22,1)}
-      #about.visible{opacity:1;transform:translateY(0)}
-    }
-
     @media (hover:hover) and (pointer:fine){
       body{cursor:none}
       .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
@@ -158,37 +103,118 @@
       .cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.7);mix-blend-mode:difference;transition:opacity .3s,transform .2s,border-color .2s}
       .cursor--hover .cursor-ring{transform:translate(-50%,-50%) scale(1.4);border-color:#fff}
     }
+
+    @media (max-width:768px){
+      html,body{overflow-x:hidden;width:100vw}
+      body{font-size:16px}
+      .hero,.interlude,.stage,#work,.contact,footer{max-width:100vw;overflow:hidden}
+      .nav{padding:0 clamp(20px,6vw,32px);height:72px}
+      .nav__group{display:none}
+      .menu-toggle{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:34px;height:26px;position:relative;z-index:1100;transition:transform .32s cubic-bezier(.19,1,.22,1)}
+      .menu-toggle span{width:100%;height:2px;background:#fff;border-radius:999px;box-shadow:0 0 8px rgba(255,255,255,.35);transition:transform .38s cubic-bezier(.19,1,.22,1),opacity .32s ease}
+      .menu-toggle.active{transform:scale(.92)}
+      .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(42deg)}
+      .menu-toggle.active span:nth-child(2){opacity:0}
+      .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-42deg)}
+
+      .mobile-menu{display:flex;position:fixed;inset:0;background:rgba(8,8,8,.78);backdrop-filter:blur(10px);align-items:flex-start;justify-content:flex-end;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.19,1,.22,1),transform .6s cubic-bezier(.19,1,.22,1);transform:translateY(-4%);padding:20vh clamp(24px,8vw,40px) 12vh;z-index:1050}
+      .mobile-menu ul{list-style:none;margin:0;padding:0;width:100%}
+      .mobile-menu li{margin:16px 0;opacity:0;transform:translateY(-24px);transition:transform .6s cubic-bezier(.19,1,.22,1),opacity .6s cubic-bezier(.19,1,.22,1)}
+      .mobile-menu a{display:inline-flex;color:#fff;font-size:1.35rem;letter-spacing:.08em;text-transform:uppercase;font-weight:400;gap:12px;align-items:center;position:relative;padding-bottom:6px}
+      .mobile-menu a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:rgba(255,255,255,.6);transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.19,1,.22,1)}
+      .mobile-menu a:focus-visible::after,
+      .mobile-menu a:hover::after{transform:scaleX(1);transform-origin:left}
+      .mobile-menu.is-active{opacity:1;pointer-events:auto;transform:translateY(0)}
+      .mobile-menu.is-active li{opacity:1;transform:translateY(0)}
+
+      body.menu-open{overflow:hidden}
+      body.menu-open .hero,
+      body.menu-open .interlude,
+      body.menu-open .stage,
+      body.menu-open #work,
+      body.menu-open .contact,
+      body.menu-open footer{opacity:.35;transition:opacity .4s ease,filter .4s ease;filter:saturate(.7)}
+      body:not(.menu-open) .hero,
+      body:not(.menu-open) .interlude,
+      body:not(.menu-open) .stage,
+      body:not(.menu-open) #work,
+      body:not(.menu-open) .contact,
+      body:not(.menu-open) footer{transition:opacity .4s ease,filter .4s ease}
+
+      #logoText{transform-origin:center bottom;will-change:transform}
+      #logoText span{will-change:transform,text-shadow}
+      #logoText.breathe-auto span,
+      #logoText.breathe-touch span{animation:mobileBreathe 1.6s ease-in-out infinite alternate}
+      @keyframes mobileBreathe{
+        0%{transform:translate3d(var(--tx,0),0,0) scale(var(--sc,1));filter:brightness(1)}
+        50%{transform:translate3d(var(--tx,0),0,0) scale(calc(var(--sc,1.04)));filter:brightness(1.14)}
+        100%{transform:translate3d(var(--tx,0),0,0) scale(var(--sc,1));filter:brightness(1)}
+      }
+      #slogan{gap:.5em;margin-top:24px}
+      #slogan .word{opacity:.7;will-change:filter,opacity}
+      #slogan .word.is-active{opacity:1}
+
+      .interlude,.stage{background:#fff}
+      .interlude::after,.stage::before{display:none}
+      .swap{overflow:hidden}
+      .swap .interlude-word{display:inline-block;opacity:0;transform:translateY(40px);transition:transform .6s cubic-bezier(.19,1,.22,1),opacity .6s cubic-bezier(.19,1,.22,1);transition-delay:calc(var(--index,0)*.08s)}
+      .swap .interlude-word.is-visible{opacity:1;transform:translateY(0)}
+
+      .stage{padding:120px clamp(20px,6vw,32px)}
+      .stage__title{font-weight:400;line-height:1.7;letter-spacing:.01em}
+      .stage__title .about-line{display:block;opacity:0;transform:translateY(18px);transition:transform .55s cubic-bezier(.19,1,.22,1),opacity .55s cubic-bezier(.19,1,.22,1);transition-delay:calc(var(--index,0)*.07s)}
+      .stage__title.is-visible .about-line{opacity:1;transform:translateY(0)}
+
+      .wall{margin:0;grid-template-columns:1fr}
+      .tile{grid-column:1/-1;opacity:0;filter:blur(2px);transition:transform .45s cubic-bezier(.19,1,.22,1),opacity .45s cubic-bezier(.19,1,.22,1),filter .45s cubic-bezier(.19,1,.22,1)}
+      .tile[data-direction="left"]{transform:translateX(-24px)}
+      .tile[data-direction="right"]{transform:translateX(24px)}
+      .tile.is-visible{opacity:1;filter:blur(0);transform:translateX(0)}
+
+      .contact{padding:100px clamp(20px,6vw,32px)}
+      .form{will-change:transform,box-shadow;transition:transform .45s cubic-bezier(.19,1,.22,1),box-shadow .45s cubic-bezier(.19,1,.22,1)}
+    }
+
+    @media (max-width:768px) and (prefers-reduced-motion:reduce){
+      #logoText span{transform:none!important;text-shadow:none!important}
+      #slogan .word,#slogan .word .letter{transition:none}
+      .swap .interlude-word{transition:none;transform:none!important;opacity:1!important}
+      .stage__title .about-line{transition:none;transform:none!important;opacity:1!important}
+      .tile{transition:none;transform:none!important;opacity:1!important;filter:none!important}
+      .form{transition:none;transform:none!important;box-shadow:inherit!important}
+    }
   </style>
 </head>
 
 <body>
   <header class="nav">
     <a href="#" class="brand__mark">BESSON</a>
-    <button class="menu-toggle" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
+    <button class="menu-toggle" aria-label="Открыть меню" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
-    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <ul>
-        <li><a href="#about">Об агентстве</a></li>
-        <li><a href="#work">Проекты</a></li>
-        <li><a href="#contact">Контакты</a></li>
-      </ul>
-    </nav>
     <nav class="nav__group">
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
       <a class="link" href="#contact">Контакты</a>
     </nav>
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="#work">Проекты</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
   </header>
 
   <section class="hero">
     <div class="hero__content">
-      <div class="hero__name" id="logoText"></div>
+      <div class="hero__name" id="logoText">BESSON AGENCY</div>
       <div class="hero__slogan" id="slogan">
-        <span>Не</span>
-        <span>спим</span>
-        <span>за</span>
-        <span>деньги</span>
+        <span class="word">НЕ</span>
+        <span class="word">СПИМ</span>
+        <span class="word">ЗА</span>
+        <span class="word">ДЕНЬГИ</span>
       </div>
     </div>
   </section>
@@ -220,7 +246,7 @@
     <div class="contact__grid">
       <h2 class="contact__lead">Оставьте заявку</h2>
       <p class="contact__sub"><span class="line">Укажите имя и номер телефона.</span><span class="line">Мы свяжемся в рабочие часы.</span></p>
-      <form class="form" id="leadForm" novalidate>
+      <form class="form" id="leadForm">
         <div class="row">
           <div class="field"><input class="input" id="name" name="name" placeholder=" " required><label class="label" for="name">Имя</label></div>
           <div class="field"><input class="input" id="phone" name="phone" type="tel" placeholder=" " required><label class="label" for="phone">Телефон</label></div>
@@ -231,7 +257,6 @@
             <svg viewBox="0 0 32 32"><path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z"/></svg>
           </a>
         </div>
-        <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -253,232 +278,525 @@
   <div class="cursor-ring" id="cursorRing"></div>
 
   <script defer>
-    // год в футере
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    // Анимация логотипа BESSON AGENCY (эффект Dock)
-    const logoText = document.getElementById("logoText");
-    const logoString = "BESSON AGENCY";
-
-    logoText.innerHTML = logoString
-      .split("")
-      .map((ch) => {
-        const isSpace = ch === " ";
-        const attrs = isSpace ? ' data-space="true"' : "";
-        const content = isSpace ? "&nbsp;" : ch;
-        return `<span${attrs}>${content}</span>`;
-      })
-      .join("");
-
-    const logoSpans = Array.from(logoText.querySelectorAll("span"));
-    const interactiveLogoSpans = logoSpans.filter((span) => !span.dataset.space);
-
-    interactiveLogoSpans.forEach((span) => {
-      span.addEventListener("mouseenter", () => {
-        span.style.transform = "translateY(-4px) scale(1.25)";
-        span.style.textShadow = "0 0 18px rgba(255,255,255,0.35)";
-      });
-      span.addEventListener("mouseleave", () => {
-        span.style.transform = "translateY(0) scale(1)";
-        span.style.textShadow = "none";
-      });
-    });
-
-    (function(){
-      if (window.innerWidth > 768) return;
-      const toggle = document.querySelector('.menu-toggle');
-      const menu = document.querySelector('#mobileMenu');
-      if(!toggle || !menu) return;
-      const items = menu.querySelectorAll('li');
-
-      function setStagger(active){
-        items.forEach((li,i)=>{
-          li.style.transitionDelay = active ? `${i * 0.1}s` : '0s';
-        });
-      }
-
-      toggle.addEventListener('click', ()=>{
-        const active = !toggle.classList.contains('active');
-        toggle.classList.toggle('active', active);
-        menu.classList.toggle('active', active);
-        menu.setAttribute('aria-hidden', String(!active));
-        setStagger(active);
-      });
-
-      menu.addEventListener('click', (e)=>{
-        if(e.target.matches('a')){
-          toggle.classList.remove('active');
-          menu.classList.remove('active');
-          menu.setAttribute('aria-hidden','true');
-          setStagger(false);
-        }
-      });
-    })();
-
-    (function(){
-      if (window.innerWidth > 768) return;
-      const logo = document.querySelector('#logoText');
-      if(!logo) return;
-      const spans = Array.from(logo.querySelectorAll('span'));
-      const maxScroll = Math.max(window.innerHeight * 1.1, 600);
-      let breathing = false;
-
-      function applySpread(){
-        const s = Math.min(window.scrollY, maxScroll);
-        const p = s / maxScroll;
-        const scale = 1 + p * 1.6;
-        const spread = p * 120;
-        const glow = 8 + p * 32;
-
-        let index = 0;
-        spans.forEach((span)=>{
-          const isSpace = span.dataset.space === 'true' || span.textContent.trim() === '';
-          if(isSpace){
-            span.style.setProperty('--tx','0px');
-            span.style.setProperty('--sc','1');
-            span.style.transform = 'translateX(0) scale(1)';
-            span.style.textShadow = 'none';
-            return;
-          }
-
-          const dir = (index % 2 === 0) ? -1 : 1;
-          const tx = dir * spread;
-          span.style.setProperty('--tx', `${tx}px`);
-          span.style.setProperty('--sc', scale);
-          span.style.transform = `translateX(${tx}px) scale(${scale})`;
-          span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.10 + p * 0.5})`;
-          index += 1;
-        });
-
-        if(p > 0.95 && !breathing){
-          logo.classList.add('breathe');
-          breathing = true;
-        }
-        if(p < 0.90 && breathing){
-          logo.classList.remove('breathe');
-          breathing = false;
-        }
-      }
-
-      let ticking = false;
-      window.addEventListener('scroll', ()=>{
-        if(!ticking){
-          requestAnimationFrame(()=>{
-            applySpread();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      }, {passive:true});
-
-      applySpread();
-    })();
-
-    (function(){
-      if (window.innerWidth > 768) return;
-      const about = document.querySelector('#about');
-      if(!about) return;
-
-      function reveal(){
-        const rect = about.getBoundingClientRect();
-        if(rect.top < window.innerHeight * 0.85){
-          about.classList.add('visible');
-          window.removeEventListener('scroll', onScroll);
-        }
-      }
-
-      function onScroll(){
-        if('requestIdleCallback' in window){
-          requestIdleCallback(reveal, {timeout:200});
-        }else{
-          requestAnimationFrame(reveal);
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, {passive:true});
-      onScroll();
-    })();
-
-    // смена слов Event / Creative / BTL / POSM
-    const words = ["Event.", "Creative.", "BTL.", "POSM."];
-    const swap = document.getElementById("swap");
-    let wi = 0;
-    setInterval(() => {
-      swap.textContent = words[wi];
-      swap.animate([{opacity:0},{opacity:1}], {duration:600});
-      wi = (wi + 1) % words.length;
-    }, 1800);
-
-    // плавающие лейблы
-    document.querySelectorAll(".input").forEach((inp) => {
-      const f = inp.parentNode;
-      const toggle = () => f.classList.toggle("filled", !!inp.value.trim());
-      toggle();
-      inp.addEventListener("input", toggle);
-      inp.addEventListener("blur", toggle);
-    });
-
-    // отправка формы
-    const leadForm = document.getElementById("leadForm");
-    const statusNode = document.getElementById("formStatus");
-    const submitBtn = leadForm.querySelector(".btn");
-    const endpoint = "https://formsubmit.co/ajax/hello@besson.asia";
-
-    function updateStatus(message = "", mode = ""){
-      statusNode.textContent = message;
-      statusNode.className = `form__status ${mode ? `form__status--${mode}` : ""}`.trim();
+    const yearEl = document.getElementById("year");
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
     }
 
-    leadForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    const words = ["Event.", "Creative.", "BTL.", "POSM."];
+    const swap = document.getElementById("swap");
+    const logoRoot = document.getElementById("logoText");
+    const sloganRoot = document.getElementById("slogan");
+    const stageTitleEl = document.querySelector(".stage__title");
 
-      if (!leadForm.reportValidity()) {
+    const originalLogoHtml = logoRoot ? logoRoot.innerHTML : "";
+    const originalSloganHtml = sloganRoot ? sloganRoot.innerHTML : "";
+    const originalStageHtml = stageTitleEl ? stageTitleEl.innerHTML : "";
+    const originalSwapHtml = swap ? swap.innerHTML : "";
+    const menuToggleEl = document.querySelector(".menu-toggle");
+    const mobileMenuEl = document.getElementById("mobileMenu");
+    const focusableMenuSelector = 'a[href], button:not([disabled])';
+    let lastFocusedMenuEl = null;
+
+    const applyMenuStagger = (active) => {
+      if (!mobileMenuEl) return;
+      mobileMenuEl.querySelectorAll("li").forEach((item, index) => {
+        item.style.transitionDelay = active ? `${index * 0.1}s` : "0s";
+      });
+    };
+
+    const setMenuState = (active) => {
+      if (!menuToggleEl || !mobileMenuEl) return;
+      menuToggleEl.classList.toggle("active", active);
+      mobileMenuEl.classList.toggle("is-active", active);
+      menuToggleEl.setAttribute("aria-expanded", String(active));
+      mobileMenuEl.setAttribute("aria-hidden", String(!active));
+      document.body.classList.toggle("menu-open", active);
+      applyMenuStagger(active);
+      if (active) {
+        lastFocusedMenuEl = document.activeElement;
+        const firstLink = mobileMenuEl.querySelector("a");
+        if (firstLink) firstLink.focus();
+      } else if (lastFocusedMenuEl && typeof lastFocusedMenuEl.focus === "function") {
+        lastFocusedMenuEl.focus({ preventScroll: true });
+        lastFocusedMenuEl = null;
+      }
+    };
+
+    const closeMobileMenu = () => setMenuState(false);
+
+    const handleMenuToggleClick = () => {
+      if (!menuToggleEl) return;
+      const active = !menuToggleEl.classList.contains("active");
+      setMenuState(active);
+    };
+
+    const handleMenuClick = (event) => {
+      if (!mobileMenuEl) return;
+      if (event.target === mobileMenuEl) {
+        closeMobileMenu();
         return;
       }
-
-      const formData = new FormData(leadForm);
-      submitBtn.disabled = true;
-      updateStatus("Отправляем…");
-
-      try {
-        const response = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Accept": "application/json" },
-          body: formData
-        });
-
-        if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
-        }
-
-        updateStatus("Спасибо! Мы свяжемся с вами в ближайшее время.", "success");
-        leadForm.reset();
-        leadForm.querySelectorAll(".field").forEach((field) => field.classList.remove("filled"));
-      } catch (error) {
-        console.error(error);
-        updateStatus("Не удалось отправить заявку. Попробуйте снова или свяжитесь по WhatsApp.", "error");
-      } finally {
-        submitBtn.disabled = false;
+      if (event.target instanceof HTMLElement && event.target.tagName === "A") {
+        closeMobileMenu();
       }
+    };
+
+    const handleMenuKeydown = (event) => {
+      if (!mobileMenuEl || !mobileMenuEl.classList.contains("is-active")) return;
+      if (event.key === "Escape") {
+        closeMobileMenu();
+        return;
+      }
+      if (event.key === "Tab") {
+        const focusable = Array.from(mobileMenuEl.querySelectorAll(focusableMenuSelector));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    const bindMenuHandlers = () => {
+      if (menuHandlersBound || !menuToggleEl || !mobileMenuEl) return;
+      menuToggleEl.addEventListener("click", handleMenuToggleClick);
+      mobileMenuEl.addEventListener("click", handleMenuClick);
+      document.addEventListener("keydown", handleMenuKeydown);
+      menuHandlersBound = true;
+    };
+
+    const restoreLogoMarkup = () => {
+      if (!logoRoot) return;
+      logoRoot.classList.remove("breathe-auto", "breathe-touch");
+      logoRoot.style.transform = "";
+      logoRoot.innerHTML = originalLogoHtml;
+      delete logoRoot.dataset.prepared;
+      delete logoRoot.dataset.breatheBound;
+    };
+
+    const prepareLogoForMobile = () => {
+      if (!logoRoot || logoRoot.dataset.prepared === "true") return;
+      const text = (originalLogoHtml || logoRoot.textContent || "").trim();
+      const frag = document.createDocumentFragment();
+      text.split("").forEach((char) => {
+        const span = document.createElement("span");
+        if (char === " ") {
+          span.dataset.space = "true";
+          span.innerHTML = "&nbsp;";
+        } else {
+          span.textContent = char;
+        }
+        frag.appendChild(span);
+      });
+      logoRoot.innerHTML = "";
+      logoRoot.appendChild(frag);
+      logoRoot.dataset.prepared = "true";
+    };
+
+    const restoreSloganMarkup = () => {
+      if (!sloganRoot) return;
+      sloganRoot.innerHTML = originalSloganHtml;
+      delete sloganRoot.dataset.prepared;
+    };
+
+    const prepareSloganForMobile = () => {
+      if (!sloganRoot || sloganRoot.dataset.prepared === "true") return;
+      sloganRoot.querySelectorAll(".word").forEach((word) => {
+        const letters = word.textContent.trim().split("");
+        word.textContent = "";
+        letters.forEach((letter) => {
+          const span = document.createElement("span");
+          span.className = "letter";
+          span.textContent = letter;
+          word.appendChild(span);
+        });
+      });
+      sloganRoot.dataset.prepared = "true";
+    };
+
+    const restoreStageMarkup = () => {
+      if (!stageTitleEl) return;
+      stageTitleEl.innerHTML = originalStageHtml;
+      stageTitleEl.classList.remove("is-visible");
+      delete stageTitleEl.dataset.split;
+    };
+
+    const prepareStageForMobile = () => {
+      if (!stageTitleEl || stageTitleEl.dataset.split === "true") return;
+      const text = stageTitleEl.textContent.trim();
+      const sentences = text.split(/(?<=\.)\s+/).filter(Boolean);
+      stageTitleEl.textContent = "";
+      sentences.forEach((sentence, index) => {
+        const span = document.createElement("span");
+        span.className = "about-line";
+        span.textContent = sentence;
+        span.style.setProperty("--index", index);
+        stageTitleEl.appendChild(span);
+      });
+      stageTitleEl.dataset.split = "true";
+    };
+
+    let wordIndex = 0;
+    let desktopTimer = null;
+    let interludeWordNodes = [];
+    let mobileTeardown = null;
+    let mobileInitialized = false;
+    let menuHandlersBound = false;
+
+    const renderWord = (index, animate = true) => {
+      if (!swap) return;
+      swap.textContent = words[index];
+      if (animate && typeof swap.animate === "function") {
+        swap.animate([{opacity:0}, {opacity:1}], {duration:520});
+      }
+    };
+
+    const stopDesktopSwap = () => {
+      if (desktopTimer) {
+        clearInterval(desktopTimer);
+        desktopTimer = null;
+      }
+    };
+
+    const swapIndexSafeReset = () => {
+      if (!swap) return;
+      swap.dataset.mobileWords = "";
+      if (originalSwapHtml) {
+        swap.innerHTML = originalSwapHtml;
+      } else {
+        swap.textContent = words[0];
+      }
+    };
+
+    const restoreDesktopState = () => {
+      if (typeof mobileTeardown === "function") {
+        mobileTeardown();
+        mobileTeardown = null;
+      }
+      if (mobileInitialized) {
+        mobileInitialized = false;
+      }
+      closeMobileMenu();
+      restoreLogoMarkup();
+      restoreSloganMarkup();
+      restoreStageMarkup();
+      interludeWordNodes = [];
+      if (swap) {
+        swapIndexSafeReset();
+      }
+      document.querySelectorAll(".tile").forEach((tile) => {
+        tile.classList.remove("is-visible");
+        tile.removeAttribute("data-direction");
+      });
+    };
+
+    const startDesktopSwap = () => {
+      if (!swap) return;
+      stopDesktopSwap();
+      swapIndexSafeReset();
+      renderWord(wordIndex, false);
+      desktopTimer = window.setInterval(() => {
+        wordIndex = (wordIndex + 1) % words.length;
+        renderWord(wordIndex);
+      }, 2000);
+    };
+
+    document.querySelectorAll(".input").forEach((inp) => {
+      const field = inp.parentNode;
+      inp.addEventListener("input", () => field.classList.toggle("filled", !!inp.value));
     });
 
-    // премиальный курсор
     const dot = document.getElementById("cursorDot");
     const ring = document.getElementById("cursorRing");
     let tx = 0, ty = 0, x = 0, y = 0;
     window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
-    function anim(){
+    const animateCursor = () => {
       x += (tx - x) * 0.2;
       y += (ty - y) * 0.2;
-      dot.style.transform = `translate(${x}px, ${y}px)`;
-      ring.style.transform = `translate(${x}px, ${y}px)`;
-      requestAnimationFrame(anim);
-    }
-    requestAnimationFrame(anim);
+      if (dot) dot.style.transform = `translate(${x}px, ${y}px)`;
+      if (ring) ring.style.transform = `translate(${x}px, ${y}px)`;
+      requestAnimationFrame(animateCursor);
+    };
+    requestAnimationFrame(animateCursor);
     document.querySelectorAll("a, button, .input").forEach((el) => {
-      el.addEventListener("mouseenter", () => ring.classList.add("cursor--hover"));
-      el.addEventListener("mouseleave", () => ring.classList.remove("cursor--hover"));
+      el.addEventListener("mouseenter", () => ring && ring.classList.add("cursor--hover"));
+      el.addEventListener("mouseleave", () => ring && ring.classList.remove("cursor--hover"));
     });
+
+    const mobileMq = window.matchMedia("(max-width: 768px)");
+    const hoverNoneMq = window.matchMedia("(hover: none)");
+    const reduceMotionMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const isMobileTouch = () => mobileMq.matches && hoverNoneMq.matches;
+
+    const applyViewportMode = () => {
+      if (isMobileTouch()) {
+        stopDesktopSwap();
+        initMobileEnhancements();
+      } else {
+        restoreDesktopState();
+        stopDesktopSwap();
+        wordIndex = 0;
+        startDesktopSwap();
+      }
+    };
+
+    const attachMediaListener = (mq) => {
+      if (!mq) return;
+      if (mq.addEventListener) {
+        mq.addEventListener("change", applyViewportMode);
+      } else if (mq.addListener) {
+        mq.addListener(applyViewportMode);
+      }
+    };
+
+    attachMediaListener(mobileMq);
+    attachMediaListener(hoverNoneMq);
+
+    const initMobileEnhancements = () => {
+      if (mobileInitialized || !isMobileTouch()) return;
+      mobileInitialized = true;
+
+      stopDesktopSwap();
+      bindMenuHandlers();
+      prepareLogoForMobile();
+      prepareSloganForMobile();
+      prepareStageForMobile();
+
+      if (swap) {
+        swap.dataset.mobileWords = "true";
+        swap.innerHTML = "";
+        words.forEach((word, index) => {
+          const span = document.createElement("span");
+          span.className = "interlude-word";
+          span.textContent = word;
+          span.style.setProperty("--index", index);
+          swap.appendChild(span);
+        });
+        interludeWordNodes = Array.from(swap.querySelectorAll(".interlude-word"));
+      } else {
+        interludeWordNodes = [];
+      }
+
+      if (stageTitleEl) {
+        stageTitleEl.classList.remove("is-visible");
+      }
+
+      const tiles = Array.from(document.querySelectorAll(".tile"));
+      tiles.forEach((tile, index) => {
+        tile.dataset.direction = index % 2 === 0 ? "right" : "left";
+      });
+
+      const sloganWords = sloganRoot ? Array.from(sloganRoot.querySelectorAll(".word")) : [];
+      sloganWords.forEach((word) => {
+        const letters = Array.from(word.querySelectorAll(".letter"));
+        const activate = () => {
+          word.classList.add("is-active");
+          letters.forEach((letter, index) => {
+            letter.classList.add("is-lit");
+            letter.style.transitionDelay = `${index * 40}ms`;
+          });
+        };
+        const deactivate = () => {
+          word.classList.remove("is-active");
+          letters.forEach((letter) => {
+            letter.classList.remove("is-lit");
+            letter.style.transitionDelay = "";
+          });
+        };
+        word.addEventListener("pointerdown", activate);
+        word.addEventListener("pointerenter", activate);
+        word.addEventListener("pointerup", deactivate);
+        word.addEventListener("pointerleave", deactivate);
+        word.addEventListener("pointercancel", deactivate);
+      });
+
+      if (logoRoot && !logoRoot.dataset.breatheBound) {
+        let breatheTimeout;
+        const releaseBreathe = () => {
+          if (breatheTimeout) {
+            clearTimeout(breatheTimeout);
+            breatheTimeout = null;
+          }
+          logoRoot.classList.remove("breathe-touch");
+        };
+        logoRoot.addEventListener("touchstart", () => {
+          releaseBreathe();
+          breatheTimeout = window.setTimeout(() => {
+            logoRoot.classList.add("breathe-touch");
+          }, 600);
+        }, { passive: true });
+        logoRoot.addEventListener("touchend", releaseBreathe);
+        logoRoot.addEventListener("touchcancel", releaseBreathe);
+        logoRoot.dataset.breatheBound = "true";
+      }
+
+      let stageObserver = null;
+      if (stageTitleEl) {
+        stageObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            stageTitleEl.classList.toggle("is-visible", entry.isIntersecting || entry.intersectionRatio > 0);
+          });
+        }, { threshold: 0.35 });
+        stageObserver.observe(stageTitleEl);
+      }
+
+      let tileObserver = null;
+      if (reduceMotionMq.matches) {
+        if (stageTitleEl) stageTitleEl.classList.add("is-visible");
+        interludeWordNodes.forEach((node) => node.classList.add("is-visible"));
+        tiles.forEach((tile) => tile.classList.add("is-visible"));
+      } else {
+        tileObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+            } else if (entry.boundingClientRect.top > window.innerHeight) {
+              entry.target.classList.remove("is-visible");
+            }
+          });
+        }, { threshold: 0.25 });
+        tiles.forEach((tile) => tileObserver.observe(tile));
+      }
+
+      const heroSection = document.querySelector(".hero");
+      const interludeSection = document.querySelector(".interlude");
+      const contactSection = document.querySelector(".contact");
+      const contactForm = contactSection ? contactSection.querySelector(".form") : null;
+      const logoSpans = logoRoot ? Array.from(logoRoot.querySelectorAll("span")) : [];
+
+      const updateScrollDriven = () => {
+        const viewport = window.innerHeight || document.documentElement.clientHeight;
+
+        if (heroSection && logoRoot && logoSpans.length) {
+          const rect = heroSection.getBoundingClientRect();
+          const heroHeight = heroSection.offsetHeight || rect.height || 1;
+          const range = Math.max(1, Math.min(heroHeight * 0.8, viewport * 0.85));
+          const progress = Math.min(Math.max((-rect.top) / range, 0), 1);
+          logoRoot.style.transform = `scale(${1 + progress * 0.15})`;
+          logoSpans.forEach((span, index) => {
+            const local = Math.min(Math.max(progress - index * 0.035, 0), 1);
+            const scale = 1 + local * 1.2;
+            const spread = (6 + local * 8) * (index % 2 === 0 ? -1 : 1);
+            span.style.setProperty("--tx", `${spread}px`);
+            span.style.setProperty("--sc", scale.toFixed(3));
+            span.style.transform = `translate3d(${spread}px,0,0) scale(${scale})`;
+            span.style.textShadow = `0 0 ${6 + progress * 26}px rgba(255,255,255,${0.12 + progress * 0.4})`;
+          });
+          logoRoot.classList.toggle("breathe-auto", progress > 0.9);
+        }
+
+        if (heroSection && sloganWords.length) {
+          const rect = heroSection.getBoundingClientRect();
+          const heroHeight = heroSection.offsetHeight || rect.height || viewport;
+          const range = Math.max(1, Math.min(heroHeight * 0.8, viewport * 0.85));
+          const progress = Math.min(Math.max((-rect.top) / range, 0), 1);
+          sloganWords.forEach((word, wordIndex) => {
+            const letters = Array.from(word.querySelectorAll(".letter"));
+            const wordProgress = Math.min(Math.max(progress - wordIndex * 0.08, 0), 1);
+            letters.forEach((letter, letterIndex) => {
+              const letterProgress = Math.min(Math.max(wordProgress - letterIndex * 0.06, 0), 1);
+              letter.classList.toggle("is-lit", letterProgress > 0.45);
+            });
+            word.style.opacity = 0.6 + wordProgress * 0.4;
+            word.style.textShadow = `0 0 ${4 + wordProgress * 18}px rgba(255,255,255,${0.1 + wordProgress * 0.35})`;
+          });
+        }
+
+        if (interludeSection && interludeWordNodes.length) {
+          const rect = interludeSection.getBoundingClientRect();
+          const sectionHeight = interludeSection.offsetHeight || rect.height || 1;
+          const progress = Math.min(Math.max((viewport - rect.top) / (sectionHeight + viewport), 0), 1);
+          const segment = 1 / interludeWordNodes.length;
+          interludeWordNodes.forEach((node, index) => {
+            const start = segment * index;
+            const local = Math.min(Math.max((progress - start) / segment, 0), 1);
+            node.style.opacity = Math.min(1, local);
+            node.style.transform = `translateY(${(1 - local) * 24}px)`;
+            node.classList.toggle("is-visible", local > 0.45);
+          });
+        }
+
+        if (contactSection && contactForm) {
+          const rect = contactSection.getBoundingClientRect();
+          const progress = Math.min(Math.max((viewport - rect.top) / (viewport * 0.25 + rect.height), 0), 1);
+          const lift = (1 - progress) * 32;
+          contactForm.style.transform = `translate3d(0, ${lift}px, 0)`;
+          contactForm.style.boxShadow = `0 ${18 - progress * 12}px ${40 - progress * 18}px rgba(0,0,0,${0.35 + progress * 0.2})`;
+        }
+      };
+
+      let ticking = false;
+      const requestTick = () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => {
+            updateScrollDriven();
+            ticking = false;
+          });
+        }
+      };
+
+      requestTick();
+
+      const onScroll = () => requestTick();
+      const onResize = () => requestTick();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onResize, { passive: true });
+
+      const handleReducedMotionChange = () => {
+        if (reduceMotionMq.matches) {
+          logoRoot && logoRoot.classList.remove("breathe-auto");
+          interludeWordNodes.forEach((node) => {
+            node.style.removeProperty("opacity");
+            node.style.removeProperty("transform");
+            node.classList.add("is-visible");
+          });
+          if (contactForm) {
+            contactForm.style.transform = "none";
+            contactForm.style.boxShadow = "";
+          }
+        } else {
+          requestTick();
+        }
+      };
+
+      if (reduceMotionMq.addEventListener) {
+        reduceMotionMq.addEventListener("change", handleReducedMotionChange);
+      } else if (reduceMotionMq.addListener) {
+        reduceMotionMq.addListener(handleReducedMotionChange);
+      }
+      handleReducedMotionChange();
+
+      mobileTeardown = () => {
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("resize", onResize);
+        if (stageObserver) stageObserver.disconnect();
+        if (tileObserver) tileObserver.disconnect();
+        if (reduceMotionMq.removeEventListener) {
+          reduceMotionMq.removeEventListener("change", handleReducedMotionChange);
+        } else if (reduceMotionMq.removeListener) {
+          reduceMotionMq.removeListener(handleReducedMotionChange);
+        }
+        if (contactForm) {
+          contactForm.style.transform = "";
+          contactForm.style.boxShadow = "";
+        }
+        interludeWordNodes.forEach((node) => {
+          node.style.removeProperty("opacity");
+          node.style.removeProperty("transform");
+          node.classList.remove("is-visible");
+        });
+      };
+    };
+
+    applyViewportMode();
   </script>
 </body>
 </html>

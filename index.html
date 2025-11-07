@@ -11,7 +11,7 @@
 
   <style>
     *{box-sizing:border-box;margin:0}
-    html,body{height:100%;scroll-behavior:smooth;overflow-x:hidden;width:100vw}
+    html,body{height:100%;scroll-behavior:smooth}
     :root{--bg:#0a0a0a;--fg:#f5f5f5;--muted:#bdbdbd;--pad:clamp(16px,2.4vw,32px);--grid:max(68rem,74vw)}
     body{font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
@@ -24,68 +24,42 @@
     .menu-toggle{display:none}
     .mobile-menu{display:none}
     @media (max-width:768px){
-      body{opacity:0;transition:opacity .6s cubic-bezier(.19,1,.22,1)}
-      body.is-ready{opacity:1}
-      body.menu-open{overflow:hidden}
-      .nav__group{display:none!important}
+      .nav__group{margin-top:16px}
+      .nav__group{display:none}
       .menu-toggle{
         display:flex;flex-direction:column;justify-content:center;gap:6px;
-        width:34px;height:26px;background:none;border:0;cursor:pointer;z-index:1100;
-        position:relative;transition:transform .45s cubic-bezier(.19,1,.22,1)
+        width:28px;height:24px;background:none;border:0;cursor:pointer;z-index:1100
       }
       .menu-toggle span{
-        display:block;width:100%;height:2px;background:#fff;border-radius:999px;
-        box-shadow:0 0 8px rgba(255,255,255,.4);transition:transform .45s cubic-bezier(.19,1,.22,1),opacity .45s ease
+        display:block;width:100%;height:2px;background:#fff;
+        transition:transform .35s ease,opacity .35s ease
       }
-      .menu-toggle.active{transform:scale(.92)}
-      .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(42deg)}
+      .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(45deg)}
       .menu-toggle.active span:nth-child(2){opacity:0}
-      .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-42deg)}
+      .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
 
       .mobile-menu{
-        display:flex;position:fixed;inset:0;background:rgba(10,10,10,.82);
-        backdrop-filter:blur(14px);
-        align-items:flex-start;justify-content:center;flex-direction:column;
+        display:flex;position:fixed;inset:0;background:rgba(10,10,10,.85);
+        backdrop-filter:blur(12px);
+        align-items:center;justify-content:center;flex-direction:column;
         opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.19,1,.22,1);
-        z-index:1000;padding:18vh var(--pad) 8vh
+        z-index:1000
       }
-      .mobile-menu ul{list-style:none;margin:0;padding:0;width:100%;text-align:left}
-      .mobile-menu li{margin:18px 0;opacity:0;transform:translateY(-30px);transition:all .6s cubic-bezier(.19,1,.22,1);will-change:transform,opacity}
-      .mobile-menu.active{opacity:1;pointer-events:auto}
+      .mobile-menu.active{opacity:1;pointer-events:auto;animation:fadeInScale .8s cubic-bezier(.19,1,.22,1)}
+      @keyframes fadeInScale{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+
+      .mobile-menu ul{list-style:none;margin:0;padding:0;text-align:center}
+      .mobile-menu li{margin:18px 0;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.19,1,.22,1)}
       .mobile-menu.active li{opacity:1;transform:translateY(0)}
       .mobile-menu a{
-        color:#fff;font-size:1.35rem;letter-spacing:.08em;text-transform:uppercase;
-        font-weight:400;text-decoration:none;position:relative;padding-bottom:6px;display:inline-flex;gap:10px;align-items:center
+        color:#fff;font-size:1.4rem;letter-spacing:.08em;text-transform:uppercase;
+        font-weight:500;text-decoration:none;position:relative
       }
       .mobile-menu a::after{
-        content:"";position:absolute;left:0;bottom:0;width:100%;height:1px;background:rgba(255,255,255,.6);
-        transform:scaleX(0);transform-origin:right;transition:transform .45s cubic-bezier(.19,1,.22,1)
+        content:"";position:absolute;left:0;bottom:-4px;width:100%;height:1px;background:#fff;
+        transform:scaleX(0);transform-origin:right;transition:transform .3s ease
       }
-      .mobile-menu a:focus-visible::after,
       .mobile-menu a:hover::after{transform:scaleX(1);transform-origin:left}
-
-      #logoText{display:inline-block;transform-origin:center;will-change:transform}
-      #logoText span{display:inline-block;transition:transform .4s cubic-bezier(.19,1,.22,1),text-shadow .5s ease,filter .5s ease;will-change:transform,filter}
-      #logoText.breathe span{animation:microPulse 1.8s ease-in-out infinite alternate}
-      @keyframes microPulse{
-        0%{transform:translate3d(var(--tx,0),0,0) scale(var(--sc,1));filter:brightness(1)}
-        50%{transform:translate3d(var(--tx,0),0,0) scale(calc(var(--sc,1.04)));filter:brightness(1.16)}
-        100%{transform:translate3d(var(--tx,0),0,0) scale(var(--sc,1));filter:brightness(1)}
-      }
-
-      .hero__slogan{margin-top:32px;gap:.55em}
-      .hero__slogan span{position:relative}
-      .hero__slogan .slogan-letter{display:inline-block;transition:transform .35s ease,color .35s ease,text-shadow .35s ease;will-change:transform}
-      .hero__slogan .slogan-letter:hover{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.35)}
-      .hero__slogan .slogan-letter.active{color:#fff;text-shadow:0 0 12px rgba(255,255,255,.4)}
-
-      .stage__title{font-weight:400;line-height:1.7}
-      .about-line{display:inline-block;will-change:transform,opacity}
-
-      .tile{will-change:transform,opacity}
-      .contact__grid{will-change:transform,opacity}
-      .swap{will-change:transform,opacity;flex-direction:column;gap:.4em}
-      .interlude-word{display:inline-block;will-change:transform,opacity}
     }
     .link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
     .link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
@@ -109,15 +83,11 @@
     @keyframes breathe{0%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.05);filter:brightness(1.25)}100%{transform:scale(1);filter:brightness(1)}}
 
     /* INTERLUDE */
-    .interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad);position:relative}
-    .interlude::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:#fff}
-    .swap{display:inline-flex;gap:.24em;align-items:center;position:relative}
-    .swap .interlude-word{display:inline-block}
+    .interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad)}
     .hero__title{font-size:clamp(3rem,9.6vw,7rem);line-height:.9;font-weight:800;letter-spacing:-.02em}
 
     /* ABOUT */
-    .stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center;position:relative}
-    .stage::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:#fff}
+    .stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center}
     .stage__title{font-weight:500;font-size:1.35rem;line-height:1.6;max-width:68ch;margin:0 auto;color:#111}
 
     /* PROJECTS */
@@ -165,6 +135,22 @@
     .footer-contact a:hover .mail-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.45));transform:translateY(-1px)}
 
     /* Premium cursor */
+    @media (max-width:768px){
+      #logoText{display:inline-block;transform-origin:center;will-change:transform}
+      #logoText span{
+        display:inline-block;transition:transform .4s cubic-bezier(.19,1,.22,1),text-shadow .5s ease,filter .5s ease;
+        will-change:transform,filter
+      }
+      #logoText.breathe span{animation:microPulse 1.8s ease-in-out infinite alternate}
+      @keyframes microPulse{
+        0%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
+        50%{transform:translateX(var(--tx,0)) scale(calc(var(--sc,1.03)));filter:brightness(1.12)}
+        100%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
+      }
+      #about{opacity:0;transform:translateY(60px);transition:all 1s cubic-bezier(.19,1,.22,1)}
+      #about.visible{opacity:1;transform:translateY(0)}
+    }
+
     @media (hover:hover) and (pointer:fine){
       body{cursor:none}
       .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
@@ -207,15 +193,7 @@
     </div>
   </section>
 
-  <section class="interlude">
-    <h1 class="hero__title">
-      <span class="swap" id="swap">
-        <span class="interlude-word">Event.</span>
-        <span class="interlude-word">BTL.</span>
-        <span class="interlude-word">POSM.</span>
-      </span>
-    </h1>
-  </section>
+  <section class="interlude"><h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1></section>
 
   <section class="stage" id="about">
     <h2 class="stage__title">Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события. Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.</h2>
@@ -274,8 +252,6 @@
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js" defer></script>
   <script defer>
     // год в футере
     document.getElementById("year").textContent = new Date().getFullYear();
@@ -308,287 +284,130 @@
       });
     });
 
-    const mobileMedia = window.matchMedia("(max-width: 768px)");
-    let mobileInitialized = false;
-
-    function initMobileExperience(){
-      if(mobileInitialized) return;
-      mobileInitialized = true;
-
-      const hasGSAP = typeof gsap !== "undefined";
-      const hasScrollTrigger = typeof ScrollTrigger !== "undefined";
-
-      if(hasGSAP && hasScrollTrigger){
-        gsap.registerPlugin(ScrollTrigger);
-        gsap.config({force3D:true,lazy:false});
-      }
-
-      requestAnimationFrame(()=>document.body.classList.add("is-ready"));
-
+    (function(){
+      if (window.innerWidth > 768) return;
       const toggle = document.querySelector('.menu-toggle');
       const menu = document.querySelector('#mobileMenu');
-      if(toggle && menu){
-        const items = menu.querySelectorAll('li');
-        const setStagger = (active)=>{
-          items.forEach((li,i)=>{
-            li.style.transitionDelay = active ? `${i * 0.12}s` : '0s';
-          });
-        };
-        toggle.addEventListener('click', ()=>{
-          const active = !toggle.classList.contains('active');
-          toggle.classList.toggle('active', active);
-          menu.classList.toggle('active', active);
-          menu.setAttribute('aria-hidden', String(!active));
-          document.body.classList.toggle('menu-open', active);
-          setStagger(active);
-          if(active && hasGSAP){
-            gsap.fromTo(menu,{y:-30},{y:0,duration:.6,ease:"power2.out",overwrite:true});
-          }
-        });
-        menu.addEventListener('click', (event)=>{
-          if(event.target.matches('a')){
-            toggle.classList.remove('active');
-            menu.classList.remove('active');
-            menu.setAttribute('aria-hidden','true');
-            document.body.classList.remove('menu-open');
-            setStagger(false);
-          }
+      if(!toggle || !menu) return;
+      const items = menu.querySelectorAll('li');
+
+      function setStagger(active){
+        items.forEach((li,i)=>{
+          li.style.transitionDelay = active ? `${i * 0.1}s` : '0s';
         });
       }
 
-      const slogan = document.getElementById('slogan');
-      if(slogan){
-        const wordSpans = Array.from(slogan.querySelectorAll('span'));
-        wordSpans.forEach((wordSpan)=>{
-          const text = wordSpan.textContent.trim();
-          const letters = text.split('');
-          wordSpan.innerHTML = letters.map((letter)=>`<span class="slogan-letter">${letter}</span>`).join('');
+      toggle.addEventListener('click', ()=>{
+        const active = !toggle.classList.contains('active');
+        toggle.classList.toggle('active', active);
+        menu.classList.toggle('active', active);
+        menu.setAttribute('aria-hidden', String(!active));
+        setStagger(active);
+      });
+
+      menu.addEventListener('click', (e)=>{
+        if(e.target.matches('a')){
+          toggle.classList.remove('active');
+          menu.classList.remove('active');
+          menu.setAttribute('aria-hidden','true');
+          setStagger(false);
+        }
+      });
+    })();
+
+    (function(){
+      if (window.innerWidth > 768) return;
+      const logo = document.querySelector('#logoText');
+      if(!logo) return;
+      const spans = Array.from(logo.querySelectorAll('span'));
+      const maxScroll = Math.max(window.innerHeight * 1.1, 600);
+      let breathing = false;
+
+      function applySpread(){
+        const s = Math.min(window.scrollY, maxScroll);
+        const p = s / maxScroll;
+        const scale = 1 + p * 1.6;
+        const spread = p * 120;
+        const glow = 8 + p * 32;
+
+        let index = 0;
+        spans.forEach((span)=>{
+          const isSpace = span.dataset.space === 'true' || span.textContent.trim() === '';
+          if(isSpace){
+            span.style.setProperty('--tx','0px');
+            span.style.setProperty('--sc','1');
+            span.style.transform = 'translateX(0) scale(1)';
+            span.style.textShadow = 'none';
+            return;
+          }
+
+          const dir = (index % 2 === 0) ? -1 : 1;
+          const tx = dir * spread;
+          span.style.setProperty('--tx', `${tx}px`);
+          span.style.setProperty('--sc', scale);
+          span.style.transform = `translateX(${tx}px) scale(${scale})`;
+          span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.10 + p * 0.5})`;
+          index += 1;
         });
-        const letters = slogan.querySelectorAll('.slogan-letter');
-        letters.forEach((letter)=>{
-          const clearActive = ()=>letter.classList.remove('active');
-          letter.addEventListener('touchstart', ()=>{
-            letter.classList.add('active');
-          }, {passive:true});
-          letter.addEventListener('touchend', clearActive);
-          letter.addEventListener('touchcancel', clearActive);
-        });
-        if(hasGSAP){
-          gsap.set(letters,{opacity:.65});
-          gsap.to(letters,{
-            opacity:1,
-            textShadow:"0 0 12px rgba(255,255,255,0.35)",
-            stagger:{each:0.05},
-            ease:"power2.out",
-            scrollTrigger:{
-              trigger:".hero",
-              start:"top top",
-              end:"+=" + Math.max(window.innerHeight * 1.2, 800),
-              scrub:true
-            }
-          });
+
+        if(p > 0.95 && !breathing){
+          logo.classList.add('breathe');
+          breathing = true;
+        }
+        if(p < 0.90 && breathing){
+          logo.classList.remove('breathe');
+          breathing = false;
         }
       }
 
-      if(hasGSAP && logoSpans.length){
-        const animatedLetters = logoSpans.filter((span)=>!span.dataset.space);
-        const mid = (animatedLetters.length - 1) / 2;
-        const maxSpread = window.innerWidth * 0.65;
-        gsap.set(logoText,{transformOrigin:"center center"});
-        gsap.set(animatedLetters,{transformOrigin:"center center"});
-        const travelDistance = Math.max(window.innerHeight * 1.2, 800);
-        const heroTimeline = gsap.timeline({
-          scrollTrigger:{
-            trigger:".hero",
-            start:"top top",
-            end:"+=" + travelDistance,
-            scrub:true
-          }
-        });
-        heroTimeline.to(logoText,{scale:3,ease:"power2.out"},0);
-        heroTimeline.to(animatedLetters,{
-          x:(i)=>{
-            const normalized = mid ? (i - mid) / mid : 0;
-            return normalized * maxSpread;
-          },
-          scale:3,
-          textShadow:"0 0 38px rgba(255,255,255,0.35)",
-          filter:"brightness(1.28)",
-          stagger:{each:0.035,from:"center"},
-          ease:"power2.out"
-        },0);
-        const syncVars = ()=>{
-          const progress = heroTimeline.progress();
-          const scale = 1 + progress * 2;
-          animatedLetters.forEach((span,i)=>{
-            const normalized = mid ? (i - mid) / mid : 0;
-            const tx = normalized * maxSpread * progress;
-            span.style.setProperty('--tx', `${tx}px`);
-            span.style.setProperty('--sc', scale);
+      let ticking = false;
+      window.addEventListener('scroll', ()=>{
+        if(!ticking){
+          requestAnimationFrame(()=>{
+            applySpread();
+            ticking = false;
           });
-        };
-        heroTimeline.eventCallback('onUpdate', syncVars);
-        syncVars();
-
-        let breatheTimeout;
-        const clearBreathe = ()=>{
-          clearTimeout(breatheTimeout);
-          logoText.classList.remove('breathe');
-        };
-        logoText.addEventListener('touchstart', ()=>{
-          clearTimeout(breatheTimeout);
-          breatheTimeout = setTimeout(()=>logoText.classList.add('breathe'), 450);
-        }, {passive:true});
-        ['touchend','touchcancel'].forEach((evt)=>{
-          logoText.addEventListener(evt, clearBreathe);
-        });
-      }
-
-      if(hasGSAP && hasScrollTrigger){
-        const about = document.getElementById('about');
-        if(about){
-          const title = about.querySelector('.stage__title');
-          if(title && !title.dataset.split){
-            const fragments = title.textContent.split(/(?<=\.)\s+|(?<=,)\s+/);
-            title.dataset.split = 'true';
-            title.innerHTML = fragments.map((fragment)=>`<span class="about-line">${fragment.trim()}</span>`).join(' ');
-          }
-          const lines = about.querySelectorAll('.about-line');
-          if(lines.length){
-            const aboutTimeline = gsap.timeline({
-              scrollTrigger:{
-                trigger:about,
-                start:"top 80%",
-                end:"top 20%",
-                scrub:true
-              }
-            });
-            aboutTimeline.fromTo(about,{opacity:0,y:60},{opacity:1,y:0,ease:"power2.out",duration:0.6});
-            aboutTimeline.fromTo(lines,{opacity:0,y:30},{opacity:1,y:0,stagger:0.08,ease:"power2.out",duration:0.6},0.05);
-          }
+          ticking = true;
         }
+      }, {passive:true});
 
-        const interlude = document.querySelector('.interlude');
-        const swap = document.getElementById('swap');
-        if(interlude && swap){
-          const words = swap.querySelectorAll('.interlude-word');
-          if(words.length){
-            gsap.set(words,{opacity:0,y:40});
-            gsap.timeline({
-              scrollTrigger:{
-                trigger:interlude,
-                start:"top 85%",
-                end:"bottom 55%",
-                scrub:true
-              }
-            }).to(words,{
-              opacity:1,
-              y:0,
-              stagger:0.2,
-              ease:"back.out(1.4)"
-            });
-          }
-        }
+      applySpread();
+    })();
 
-        const tiles = gsap.utils.toArray('.tile');
-        tiles.forEach((tile,index)=>{
-          gsap.fromTo(tile,{opacity:0,x:index % 2 === 0 ? 60 : -60},{
-            opacity:1,
-            x:0,
-            duration:1.1,
-            ease:"power3.out",
-            scrollTrigger:{
-              trigger:tile,
-              start:"top 80%",
-              toggleActions:"play none none reverse"
-            }
-          });
-        });
+    (function(){
+      if (window.innerWidth > 768) return;
+      const about = document.querySelector('#about');
+      if(!about) return;
 
-        const contactSection = document.getElementById('contact');
-        if(contactSection){
-          const contactGrid = contactSection.querySelector('.contact__grid');
-          if(contactGrid){
-            gsap.fromTo(contactGrid,{yPercent:25,opacity:0.8},{
-              yPercent:0,
-              opacity:1,
-              ease:"power2.out",
-              scrollTrigger:{
-                trigger:contactSection,
-                start:"top bottom",
-                end:"bottom bottom",
-                scrub:true
-              }
-            });
-            const submitBtn = contactGrid.querySelector('.btn');
-            if(submitBtn){
-              ScrollTrigger.create({
-                trigger:contactSection,
-                start:"top bottom",
-                end:"bottom bottom",
-                scrub:true,
-                onUpdate:(self)=>{
-                  const glow = self.progress;
-                  submitBtn.style.boxShadow = `0 0 ${8 + glow * 26}px rgba(255,255,255,${0.18 + glow * 0.3})`;
-                },
-                onLeave:()=>{
-                  submitBtn.style.boxShadow = "0 0 28px rgba(255,255,255,0.45)";
-                },
-                onLeaveBack:()=>{
-                  submitBtn.style.boxShadow = "";
-                }
-              });
-            }
-          }
+      function reveal(){
+        const rect = about.getBoundingClientRect();
+        if(rect.top < window.innerHeight * 0.85){
+          about.classList.add('visible');
+          window.removeEventListener('scroll', onScroll);
         }
       }
 
-      if(hasScrollTrigger){
-        ScrollTrigger.refresh();
+      function onScroll(){
+        if('requestIdleCallback' in window){
+          requestIdleCallback(reveal, {timeout:200});
+        }else{
+          requestAnimationFrame(reveal);
+        }
       }
-    }
 
-    if(mobileMedia.matches){
-      initMobileExperience();
-    }else{
-      document.body.classList.add('is-ready');
-    }
+      window.addEventListener('scroll', onScroll, {passive:true});
+      onScroll();
+    })();
 
-    const handleMobileChange = (event)=>{
-      if(event.matches){
-        initMobileExperience();
-      }else{
-        document.body.classList.add('is-ready');
-      }
-    };
-    if(typeof mobileMedia.addEventListener === 'function'){
-      mobileMedia.addEventListener('change', handleMobileChange);
-    }else if(typeof mobileMedia.addListener === 'function'){
-      mobileMedia.addListener(handleMobileChange);
-    }
-
+    // смена слов Event / Creative / BTL / POSM
+    const words = ["Event.", "Creative.", "BTL.", "POSM."];
     const swap = document.getElementById("swap");
-    if(swap && !mobileMedia.matches){
-      const interludeWords = Array.from(swap.querySelectorAll('.interlude-word'));
-      if(interludeWords.length){
-        let active = 0;
-        const highlight = ()=>{
-          interludeWords.forEach((word,index)=>{
-            const opacity = index === active ? 1 : 0.35;
-            word.style.opacity = opacity;
-          });
-          interludeWords[active].animate([
-            {opacity:0.35,transform:'translateY(18px)'},
-            {opacity:1,transform:'translateY(0)'}
-          ], {duration:500,easing:'ease-out'});
-        };
-        highlight();
-        setInterval(()=>{
-          active = (active + 1) % interludeWords.length;
-          highlight();
-        }, 2000);
-      }
-    }
+    let wi = 0;
+    setInterval(() => {
+      swap.textContent = words[wi];
+      swap.animate([{opacity:0},{opacity:1}], {duration:600});
+      wi = (wi + 1) % words.length;
+    }, 1800);
 
     // плавающие лейблы
     document.querySelectorAll(".input").forEach((inp) => {
@@ -660,7 +479,6 @@
       el.addEventListener("mouseenter", () => ring.classList.add("cursor--hover"));
       el.addEventListener("mouseleave", () => ring.classList.remove("cursor--hover"));
     });
-
   </script>
 </body>
 </html>

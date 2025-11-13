@@ -654,13 +654,6 @@ section.stage#about .stage__title{
 @media (hover:hover) and (pointer:fine){
   html, body{ cursor: none !important; }
 
-  /* любые интерактивные и текстовые элементы */
-  *, a, button, [role="button"], label,
-  input, textarea, select, summary {
-    cursor: none !important;
-    caret-color: transparent; /* не показывать текстовый курсор */
-  }
-
   /* страхуем, что наш курсор-слой всегда выше и «прозрачный» */
   .cursor, .cursor-dot, .cursor-ring, .cursor-ghost{
     position: fixed;
@@ -668,3 +661,10 @@ section.stage#about .stage__title{
     z-index: 2147483647; /* поверх всего */
   }
 }
+/* === Premium Cursor: hide native cursor on desktop, allow only in forms === */
+@media (hover:hover) and (pointer:fine){
+  .no-native-cursor,
+  .no-native-cursor * {
+    cursor: none !important;
+  }
+  

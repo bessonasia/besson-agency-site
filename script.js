@@ -1,400 +1,430 @@
-// =======================
-// CodePen-safe DOM ready
-// =======================
-const onReady = (cb)=> (document.readyState !== 'loading') ? cb() : document.addEventListener('DOMContentLoaded', cb);
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;scroll-behavior:smooth}
+:root{--bg:#0a0a0a;--fg:#f5f5f5;--muted:#bdbdbd;--pad:clamp(16px,2.4vw,32px);--grid:max(68rem,74vw)}
+body{font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',sans-serif;background:var(--bg);color:var(--fg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
 
-onReady(()=>{
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--pad);z-index:1000;background:linear-gradient(180deg,rgba(10,10,10,0.85),rgba(10,10,10,0));backdrop-filter:saturate(140%) blur(6px)}
+.brand__mark{font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:inherit;text-decoration:none;cursor:pointer;transition:text-shadow .3s ease,transform .3s ease}
+.brand__mark:hover{text-shadow:0 0 8px rgba(255,255,255,0.4);transform:translateY(-1px)}
+.nav__group{display:flex;align-items:center;gap:18px}
+.menu-toggle{display:none}
+.mobile-menu{display:none}
+@media (max-width:768px){
+  .nav__group{margin-top:16px}
+  .nav__group{display:none}
+  .menu-toggle{display:flex;flex-direction:column;justify-content:center;gap:6px;width:28px;height:24px;background:none;border:0;cursor:pointer;z-index:1100}
+  .menu-toggle span{display:block;width:100%;height:2px;background:#fff;transition:transform .35s ease,opacity .35s ease}
+  .menu-toggle.active span:nth-child(1){transform:translateY(8px) rotate(45deg)}
+  .menu-toggle.active span:nth-child(2){opacity:0}
+  .menu-toggle.active span:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
 
-  // --- Footer year ---
-  try {
-    const year = document.getElementById("year");
-    if (year) year.textContent = new Date().getFullYear();
-  } catch(e){ console.warn('year:', e); }
+  .mobile-menu{display:flex;position:fixed;inset:0;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);align-items:center;justify-content:center;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .6s cubic-bezier(.19,1,.22,1);z-index:1000}
+  .mobile-menu.active{opacity:1;pointer-events:auto;animation:fadeInScale .8s cubic-bezier(.19,1,.22,1)}
+  @keyframes fadeInScale{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 
-  // --- LOGO: build "BESSON AGENCY" letters + hover micro-interactions ---
-  let logoText;
-  try {
-    logoText = document.getElementById("logoText");
-    if (logoText) {
-      const logoString = "BESSON AGENCY";
-      logoText.innerHTML = logoString.split("")
-        .map(ch => ch === " " ? '<span data-space="true">&nbsp;</span>' : `<span>${ch}</span>`).join("");
+  .mobile-menu ul{list-style:none;margin:0;padding:0;text-align:center}
+  .mobile-menu li{margin:18px 0;opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.19,1,.22,1)}
+  .mobile-menu.active li{opacity:1;transform:translateY(0)}
+  .mobile-menu a{color:#fff;font-size:1.4rem;letter-spacing:.08em;text-transform:uppercase;font-weight:500;text-decoration:none;position:relative}
+  .mobile-menu a::after{content:"";position:absolute;left:0;bottom:-4px;width:100%;height:1px;background:#fff;transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
+  .mobile-menu a:hover::after{transform:scaleX(1);transform-origin:left}
+}
+.link{position:relative;text-transform:uppercase;font-size:.78rem;letter-spacing:.18em}
+.link::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:1px;background:#fff;opacity:.25;transform:scaleX(0);transform-origin:left;transition:transform .35s ease,opacity .35s}
+.link:hover::after{transform:scaleX(1);opacity:.5}
 
-      const spans = Array.from(logoText.querySelectorAll("span")).filter(s => !s.dataset.space);
-      spans.forEach((span)=>{
-        span.addEventListener("mouseenter", ()=>{
-          span.style.transform = "translateY(-4px) scale(1.25)";
-          span.style.textShadow = "0 0 18px rgba(255,255,255,0.35)";
-        });
-        span.addEventListener("mouseleave", ()=>{
-          span.style.transform = "translateY(0) scale(1)";
-          span.style.textShadow = "none";
-        });
-      });
-    }
-  } catch(e){ console.warn('logo init:', e); }
+/* HERO */
+.hero{min-height:100vh;display:grid;place-items:center}
+.hero__content{text-align:center;padding:120px var(--pad) 60px}
+.hero__name{font-size:clamp(2rem,6vw,4rem);font-weight:800;letter-spacing:.22em;text-transform:uppercase;margin-bottom:16px}
+#logoText{color:#fff}
+#logoText span{display:inline-block;transition:transform .25s ease-out,text-shadow .3s ease-out}
+#logoText span[data-space="true"]{pointer-events:none}
+.hero__slogan{margin-top:24px;font-size:clamp(1.1rem,2.4vw,1.6rem);letter-spacing:.22em;text-transform:uppercase;opacity:0;transform:translateY(8px) scale(.98);animation:heroSloganIntro 1.2s ease forwards .4s;display:flex;justify-content:center;flex-wrap:wrap;gap:.6em;cursor:default}
+.hero__slogan span{display:inline-block;transition:color .4s ease,text-shadow .4s ease;animation:subtleGlow 6s ease-in-out infinite alternate}
+.hero__slogan span:hover{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.45),0 0 20px rgba(255,255,255,.25),0 0 30px rgba(255,255,255,.15)}
+#logoText.breathe span{animation:breathe 1.4s ease-in-out infinite alternate}
+@keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes subtleGlow{0%,100%{text-shadow:none}50%{text-shadow:0 0 6px rgba(255,255,255,0.15)}}
+@keyframes breathe{0%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.05);filter:brightness(1.25)}100%{transform:scale(1);filter:brightness(1)}}
 
-  // --- LOGO MOBILE SCROLL ANIMATION (reactive to breakpoint changes) ---
-  try {
-    if (!logoText) logoText = document.getElementById('logoText');
-    if (logoText){
-      const mq = window.matchMedia('(max-width: 768px)');
-      let cleanup = null; // function to remove listeners & reset styles
+/* INTERLUDE */
+.interlude{background:#fff;color:#0a0a0a;text-align:center;padding:140px var(--pad)}
+.hero__title{font-size:clamp(3rem,9.6vw,7rem);line-height:.9;font-weight:800;letter-spacing:-.02em}
 
-      function activate(){
-        const letters = Array.from(logoText.querySelectorAll('span'));
-        const maxScroll = Math.max(window.innerHeight * 1.1, 600);
-        let breathing = false;
-        let ticking = false;
+/* ABOUT */
+.stage{background:#fff;color:#0a0a0a;padding:160px var(--pad);text-align:center}
+.stage__title{font-weight:500;font-size:1.35rem;line-height:1.6;max-width:68ch;margin:0 auto;color:#111}
 
-        function applySpread(){
-          const s = Math.min(window.scrollY, maxScroll);
-          const p = s / maxScroll;
-          const scale = 1 + p * 1.6;
-          const spread = p * 120;
-          const glow = 8 + p * 32;
-          let i = 0;
+/* PROJECTS */
+#work{padding:0}
+.wall{width:100vw;margin-left:calc(50% - 50vw);display:grid;grid-template-columns:repeat(12,1fr)}
+.tile{grid-column:span 4;position:relative;overflow:hidden}
+@media (max-width:1100px){.tile{grid-column:span 6}}
+@media (max-width:680px){.tile{grid-column:1/-1}}
+.tile img{width:100%;height:auto;min-height:300px;display:block;background:#111;transition:transform .7s ease;aspect-ratio:16/9;object-fit:cover}
+.tile:hover img{transform:scale(1.06)}
+.tile__caption{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .35s ease,backdrop-filter .35s ease;background:rgba(0,0,0,.45);color:#fff;text-align:center;padding:12px}
+.tile:hover .tile__caption{opacity:1;backdrop-filter:blur(2px)}
 
-          letters.forEach((span)=>{
-            const isSpace = span.dataset.space === 'true' || span.textContent.trim() === '';
-            if(isSpace){
-              span.style.transform = 'translateX(0) scale(1)';
-              span.style.textShadow = 'none';
-              return;
-            }
-            const dir = (i++ % 2 === 0) ? -1 : 1;
-            const tx = dir * spread;
-            span.style.transform = `translateX(${tx}px) scale(${scale})`;
-            span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.10 + p * 0.5})`;
-          });
+/* CONTACT */
+.contact{padding:120px var(--pad);text-align:center}
+.contact__grid{max-width:var(--grid);margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:28px}
+.contact__lead{font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:clamp(1.4rem,3.6vw,2.2rem)}
+.contact__sub{color:var(--muted);margin-top:10px;max-width:52ch}
+.form{background:linear-gradient(180deg,#0e0e0e,#0a0a0a);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:460px;width:100%}
+.row{display:block}
+.field{position:relative;margin-bottom:18px}
+.input{width:100%;padding:18px 14px;border-radius:14px;border:1px solid #1b1b1b;background:#0f0f0f;color:#fff;transition:border-color .25s,box-shadow .25s}
+.input:focus{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.15)}
+.label{position:absolute;left:16px;top:14px;padding:2px 6px;border-radius:8px;font-size:.85rem;color:#a9a9a9;background:rgba(255,255,255,.02);transform-origin:left top;transition:transform .2s,opacity .2s}
+.field.filled .label,.input:focus + .label{transform:translateY(-18px) scale(.88);opacity:.9;color:#fff}
+.form__status{min-height:20px;font-size:.9rem;color:var(--muted);margin-top:6px;transition:opacity .3s}
+.form__status--success{color:#9be7c4}
+.form__status--error{color:#ff8a80}
+.actions{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:24px;flex-wrap:wrap}
+.btn{position:relative;padding:16px 22px;border-radius:999px;border:1px solid #fff;background:#fff;color:#000;font-weight:700;text-transform:uppercase;cursor:pointer;transition:transform .25s,box-shadow .25s;isolation:isolate}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1)}
+.btn .glow{position:absolute;inset:-2px;border-radius:inherit;background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);opacity:0;transition:opacity .25s;filter:blur(14px)}
+.btn:hover .glow{opacity:1}
 
-          if (p > 0.95 && !breathing){ logoText.classList.add('breathe'); breathing = true; }
-          if (p < 0.90 && breathing){ logoText.classList.remove('breathe'); breathing = false; }
-        }
+.icon-btn{width:44px;height:44px;border:1px solid #1b1b1b;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#0f0f0f;color:#fff;transition:background .25s,border-color .25s,transform .2s}
+.icon-btn:hover{background:#fff;color:#000;border-color:#fff;transform:translateY(-2px)}
+.icon-btn svg{width:20px;height:20px;fill:currentColor}
 
-        function onScroll(){
-          if(!ticking){
-            requestAnimationFrame(()=>{ applySpread(); ticking = false; });
-            ticking = true;
-          }
-        }
+/* FOOTER */
+footer{padding:48px var(--pad);color:#bdbdbd;text-align:center}
+.footer-left{font-weight:700;letter-spacing:0.18em}
+.footer-contact{font-size:.9rem;display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
+.footer-contact svg{width:16px;height:16px;opacity:.8}
+.mail-icon{transition:filter .3s ease,transform .3s ease}
+.footer-contact a:hover .mail-icon{filter:drop-shadow(0 0 6px rgba(255,255,255,.45));transform:translateY(-1px)}
 
-        window.addEventListener('scroll', onScroll, {passive:true});
-        applySpread(); // initial
-
-        return ()=>{
-          window.removeEventListener('scroll', onScroll);
-          logoText.classList.remove('breathe');
-          letters.forEach((span)=>{
-            span.style.transform = '';
-            span.style.textShadow = '';
-          });
-        };
-      }
-
-      function recheck(){
-        if (mq.matches){
-          if (!cleanup) cleanup = activate();
-        } else if (cleanup){
-          cleanup();
-          cleanup = null;
-        }
-      }
-
-      if (mq.addEventListener) mq.addEventListener('change', recheck);
-      else mq.addListener(recheck);
-      recheck(); // initial run
-    }
-  } catch(e){ console.warn('logo mobile anim:', e); }
-
-  // --- MOBILE MENU: scroll lock + Esc + focus trap + stagger ---
-  try {
-    const mq = window.matchMedia('(max-width: 768px)');
-    const toggle = document.querySelector('.menu-toggle');
-    const menu = document.getElementById('mobileMenu');
-    if(toggle && menu){
-      const focusableSel = 'a, button, [tabindex]:not([tabindex="-1"])';
-      let lastFocus = null;
-
-      const lockBody = (lock)=>{
-        document.documentElement.style.overflow = lock ? 'hidden' : '';
-        document.body.style.overflow = lock ? 'hidden' : '';
-        document.body.style.touchAction = lock ? 'none' : '';
-      };
-
-      const setStagger = (active)=>{
-        const items = menu.querySelectorAll('li');
-        items.forEach((li,i)=>{ li.style.transitionDelay = active ? `${i*0.1}s` : '0s'; });
-      };
-
-      const onKey = (e)=>{
-        if(e.key === 'Escape'){ closeMenu(); }
-        else if(e.key === 'Tab' && menu.classList.contains('active')){
-          const f = menu.querySelectorAll(focusableSel);
-          if(!f.length) return;
-          const first = f[0], last = f[f.length-1];
-          if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
-          else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
-        }
-      };
-
-      const openMenu = ()=>{
-        lastFocus = document.activeElement;
-        toggle.classList.add('active');
-        toggle.setAttribute('aria-expanded','true');
-        menu.classList.add('active');
-        menu.setAttribute('aria-hidden','false');
-        setStagger(true);
-        lockBody(true);
-        const first = menu.querySelector(focusableSel);
-        if(first) first.focus();
-        document.addEventListener('keydown', onKey);
-      };
-
-      const closeMenu = ()=>{
-        toggle.classList.remove('active');
-        toggle.setAttribute('aria-expanded','false');
-        menu.classList.remove('active');
-        menu.setAttribute('aria-hidden','true');
-        setStagger(false);
-        lockBody(false);
-        document.removeEventListener('keydown', onKey);
-        if(lastFocus) lastFocus.focus();
-      };
-
-      const maybeToggle = ()=>{
-        if(!mq.matches){ closeMenu(); return; } // always closed on desktop
-        menu.classList.contains('active') ? closeMenu() : openMenu();
-      };
-
-      toggle.addEventListener('click', maybeToggle);
-      menu.addEventListener('click', (e)=>{ if(e.target.matches('a')) closeMenu(); });
-    }
-  } catch(e){ console.warn('mobile menu:', e); }
-
-  // --- INTERLUDE: rotating words Event / Creative / BTL / POSM ---
-  try {
-    const words = ["Event.", "Creative.", "BTL.", "POSM."];
-    const swap = document.getElementById("swap");
-    if (swap){
-      let wi = 0;
-      setInterval(() => {
-        swap.textContent = words[wi];
-        if (swap.animate) swap.animate([{opacity:0},{opacity:1}], {duration:600});
-        wi = (wi + 1) % words.length;
-      }, 1800);
-    }
-  } catch(e){ console.warn('swap:', e); }
-
-  // --- Floating labels ---
-  try {
-    document.querySelectorAll(".input").forEach((inp) => {
-      const f = inp.parentNode;
-      const toggle = () => f.classList.toggle("filled", !!inp.value.trim());
-      toggle();
-      inp.addEventListener("input", toggle);
-      inp.addEventListener("blur", toggle);
-    });
-  } catch(e){ console.warn('labels:', e); }
-
-  // --- Form submit (honeypot + phone normalization) ---
-  try {
-    const leadForm = document.getElementById("leadForm");
-    const statusNode = document.getElementById("formStatus");
-    if(leadForm && statusNode){
-      const submitBtn = leadForm.querySelector(".btn");
-      const endpoint = "https://formsubmit.co/ajax/hello@besson.asia";
-
-      const updateStatus = (message = "", mode = "")=>{
-        statusNode.textContent = message;
-        statusNode.className = `form__status ${mode ? `form__status--${mode}` : ""}`.trim();
-      };
-
-      leadForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        if (!leadForm.reportValidity()) return;
-
-        const formData = new FormData(leadForm);
-        if (formData.get('_honey')) { updateStatus("Ошибка. Попробуйте другой способ связи.", "error"); return; }
-
-        const raw = (formData.get('phone') || '').toString();
-        formData.set('phone', raw.replace(/[^\d\+]/g,''));
-
-        if (submitBtn) submitBtn.disabled = true;
-        updateStatus("Отправляем…");
-
-        try {
-          const response = await fetch(endpoint, { method: "POST", headers: { "Accept": "application/json" }, body: formData });
-          if (!response.ok) throw new Error(`Request failed: ${response.status}`);
-          updateStatus("Спасибо! Мы свяжемся с вами в ближайшее время.", "success");
-          leadForm.reset();
-          leadForm.querySelectorAll(".field").forEach((field) => field.classList.remove("filled"));
-        } catch (error) {
-          updateStatus("Не удалось отправить заявку. Попробуйте снова или свяжитесь по WhatsApp.", "error");
-        } finally {
-          if (submitBtn) submitBtn.disabled = false;
-        }
-      });
-    }
-  } catch(e){ console.warn('form:', e); }
-
-  // --- Premium cursor (desktop only: hover:hover & pointer:fine) ---
-  try {
-    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (fine.matches){
-      const dot = document.getElementById("cursorDot");
-      const ring = document.getElementById("cursorRing");
-      if (dot && ring){
-        let tx = 0, ty = 0, x = 0, y = 0;
-
-        window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
-        (function anim(){
-          x += (tx - x) * 0.17;
-          y += (ty - y) * 0.17;
-          dot.style.transform = `translate(${x}px, ${y}px)`;
-          ring.style.transform = `translate(${x}px, ${y}px)`;
-          requestAnimationFrame(anim);
-        })();
-
-        const addHover = (el)=>{
-          el.addEventListener("mouseenter", () => ring.classList.add("cursor--hover"));
-          el.addEventListener("mouseleave", () => ring.classList.remove("cursor--hover"));
-        };
-        document.querySelectorAll("a, button, .input, .icon-btn, .btn").forEach(addHover);
-      }
-    }
-  } catch(e){ console.warn('cursor:', e); }
-
-});
-/* no-op patch for JS */
-/* Force a line break before "Реализуем" inside the description title */
-(function () {
-  var el = document.querySelector('section.stage#about .stage__title');
-  if (!el || el.dataset.broken === '1') return;
-
-  // Вставляем перенос строки перед словом "Реализуем" (первое вхождение)
-  // Сохраняем остальную разметку как есть.
-  el.innerHTML = el.innerHTML.replace(/Реализуем/, '<br>Реализуем');
-
-  el.dataset.broken = '1';
-})();
-// Центрируем #about при переходе по якорю "Об агентстве"
-(function(){
-  const about  = document.querySelector('section.stage#about');
-  if (!about) return;
-
-  // Считаем высоту фиксированной шапки, если она реально fixed
-  const header = document.querySelector('.nav, header.nav, .site-header');
-  const getHeaderH = () => {
-    if (!header) return 0;
-    const cs = getComputedStyle(header);
-    return cs.position === 'fixed' ? header.offsetHeight : 0;
-  };
-
-  // Скроллим так, чтобы центр секции оказался в центре экрана
-  const scrollCenterTo = (el) => {
-    const rect    = el.getBoundingClientRect();
-    const yNow    = window.pageYOffset || document.documentElement.scrollTop;
-    const vh      = window.innerHeight;
-    const targetY = yNow + rect.top + (rect.height / 2) - (vh / 2);
-
-    // Чуть корректируем, если есть фикс-шапка
-    const yWithHeader = Math.max(0, targetY + getHeaderH() * 0.5);
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      window.scrollTo(0, yWithHeader);
-    } else {
-      window.scrollTo({ top: yWithHeader, behavior: 'smooth' });
-    }
-  };
-
-  // Перехватываем клики по всем вариантам ссылок на #about
-  const selectors = [
-    'a[href="#about"]',
-    '[data-scroll="about"]',
-    '[data-target="#about"]'
-  ];
-  document.querySelectorAll(selectors.join(',')).forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      scrollCenterTo(about);
-      // Если у тебя мобильное меню открыто — здесь можно его закрыть
-      // (оставил без логики, чтобы не менять твоё меню)
-    });
-  });
-
-  // Если пришли сразу с хэшем (#about), центрируем после рендера
-  if (location.hash === '#about') {
-    requestAnimationFrame(() => setTimeout(() => scrollCenterTo(about), 60));
+/* Mobile-only micro animations */
+@media (max-width:768px){
+  #logoText{display:inline-block;transform-origin:center;will-change:transform}
+  #logoText span{display:inline-block;transition:transform .4s cubic-bezier(.19,1,.22,1),text-shadow .5s ease,filter .5s ease;will-change:transform,filter}
+  #logoText.breathe span{animation:microPulse 1.8s ease-in-out infinite alternate}
+  @keyframes microPulse{
+    0%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
+    50%{transform:translateX(var(--tx,0)) scale(calc(var(--sc,1.03)));filter:brightness(1.12)}
+    100%{transform:translateX(var(--tx,0)) scale(var(--sc,1));filter:brightness(1)}
   }
-})();
-/* === Center #about with a slight downward bias === */
-(() => {
-  const about  = document.querySelector('section.stage#about');
-  if (!about) return;
+  #about{opacity:0;transform:translateY(60px);transition:all 1s cubic-bezier(.19,1,.22,1)}
+  #about.visible{opacity:1;transform:translateY(0)}
+}
 
-  // Подстройка: сколько "ниже центра" останавливаемся
-  const BIAS_DESKTOP = -270;  // px — под себя
-  const BIAS_MOBILE  = 96;  // px — на мобиле чуть ниже
+/* Premium cursor (desktop only) */
+@media (hover:hover) and (pointer:fine){
+  body{cursor:none}
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;pointer-events:none;z-index:2000;transform:translate(-50%,-50%)}
+  .cursor-dot{width:8px;height:8px;border-radius:50%;background:#fff;mix-blend-mode:difference;transition:opacity .25s,transform .08s}
+  .cursor-ring{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.7);mix-blend-mode:difference;transition:opacity .3s,transform .2s,border-color .2s}
+  /* fixed hover rule */
+  .cursor-ring.cursor--hover{transform:translate(-50%,-50%) scale(1.4);border-color:#fff}
+}
 
-  // Если шапка реально fixed — можно учесть её высоту (сейчас не учитываем)
-  const header = document.querySelector('.nav, header.nav, .site-header');
-  const getHeaderH = () => {
-    if (!header) return 0;
-    const cs = getComputedStyle(header);
-    return cs.position === 'fixed' ? header.offsetHeight : 0;
-  };
+/* Reduce Motion */
+@media (prefers-reduced-motion: reduce){
+  * { animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  .hero__slogan span, #logoText.breathe span { animation:none !important; }
+}
+/* Скрываем старый гамбургер на мобилке */
+@media (max-width:768px){ .menu-toggle{ display:none !important; } }
 
-  const centerWithBias = () => {
-    const r   = about.getBoundingClientRect();
-    const y   = window.pageYOffset || document.documentElement.scrollTop;
-    const vh  = window.innerHeight;
-    const bias = window.matchMedia('(max-width: 768px)').matches ? BIAS_MOBILE : BIAS_DESKTOP;
+/* === FIX: видимость и контраст секции "Описание" ===================== */
+/* Поднимаем только секцию #about над градиентом предыдущего блока */
+section.stage#about{
+  position: relative;
+  z-index: 5;                     /* выше interlude::before/::after */
+  padding-top: clamp(16px, 3vh, 28px);
+  padding-bottom: clamp(56px, 10vh, 120px);
+  /* если у тебя здесь задуман белый фон — оставь прозрачно;
+     если текст всё ещё «тонет», можно раскомментировать след. строку */
+  /* background: #fff; */
+}
 
-    // Центр секции + смещение вниз (положительное = ниже)
-    const target = y + r.top + (r.height / 2) - (vh / 2) + bias;
+/* Гарантируем нормальный режим смешения и полную непрозрачность */
+section.stage#about *{
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+}
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      window.scrollTo(0, Math.max(0, target));
-    } else {
-      window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-    }
-  };
+/* Контрастная «премиальная» типографика */
+section.stage#about .stage__title{
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display",
+               "Inter", "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-weight: 300;                   /* тонкий, при желании 200 */
+  letter-spacing: 0.015em;
+  line-height: 1.24;
+  font-size: clamp(22px, 2.6vw, 36px);
+  color: #0a0a0a !important;          /* ТЁМНЫЙ текст = контраст на светлом фоне */
+  max-width: 72ch;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 2.4vw, 32px);
+  text-wrap: balance;
+}
 
-  // Перехватываем клики по ссылкам на #about на стадии capture,
-  // чтобы переопределить любые предыдущие обработчики
-  const sel = 'a[href="#about"], [data-scroll="about"], [data-target="#about"]';
-  const onNav = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-    centerWithBias();
-  };
-  document.querySelectorAll(sel).forEach(a => a.addEventListener('click', onNav, true));
+/* Если непосредственно за описанием идёт #work — добавим «воздух» */
+section.stage#about + #work{
+  margin-top: clamp(24px, 6vh, 96px);
+}
 
-  // Если пришли по хэшу сразу — центрируем после рендера
-  if (location.hash === '#about') {
-    requestAnimationFrame(() => setTimeout(centerWithBias, 60));
+/* Мобайл — компактнее, но читаемо */
+@media (max-width: 768px){
+  section.stage#about{
+    padding-top: clamp(10px, 3vh, 20px);
+    padding-bottom: clamp(48px, 9vh, 96px);
   }
-})();
-/* Склейки: не даём рвать ключевые словосочетания на переносах */
-(() => {
-  const el = document.querySelector('section.stage#about .stage__title');
-  if (!el || el.dataset.typoFixed) return;
+  section.stage#about .stage__title{
+    font-size: clamp(18px, 5vw, 24px);
+    line-height: 1.26;
+    letter-spacing: 0.01em;
+  }
+}
 
-  // NBSP-дефисы: U+2011 (неразрывный дефис)
-  el.innerHTML = el.innerHTML
-    .replace(/BTL-?проекты/gi, 'BTL-проекты')
-    .replace(/бренд-активаций/gi, 'бренд-активаций');
+/* Временная визуальная проверка границ секции (снимешь после проверки) */
+@media (any-hover: hover){
+  section.stage#about{ outline: 1px dashed rgba(0,0,0,.2); }
+}
+/* --- remove debug outline --- */
+@media (any-hover: hover){
+  section.stage#about{ outline: none !important; }
+}
 
-  el.dataset.typoFixed = '1';
-})();
+/* --- balanced premium typography & spacing for the description --- */
+section.stage#about{
+  padding-top: clamp(8px, 2.2vh, 20px) !important;
+  margin-bottom: clamp(40px, 8vh, 88px) !important; /* чуть меньше «воздуха» */
+}
+
+section.stage#about .stage__title{
+  /* тонкий «премиальный» гротеск без избыточной крупности */
+  font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Display",
+               "Inter","Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.28;
+  font-size: clamp(20px, 1rem + 0.9vw, 28px); /* было до 36px — делаем изящнее */
+  max-width: 72ch;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 2.4vw, 32px);
+  color: #0a0a0a !important; /* контрастный тёмный текст на светлом фоне */
+  text-wrap: balance;
+}
+
+/* мобильная подстройка — ещё на ступень меньше */
+@media (max-width: 768px){
+  section.stage#about .stage__title{
+    font-size: clamp(17px, 4.2vw, 22px);
+    line-height: 1.3;
+  }
+}
+/* --- more air before Projects + balanced width for the paragraph --- */
+section.stage#about{
+  margin-bottom: clamp(72px, 12vh, 160px) !important; /* больше воздуха */
+}
+
+section.stage#about + #work{
+  margin-top: clamp(24px, 10vh, 120px) !important;    /* и со стороны Projects */
+}
+
+section.stage#about .stage__title{
+  max-width: 66ch;          /* читаемая ширина, чтобы переносы были красивыми */
+  line-height: 1.30;
+}
+
+/* на мобильном чуть компактнее */
+@media (max-width: 768px){
+  section.stage#about{
+    margin-bottom: clamp(56px, 10vh, 120px) !important;
+  }
+  section.stage#about .stage__title{
+    max-width: 60ch;
+    line-height: 1.32;
+  }
+}
+/* --- extra air before Projects (final tune) --- */
+section.stage#about{
+  margin-bottom: clamp(96px, 14vh, 200px) !important;  /* +больше воздуха снизу */
+}
+
+/* если блок #work идёт сразу за описанием — усилим зазор и со стороны Projects */
+section.stage#about + #work{
+  margin-top: clamp(32px, 8vh, 128px) !important;
+}
+
+/* мобильная подстройка: чуть компактнее, но всё ещё свободно */
+@media (max-width: 768px){
+  section.stage#about{
+    margin-bottom: clamp(72px, 12vh, 160px) !important;
+  }
+  section.stage#about + #work{
+    margin-top: clamp(24px, 7vh, 96px) !important;
+  }
+}
+/* ——— Projects section: make the header band white ——— */
+#work{
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Если фон делался через псевдослои — выключаем их */
+#work::before,
+#work::after{
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+/* Если «полоса» была у внутреннего контейнера — обнулим и его */
+#work .wall,
+#work .wrapper,
+#work .container{
+  background: transparent !important; /* оставляем белый фон родителя */
+}
+
+/* ——— (Опционально) Чтобы сетка и карточки не «пропали» на белом ——— */
+/* Включи, если бордеры стали незаметны */
+#work .card,
+#work .item,
+#work .tile{
+  /* закомментировано по умолчанию; раскомментируй при необходимости */
+  /* border-color: rgba(0,0,0,.12) !important; */
+  /* outline: 1px solid rgba(0,0,0,.06); */
+}
+/* === Description section: больше «поля» вниз + идеальный центр === */
+section.stage#about{
+  /* центрирование блока с текстом */
+  display: grid !important;
+  place-items: center !important;
+
+  /* комфортная высота секции — «полотно» под текст */
+  min-height: clamp(360px, 48vh, 620px);
+
+  /* управляем воздухом ТОЛЬКО паддингом секции */
+  padding-top: clamp(16px, 3vh, 28px);
+  padding-bottom: clamp(120px, 18vh, 240px) !important;
+
+  /* убираем внешние зазоры — не трогаем «Проекты» вовсе */
+  margin-bottom: 0 !important;
+}
+
+/* текст в описании точно по центру и аккуратно читается */
+section.stage#about .stage__title{
+  text-align: center;
+  max-width: 66ch;          /* чуть уже — аккуратнее переносы */
+  line-height: 1.30;
+}
+
+/* на мобильном — компактнее, но с воздухом */
+@media (max-width: 768px){
+  section.stage#about{
+    min-height: clamp(300px, 44vh, 520px);
+    padding-bottom: clamp(96px, 16vh, 200px) !important;
+  }
+}
+
+/* гарантируем, что сосед не добавляет свой зазор сверху/снизу */
+section.stage#about + #work{
+  margin-top: 0 !important;
+}
+/* === MOBILE PATCH: показать #about, центрировать, дать воздух и белый стык === */
+@media (max-width: 768px){
+  section.stage#about{
+    display: grid !important;         /* гарантированно видно */
+    place-items: center !important;   /* по центру по обеим осям */
+    position: relative;
+    z-index: 2;                       /* поверх мягкого градиента сверху */
+    opacity: 1 !important;
+    visibility: visible !important;
+
+    /* полотно секции на мобиле + воздух вниз */
+    min-height: clamp(300px, 56svh, 520px);
+    padding: 24px 16px 112px 16px !important;
+
+    /* не завязываемся на внешние маргины — управляем только паддингом */
+    margin: 0 !important;
+
+    /* контраст и отсечка любых подложек */
+    background: #fff;
+  }
+
+  section.stage#about .stage__title{
+    text-align: center;
+    max-width: 64ch;
+    font-weight: 300;
+    line-height: 1.34;
+    font-size: clamp(18px, 4.4vw, 22px);
+    color: #0a0a0a;                   /* чёткий контраст на белом */
+  }
+
+  /* Белая "крышка" на стыке, если #work подползает сверху */
+  section.stage#about::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 24px;                      /* при необходимости подстрой: 20–32px */
+    background: #fff;
+    pointer-events: none;
+  }
+}
+/* === MOBILE seam fix: белая "крышка" сверху у описания === */
+@media (max-width: 768px){
+  section.stage#about{
+    position: relative;           /* якорь для псевдоэлемента */
+    background: #fff;             /* белое полотно секции */
+    z-index: 2;                   /* поверх мягких градиентов вокруг */
+  }
+  section.stage#about::before{
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    top: -70px;                   /* подстрой при необходимости: -24/-36 */
+    height: 75px;                 /* столько перекрываем; можно 32–40 */
+    background: #fff;
+    pointer-events: none;         /* не перехватывает клики */
+  }
+}
+/* Плавный скролл браузером (страховка) */
+html { scroll-behavior: smooth; }
+
+/* На случай прямого перехода по якорю без JS — небольшой зазор от шапки */
+section.stage#about { scroll-margin-top: 64px; }
+
+@media (max-width: 768px){
+  section.stage#about { scroll-margin-top: 56px; } /* мобильная шапка короче */
+}
+/* Premium tuning для абзаца-описания */
+section.stage#about .stage__title{
+  max-width: 60ch;                 /* уже колонка = аккуратнее переносы */
+  font-weight: 300;
+  letter-spacing: 0.005em;         /* меньше трекинга */
+  line-height: 1.32;               /* комфортная читаемость */
+  font-size: clamp(18px, 0.95rem + 0.8vw, 26px);
+  text-align: center;
+  text-wrap: balance;               /* сбалансированные строки (Safari/Chromium) */
+  -webkit-hyphens: auto; hyphens: auto;
+}
+
+/* лёгкая моб. подстройка: ещё компактнее и стабильнее */
+@media (max-width: 768px){
+  section.stage#about .stage__title{
+    max-width: 58ch;
+    font-size: clamp(16px, 4.2vw, 20px);
+    line-height: 1.35;
+    letter-spacing: 0.003em;
+  }
+}
 // Тонкая настройка «на глаз»
 (() => {
   const TUNE = {
-    dotLerp: 0.40,   // точка: 0.28–0.40 (быстрее = больше)
-    ringLerp: 0.01,  // кольцо: 0.06–0.10 (медленнее = длиннее хвост)
-    cssRingMs: 1000   // CSS-длительность transform для кольца
+    dotLerp: 0.32,   // точка: 0.28–0.40 (быстрее = больше)
+    ringLerp: 0.08,  // кольцо: 0.06–0.10 (медленнее = длиннее хвост)
+    cssRingMs: 320   // CSS-длительность transform для кольца
   };
 
   // Попробуем найти типичный апдейтер и подменить коэф.
@@ -409,69 +439,232 @@ onReady(()=>{
   const ring = document.querySelector('.cursor-ring');
   if (ring) ring.style.transition = `transform ${TUNE.cssRingMs}ms cubic-bezier(.16,1,.3,1), width 220ms cubic-bezier(.22,1,.36,1), height 220ms cubic-bezier(.22,1,.36,1), opacity 220ms ease`;
 })();
-// Однократная замена в #about: BTL-проекты -> BTL-проекты (неразрывный дефис)
-(() => {
-  const el = document.querySelector('section.stage#about .stage__title');
-  if (!el || el.dataset.nbspFixed) return;
-  el.innerHTML = el.innerHTML.replace(/BTL-?проекты/gi, 'BTL-проекты'); // U+2011
-  el.dataset.nbspFixed = '1';
-})();
-/* ==== Контейнерно-осознанный размер шрифта для #about ==== */
-(() => {
-  const section = document.querySelector('section.stage#about');
-  const title   = section?.querySelector('.stage__title');
-  if (!section || !title) return;
+/* ==== Export-safe типографика #about (фикс через переменную) ==== */
 
-  // ПРАВЬ ЗДЕСЬ под свой вкус:
-  const MIN_W = 360;   // px: ширина секции, где хотим минимальный размер
-  const MAX_W = 1200;  // px: ширина секции, где хотим максимальный размер
-  const MIN_FS = 20;   // px: минимальный размер шрифта (мобайл)
-  const MAX_FS = 24;   // px: максимальный размер шрифта (широкие десктопы)
+/* запрет автоподдува в Safari/iOS */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
-  const map = (x, inMin, inMax, outMin, outMax) =>
-    outMin + (outMax - outMin) * ((x - inMin) / (inMax - inMin));
+/* переменная под размер, по умолчанию — достойно на десктопе */
+:root { --about-fs: 22px; }
 
-  const apply = () => {
-    const w = section.clientWidth || window.innerWidth;
-    const clampedW = Math.max(MIN_W, Math.min(MAX_W, w));
-    const fs = map(clampedW, MIN_W, MAX_W, MIN_FS, MAX_FS);
-    document.documentElement.style.setProperty('--about-fs', fs.toFixed(2) + 'px');
-  };
+/* делаем контейнер предсказуемым и красивым */
+section.stage#about{
+  /* не критично, но помогает с внутренней сеткой */
+  contain: layout paint style;
+}
 
-  // Реагируем на реальные изменения размера секции
-  const ro = new ResizeObserver(apply);
-  ro.observe(section);
+section.stage#about .stage__title{
+  max-width: 60ch;
+  margin-inline: auto;
+  text-align: center;
 
-  // Запускаем
-  apply();
-  addEventListener('orientationchange', apply, { passive: true });
-  addEventListener('load', apply, { passive: true });
-})();
-// Диагностика в консоли: какой шрифт реально применился
-(() => {
-  const t = document.querySelector('section.stage#about .stage__title');
-  if (!t) return;
-  const ff = getComputedStyle(t).fontFamily;
-  console.log('[FontCheck] about.title font-family →', ff);
-})();
-/* ==== Safari-страховка: закрепляем размер текста от реальной ширины ABOUT ==== */
-(() => {
-  const sec = document.querySelector('section.stage#about');
-  const p   = sec?.querySelector('.stage__title');
-  if (!sec || !p) return;
+  /* КЛЮЧЕВАЯ СТРОКА: размер из переменной, перекрываем всё предыдущее */
+  font-size: var(--about-fs) !important;
 
-  const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+  line-height: 1.32;
+  letter-spacing: 0.014em;            /* «как в меню», но мягче */
+  text-wrap: balance;
+  -webkit-hyphens: auto; hyphens: auto;
 
-  const apply = () => {
-    // ширина самого блока (а не окна) — стабильнее для Safari
-    const w  = sec.clientWidth || window.innerWidth;
-    const fs = Math.round(clamp(19 + ((w - 360) / (1200 - 360)) * (22 - 19), 19, 22));
-    // только если наш CSS не перекрыт вручную
-    p.style.setProperty('font-size', fs + 'px', 'important');
-  };
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
 
-  // один раз и при реальном изменении размеров
-  apply();
-  new ResizeObserver(apply).observe(sec);
-  addEventListener('orientationchange', apply, { passive: true });
-})();
+/* на очень узких — чуть больше воздуха, без уменьшения размера */
+@media (max-width: 520px){
+  section.stage#about .stage__title{ line-height: 1.35; letter-spacing: 0.012em; }
+}
+/* === Pin-топография: один и тот же шрифт везде === */
+@font-face{
+  font-family: "InterVar";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("https://rsms.me/inter/font-files/Inter-roman.var.woff2?v=4.0") format("woff2-variations");
+}
+:root{
+  --font-ui: "InterVar", -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+html{
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body{
+  font-family: var(--font-ui);
+  /* запрещаем подделки шрифта в Safari */
+  font-synthesis-weight: none;
+  font-synthesis-style: none;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures contextual;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Заголовок-слово (BTL./Event./Creative.) — чтобы точно совпадал вес */
+.hero__name,
+.hero h1{
+  font-variation-settings: "wght" 780; /* подгони при желании: 720–820 */
+}
+
+/* Тот самый абзац #about — сохраняем твой размер, просто стабилизируем метрики */
+section.stage#about .stage__title{
+  max-width: 60ch;
+  margin-inline: auto;
+  text-align: center;
+  font-variation-settings: "wght" 380; /* тонкий, «дорогой» текст */
+  line-height: 1.36;
+  letter-spacing: 0.016em;
+  text-wrap: balance;
+  -webkit-hyphens: auto; hyphens: auto;
+}
+/* ==== ABOUT: стабильная типографика без сюрпризов в Safari ==== */
+
+/* страхуемся от авто-укрупнения и синтеза шрифта */
+html{ -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+
+/* красивый абзац и одинаковая верстка на всех устройствах */
+section.stage#about .stage__title{
+  max-width: 60ch;
+  margin-inline: auto;
+  text-align: center;
+
+  /* размер: фиксируем диапазон, чтобы не «гулял» вне CodePen */
+  font-size: 22px !important;            /* десктоп по умолчанию */
+  line-height: 1.32;
+  letter-spacing: 0.014em;
+  text-wrap: balance;
+  -webkit-hyphens: auto; hyphens: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* мобильная подстройка — без уменьшения «до мелочи», но читабельно */
+@media (max-width: 600px){
+  section.stage#about{ padding-inline: 16px; }
+  section.stage#about .stage__title{
+    font-size: 19px !important;          /* аккуратный размер для iPhone */
+    line-height: 1.35;
+    letter-spacing: 0.012em;
+  }
+}
+
+/* якорь «Об агентстве» — встаёт красиво, не прилипает к проектам */
+section.stage#about{ 
+  scroll-margin-top: 18vh;                /* когда кликаем в меню */
+  padding-bottom: clamp(56px, 14vh, 140px); /* воздух от проектов */
+}
+
+/* ==== ЧЁРНАЯ ПОЛОСА: полностью выключаем «кепку» у проектов ==== */
+/* На некоторых сборках сверху у #work есть техническая шапка/псевдо-элемент
+   с чёрным фоном. Глушим всё возможное без затрагивания карточек. */
+
+section#work,
+.work,
+.projects{
+  background-color: #fff !important;
+  border-top: 0 !important;
+}
+
+/* сносим декоративные крышки и разделители, где бы они ни висели */
+section#work::before,
+section#work::after,
+.work::before,
+.work::after,
+.projects::before,
+.projects::after,
+.divider,
+.section-sep{
+  content: none !important;
+  display: none !important;
+  height: 0 !important;
+  border: 0 !important;
+}
+
+/* если полоса появлялась из-за «отрицательных» маргинов/оверлеев — обрезаем */
+section#work{ overflow: clip; }
+/* === PATCH: ABOUT — ручная докрутка ширины/центра === */
+/* Крути значения ниже под вкус */
+:root{
+  /* Десктоп */
+  --about-col-desktop: 60ch;   /* ширина колонки текста */
+  --about-fs-desktop: 22px;    /* размер шрифта */
+  --about-lh-desktop: 1.32;    /* межстрочный интервал */
+  --about-align-desktop: center;
+
+  /* Мобайл (≤600px) */
+  --about-col-mobile: 32ch;
+  --about-fs-mobile: 19px;
+  --about-lh-mobile: 1.36;
+
+  /* Общие */
+  --about-letterspace: 0.014em;
+  --about-bottom-space: clamp(56px, 14vh, 140px); /* воздух снизу от проектов */
+  --about-side-pad-mobile: 16px;                  /* боковые отступы на мобилке */
+}
+
+/* Блок «Об агентстве» — общий вид */
+section.stage#about{
+  padding-bottom: var(--about-bottom-space);
+  scroll-margin-top: 18vh; /* якорь из меню садится красиво */
+}
+
+/* Текст «о нас» — десктоп */
+section.stage#about .stage__title{
+  max-width: var(--about-col-desktop);
+  margin-inline: auto;
+  text-align: var(--about-align-desktop);
+  font-size: var(--about-fs-desktop);
+  line-height: var(--about-lh-desktop);
+  letter-spacing: var(--about-letterspace);
+  text-wrap: balance;
+  -webkit-hyphens: auto; hyphens: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Мобайл: жёстко по центру, аккуратная узкая колонка */
+@media (max-width: 600px){
+  section.stage#about{
+    display: grid;            /* не зависит от родителей */
+    place-items: center;
+    padding-inline: var(--about-side-pad-mobile);
+    row-gap: 16px;
+  }
+  section.stage#about > *{
+    justify-self: center;     /* на случай лишних обёрток */
+  }
+  section.stage#about .stage__title{
+    max-width: var(--about-col-mobile);
+    font-size: var(--about-fs-mobile);
+    line-height: var(--about-lh-mobile);
+    text-align: center;
+    margin: 0 auto !important;   /* гасим наследованные сдвиги */
+    letter-spacing: calc(var(--about-letterspace) - 0.002em);
+  }
+  /* Если есть ручные <br> — обычно на мобиле лишние */
+  section.stage#about .stage__title br{ display:none; }
+}
+/* === CUSTOM CURSOR: глушим системный курсор на десктопах === */
+@media (hover:hover) and (pointer:fine){
+  html, body{ cursor: none !important; }
+
+  /* любые интерактивные и текстовые элементы */
+  *, a, button, [role="button"], label,
+  input, textarea, select, summary {
+    cursor: none !important;
+    caret-color: transparent; /* не показывать текстовый курсор */
+  }
+
+  /* страхуем, что наш курсор-слой всегда выше и «прозрачный» */
+  .cursor, .cursor-dot, .cursor-ring, .cursor-ghost{
+    position: fixed;
+    pointer-events: none;
+    z-index: 2147483647; /* поверх всего */
+  }
+}

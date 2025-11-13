@@ -246,6 +246,25 @@ onReady(()=>{
       const ring = document.getElementById("cursorRing");
       if (dot && ring){
         let tx = 0, ty = 0, x = 0, y = 0;
+// после проверки fine.matches и перед/после инициализации dot/ring:
+const root = document.documentElement;
+root.classList.add('no-native-cursor');
+
+// страховка от внезапных переопределений стилей
+const reinforceNoCursor = () => {
+  root.classList.add('no-native-cursor');
+  // на всякий случай — инлайн на html/body (Safari любит чудить)
+  root.style.cursor = 'none';
+  if (document.body) document.body.style.cursor = 'none';
+};
+
+window.addEventListener('mousemove', reinforceNoCursor, { passive: true });
+window.addEventListener('mouseenter', reinforceNoCursor, { passive: true });
+window.addEventListener('focus', reinforceNoCursor, { passive: true });
+new MutationObserver(reinforceNoCursor).observe(root, {
+  attributes: true,
+  attributeFilter: ['class','style']
+});
 
         window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; });
         (function anim(){

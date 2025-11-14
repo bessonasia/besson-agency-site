@@ -1,137 +1,213 @@
-// helpers
-const qs  = (s, r=document) => r.querySelector(s);
-const qsa = (s, r=document) => [...r.querySelectorAll(s)];
-const lerp = (a,b,t)=>a+(b-a)*t;
+// ===== Утилиты =====
+const qs  = (sel, root = document) => root.querySelector(sel);
+const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const lerp = (a, b, t) => a + (b - a) * t;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const isMobile      = matchMedia('(max-width: 768px)').matches;
-  const isFinePointer = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const isMobile      = window.matchMedia('(max-width: 768px)').matches;
+  const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  /* 1) Анимируем логотип (верхний и центральный по буквам) */
-  const logoText = qs('#logoText');
-  if (logoText) {
-    const text = (logoText.getAttribute('aria-label') || 'Besson Agency').trim();
-    logoText.innerHTML = text.split('').map(ch=>{
-      const isSpace = ch === ' ';
-      return `<span ${isSpace ? 'data-space="true"' : ''}>${isSpace?'&nbsp;':ch}</span>`;
-    }).join('');
-
-    const spans = qsa('#logoText span');
-
-    // Ховер по буквам — только на десктопе, чтобы не мешать мобиле
-    if (!isMobile) {
-      spans.forEach(s=>{
-        if (s.dataset.space) return;
-        s.addEventListener('mouseenter', ()=>{
-          s.style.transform = 'translateY(-6px) scale(1.06)';
-        });
-        s.addEventListener('mouseleave', ()=>{
-          s.style.transform = 'translateY(0) scale(1)';
-        });
-      });
-    }
-
-    // 7) Мобильный «разъезд» логотипа при прокрутке вниз
-    if (isMobile) {
-      const letterSpans = spans.filter(s => !s.dataset.space);
-      const half = Math.ceil(letterSpans.length / 2);
-      const maxShift = 12; // px — насколько далеко разъезжаются буквы
-
-      const updateFromScroll = () => {
-        // t от 0 до 1, по мере прокрутки вниз
-        const t = Math.max(0, Math.min(1, window.scrollY / 220));
-        letterSpans.forEach((s, i) => {
-          const dir   = i < half ? -1 : 1;     // левая часть влево, правая вправо
-          const shift = dir * t * maxShift;
-          s.style.transform = `translateX(${shift}px)`;
-        });
-      };
-
-      updateFromScroll();
-      window.addEventListener('scroll', updateFromScroll, { passive: true });
-    }
+  // ===== 1. Год в футере =====
+  const yearEl = qs('#year');
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear();
   }
 
-  /* 2) Смена слов в interlude (Event / Creative / BTL / POSM) */
+  // ===== 2. Логотип: сборка по буквам =====
+  const logoText = qs('#logoText');
+  let logoSpans = [];
+
+  if (logoText) {
+    const text = (logoText.getAttribute('aria-label') || logoText.textContent || 'Besson Agency').trim();
+
+    logoText.innerHTML = text
+      .split('')
+      .map(ch => {
+        if (ch === ' ') {
+          return '<span data-space="true">&nbsp;</span>';
+        }
+        return `<span>${ch}</span>`;
+      })
+      .join('');
+
+    logoSpans = qsa('span', logoText);
+  }
+
+  // ===== 3. Десктоп: ховер по буквам (микроанимация) =====
+  if (logoSpans.length && !isMobile) {
+    logoSpans.forEach(span => {
+      if (span.dataset.space === 'true') return;
+      span.style.transition = 'transform 0.22s ease-out';
+
+      span.addEventListener('mouseenter', () => {
+        span.style.transform = 'translateY(-6px) scale(1.06)';
+      });
+
+      span.addEventListener('mouseleave', () => {
+        span.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+  }
+
+  // ===== 4. Мобилка: Netflix-анимация логотипа при скролле =====
+  if (logoSpans.length && isMobile) {
+    const letters = logoSpans.filter(s => s.dataset.space !== 'true');
+    const maxScrollBase = 600;
+    let maxScroll = Math.max(window.innerHeight * 1.1, maxScrollBase);
+    let breathing = false;
+    let ticking = false;
+
+    const recalcMaxScroll = () => {
+      maxScroll = Math.max(window.innerHeight * 1.1, maxScrollBase);
+    };
+
+    const applySpread = () => {
+      const s = Math.min(window.scrollY, maxScroll);
+      const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
+
+      // масштаб и “сила” разлёта
+      const scale  = 1 + p * 1.6;       // чем ниже — тем крупнее
+      const spread = p * 120;           // насколько далеко разъезжаются
+      const glow   = 8 + p * 32;        // сила свечения
+
+      let index = 0;
+
+      logoSpans.forEach(span => {
+        const isSpace = span.dataset.space === 'true';
+        if (isSpace) {
+          span.style.transform   = 'translateX(0px) scale(1)';
+          span.style.textShadow  = 'none';
+          return;
+        }
+
+        // Чередуем направление: буквы идут влево/вправо поочерёдно
+        const dir = (index++ % 2 === 0) ? -1 : 1;
+        const tx  = dir * spread;
+
+        span.style.transform  = `translateX(${tx}px) scale(${scale})`;
+        span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
+      });
+
+      // Лёгкий “breathing”-эффект на пике (если ты захочешь анимировать классом .breathe в CSS)
+      if (p > 0.95 && !breathing) {
+        logoText.classList.add('breathe');
+        breathing = true;
+      } else if (p < 0.9 && breathing) {
+        logoText.classList.remove('breathe');
+        breathing = false;
+      }
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          applySpread();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    // стартовые значения
+    recalcMaxScroll();
+    applySpread();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      recalcMaxScroll();
+      applySpread();
+    }, { passive: true });
+  }
+
+  // ===== 5. Смена слов в interlude (Event / Creative / BTL / POSM) =====
   const swapEl = qs('#swap');
   if (swapEl) {
     const words = ['Event.', 'Creative.', 'BTL.', 'POSM.'];
     let i = 0;
-    setInterval(()=>{ i=(i+1)%words.length; swapEl.textContent = words[i]; }, 2500);
+    setInterval(() => {
+      i = (i + 1) % words.length;
+      swapEl.textContent = words[i];
+    }, 2500);
   }
 
-  /* 3) Mobile menu */
+  // ===== 6. Мобильное меню (гамбургер) =====
   const burger = qs('.menu-toggle');
-  const mnav   = qs('.mobile-menu');
-  if (burger && mnav){
-    burger.addEventListener('click', ()=>{
-      const on = burger.classList.toggle('active');
-      mnav.classList.toggle('active', on);
-      mnav.setAttribute('aria-hidden', on ? 'false' : 'true');
+  const mobileMenu = qs('#mobileMenu');
+
+  if (burger && mobileMenu) {
+    const lockBody = lock => {
+      document.documentElement.style.overflow = lock ? 'hidden' : '';
+      document.body.style.overflow = lock ? 'hidden' : '';
+      document.body.style.touchAction = lock ? 'none' : '';
+    };
+
+    burger.addEventListener('click', () => {
+      const active = burger.classList.toggle('active');
+      mobileMenu.classList.toggle('active', active);
+      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
+      burger.setAttribute('aria-expanded', active ? 'true' : 'false');
+      lockBody(active);
+    });
+
+    // закрываем меню по клику на ссылку
+    qsa('a', mobileMenu).forEach(a => {
+      a.addEventListener('click', () => {
+        if (!burger.classList.contains('active')) return;
+        burger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        burger.setAttribute('aria-expanded', 'false');
+        lockBody(false);
+      });
     });
   }
 
-  /* 4) Премиальный курсор (desktop only) */
+  // ===== 7. Премиальный курсор (десктоп) =====
   const dot  = qs('#cursorDot');
   const ring = qs('#cursorRing');
-  if (isFinePointer && dot && ring){
-    let dx=0, dy=0, rx=0, ry=0;
-    let mx=window.innerWidth/2, my=window.innerHeight/2;
+
+  if (isFinePointer && dot && ring) {
+    let dx = window.innerWidth / 2;
+    let dy = window.innerHeight / 2;
+    let rx = dx;
+    let ry = dy;
+    let targetX = dx;
+    let targetY = dy;
+
     const DOT_LERP  = 0.35;
     const RING_LERP = 0.12;
 
-    const onMove = (e)=>{
-      mx = e.clientX; my = e.clientY;
-      dot.style.opacity = ring.style.opacity = '1';
+    const move = e => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+      dot.style.opacity  = '1';
+      ring.style.opacity = '1';
     };
-    window.addEventListener('mousemove', onMove, {passive:true});
 
-    const raf = ()=>{
-      dx = lerp(dx, mx, DOT_LERP);
-      dy = lerp(dy, my, DOT_LERP);
-      rx = lerp(rx, mx, RING_LERP);
-      ry = lerp(ry, my, RING_LERP);
+    window.addEventListener('mousemove', move, { passive: true });
+
+    const loop = () => {
+      dx = lerp(dx, targetX, DOT_LERP);
+      dy = lerp(dy, targetY, DOT_LERP);
+      rx = lerp(rx, targetX, RING_LERP);
+      ry = lerp(ry, targetY, RING_LERP);
+
       dot.style.transform  = `translate(${dx}px, ${dy}px)`;
       ring.style.transform = `translate(${rx}px, ${ry}px)`;
-      requestAnimationFrame(raf);
+
+      requestAnimationFrame(loop);
     };
-    raf();
+    loop();
 
     const hoverSel = 'a, button, [role="button"], .link, .tile, .btn, input, textarea, select, label, summary';
-    qsa(hoverSel).forEach(el=>{
-      el.addEventListener('mouseenter', ()=> ring.classList.add('cursor--hover'));
-      el.addEventListener('mouseleave', ()=> ring.classList.remove('cursor--hover'));
+    qsa(hoverSel).forEach(el => {
+      el.addEventListener('mouseenter', () => ring.classList.add('cursor--hover'));
+      el.addEventListener('mouseleave', () => ring.classList.remove('cursor--hover'));
     });
 
-    window.addEventListener('mouseout', (e)=>{
-      if (!e.relatedTarget) { dot.style.opacity = ring.style.opacity = '0'; }
-    });
-  } else {
-    // мобильные: на всякий случай скрываем элементы курсора
-    if (dot)  dot.style.display = 'none';
-    if (ring) ring.style.display = 'none';
-  }
-
-  /* 5) Кнопка: эффект «светового пятна» по курсору */
-  qsa('.btn').forEach(btn=>{
-    const glow = qs('.glow', btn);
-    if (!glow) return;
-    btn.addEventListener('pointermove', (e)=>{
-      const r = btn.getBoundingClientRect();
-      const x = ((e.clientX - r.left) / r.width) * 100;
-      const y = ((e.clientY - r.top)  / r.height)* 100;
-      glow.style.setProperty('--x', x + '%');
-      glow.style.setProperty('--y', y + '%');
-    });
-  });
-
-  /* 6) Формочка — UX + год */
-  qsa('.field .input').forEach(inp=>{
-    const wrap = inp.closest('.field');
-    const sync = ()=> wrap.classList.toggle('filled', !!inp.value.trim());
-    inp.addEventListener('input', sync); sync();
-  });
-  const yearEl = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
-});
+    window.addEventListener('mouseout', e => {
+      if (!e.relatedTarget) {
+        dot.style.opacity  = '0';
+        ring.
 
 

@@ -1,213 +1,203 @@
-// ===== Утилиты =====
-const qs  = (sel, root = document) => root.querySelector(sel);
-const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const lerp = (a, b, t) => a + (b - a) * t;
+/* ===== Reset & base ===== */
+*{ box-sizing:border-box; margin:0 }
+html,body{ height:100%; scroll-behavior:smooth }
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+:root{
+  --bg:#0a0a0a; --fg:#f5f5f5; --muted:#bdbdbd;
+  --pad:clamp(16px,2.4vw,32px);
+  --grid:max(68rem,74vw);
+}
+body{
+  font-family: 'Inter','Helvetica Neue','Segoe UI','Roboto',system-ui,sans-serif;
+  background:var(--bg); color:var(--fg);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+a{ color:inherit; text-decoration:none }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const isMobile      = window.matchMedia('(max-width: 768px)').matches;
-  const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+/* ===== Nav ===== */
+.nav{
+  position:fixed; inset:0 0 auto 0; height:76px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--pad); z-index:1000;
+  background:linear-gradient(180deg, rgba(10,10,10,.85), rgba(10,10,10,0));
+  backdrop-filter:saturate(140%) blur(6px);
+}
+.brand__mark{ font-weight:800; letter-spacing:.18em; text-transform:uppercase; transition:text-shadow .3s, transform .3s }
+.brand__mark:hover{ text-shadow:0 0 8px rgba(255,255,255,.4); transform:translateY(-1px) }
+.nav__group{ display:flex; align-items:center; gap:18px }
+.link{ position:relative; text-transform:uppercase; font-size:.78rem; letter-spacing:.18em }
+.link::after{
+  content:""; position:absolute; left:0; right:0; bottom:-6px; height:1px; background:#fff; opacity:.25;
+  transform:scaleX(0); transform-origin:left; transition:transform .35s, opacity .35s
+}
+.link:hover::after{ transform:scaleX(1); opacity:.5 }
+.menu-toggle, .mobile-menu{ display:none }
 
-  // ===== 1. Год в футере =====
-  const yearEl = qs('#year');
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
+/* Mobile nav */
+@media (max-width:768px){
+  .nav__group{ display:none }
+  .menu-toggle{
+    display:flex; flex-direction:column; gap:6px; width:28px; height:24px;
+    background:none; border:0; cursor:pointer; z-index:1100;
   }
+  .menu-toggle span{ display:block; width:100%; height:2px; background:#fff; transition:transform .35s, opacity .35s }
+  .menu-toggle.active span:nth-child(1){ transform:translateY(8px) rotate(45deg) }
+  .menu-toggle.active span:nth-child(2){ opacity:0 }
+  .menu-toggle.active span:nth-child(3){ transform:translateY(-8px) rotate(-45deg) }
 
-  // ===== 2. Логотип: сборка по буквам =====
-  const logoText = qs('#logoText');
-  let logoSpans = [];
-
-  if (logoText) {
-    const text = (logoText.getAttribute('aria-label') || logoText.textContent || 'Besson Agency').trim();
-
-    logoText.innerHTML = text
-      .split('')
-      .map(ch => {
-        if (ch === ' ') {
-          return '<span data-space="true">&nbsp;</span>';
-        }
-        return `<span>${ch}</span>`;
-      })
-      .join('');
-
-    logoSpans = qsa('span', logoText);
+  .mobile-menu{
+    display:flex; position:fixed; inset:0; background:rgba(10,10,10,.85); backdrop-filter:blur(12px);
+    align-items:center; justify-content:center; flex-direction:column;
+    opacity:0; pointer-events:none; transition:opacity .6s cubic-bezier(.19,1,.22,1); z-index:1000;
   }
-
-  // ===== 3. Десктоп: ховер по буквам (микроанимация) =====
-  if (logoSpans.length && !isMobile) {
-    logoSpans.forEach(span => {
-      if (span.dataset.space === 'true') return;
-      span.style.transition = 'transform 0.22s ease-out';
-
-      span.addEventListener('mouseenter', () => {
-        span.style.transform = 'translateY(-6px) scale(1.06)';
-      });
-
-      span.addEventListener('mouseleave', () => {
-        span.style.transform = 'translateY(0) scale(1)';
-      });
-    });
+  .mobile-menu.active{ opacity:1; pointer-events:auto }
+  .mobile-menu ul{ list-style:none; text-align:center }
+  .mobile-menu li{ margin:18px 0 }
+  .mobile-menu a{ color:#fff; font-size:1.4rem; letter-spacing:.08em; text-transform:uppercase; font-weight:500; position:relative }
+  .mobile-menu a::after{
+    content:""; position:absolute; left:0; bottom:-4px; width:100%; height:1px; background:#fff;
+    transform:scaleX(0); transform-origin:right; transition:transform .3s
   }
+  .mobile-menu a:hover::after{ transform:scaleX(1); transform-origin:left }
+}
 
-  // ===== 4. Мобилка: Netflix-анимация логотипа при скролле =====
-  if (logoSpans.length && isMobile) {
-    const letters = logoSpans.filter(s => s.dataset.space !== 'true');
-    const maxScrollBase = 600;
-    let maxScroll = Math.max(window.innerHeight * 1.1, maxScrollBase);
-    let breathing = false;
-    let ticking = false;
+/* ===== Hero ===== */
+.hero{ min-height:100vh; display:grid; place-items:center }
+.hero__content{ text-align:center; padding:120px var(--pad) 60px }
+.hero__name{ font-size:clamp(2rem,6vw,4rem); font-weight:800; letter-spacing:.22em; text-transform:uppercase; margin-bottom:16px }
+#logoText{ color:#fff }
+#logoText span{ display:inline-block; transition:transform .25s ease-out, text-shadow .3s ease-out }
+#logoText span[data-space="true"]{ pointer-events:none }
 
-    const recalcMaxScroll = () => {
-      maxScroll = Math.max(window.innerHeight * 1.1, maxScrollBase);
-    };
+.hero__slogan{
+  margin-top:24px; font-size:clamp(1.1rem,2.4vw,1.6rem); letter-spacing:.22em; text-transform:uppercase;
+  opacity:0; transform:translateY(8px) scale(.98); animation:heroSloganIntro 1.2s ease forwards .4s;
+  display:flex; justify-content:center; flex-wrap:wrap; gap:.6em; cursor:default;
+}
+.hero__slogan span{ display:inline-block; transition:color .4s, text-shadow .4s; animation:subtleGlow 6s ease-in-out infinite alternate }
+.hero__slogan span:hover{ color:#fff; text-shadow:0 0 10px rgba(255,255,255,.45),0 0 20px rgba(255,255,255,.25),0 0 30px rgba(255,255,255,.15) }
 
-    const applySpread = () => {
-      const s = Math.min(window.scrollY, maxScroll);
-      const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
+@keyframes heroSloganIntro{ to{ opacity:1; transform:translateY(0) scale(1) } }
+@keyframes subtleGlow{ 0%,100%{ text-shadow:none } 50%{ text-shadow:0 0 6px rgba(255,255,255,.15) } }
 
-      // масштаб и “сила” разлёта
-      const scale  = 1 + p * 1.6;       // чем ниже — тем крупнее
-      const spread = p * 120;           // насколько далеко разъезжаются
-      const glow   = 8 + p * 32;        // сила свечения
+/* ===== Interlude (меняющийся заголовок) ===== */
+.interlude{ background:#fff; color:#0a0a0a; text-align:center; padding:140px var(--pad) }
+.hero__title{ font-size:clamp(3rem,9.6vw,7rem); line-height:.9; font-weight:800; letter-spacing:-.02em }
 
-      let index = 0;
+/* ===== About (белый блок, строго по центру) ===== */
+.stage{ background:#fff; color:#0a0a0a; padding:160px var(--pad); text-align:center }
+.stage#about{
+  position:relative; z-index:2; display:grid; place-items:center;
+  min-height:clamp(360px, 48vh, 620px);
+}
+.stage#about .stage__title{
+  max-width:60ch; margin:0 auto; text-align:center;
+  font-weight:300; letter-spacing:.012em; line-height:1.32;
+  font-size:clamp(18px, 1rem + .8vw, 26px);
+}
 
-      logoSpans.forEach(span => {
-        const isSpace = span.dataset.space === 'true';
-        if (isSpace) {
-          span.style.transform   = 'translateX(0px) scale(1)';
-          span.style.textShadow  = 'none';
-          return;
-        }
+/* ===== Work (убираем любые декоративные градиенты) ===== */
+#work{ background:#fff !important; padding:0 }
+#work::before,#work::after{ content:none !important }
+.wall{ width:100vw; margin-left:calc(50% - 50vw); display:grid; grid-template-columns:repeat(12,1fr) }
+.tile{ grid-column:span 4; position:relative; overflow:hidden }
+@media (max-width:1100px){ .tile{ grid-column:span 6 } }
+@media (max-width:680px){ .tile{ grid-column:1/-1 } }
+.tile img{
+  width:100%; height:auto; min-height:300px; display:block; background:#111;
+  transition:transform .7s ease; aspect-ratio:16/9; object-fit:cover;
+}
+.tile:hover img{ transform:scale(1.06) }
+.tile__caption{
+  position:absolute; inset:0; display:grid; place-items:center;
+  opacity:0; transition:opacity .35s, backdrop-filter .35s;
+  background:rgba(0,0,0,.45); color:#fff; text-align:center; padding:12px;
+}
+.tile:hover .tile__caption{ opacity:1; backdrop-filter:blur(2px) }
 
-        // Чередуем направление: буквы идут влево/вправо поочерёдно
-        const dir = (index++ % 2 === 0) ? -1 : 1;
-        const tx  = dir * spread;
+/* ===== Contact ===== */
+.contact{ padding:120px var(--pad); text-align:center }
+.contact__grid{ max-width:var(--grid); margin:0 auto; display:flex; flex-direction:column; align-items:center; gap:28px }
+.contact__lead{ font-weight:800; letter-spacing:.06em; text-transform:uppercase; font-size:clamp(1.4rem,3.6vw,2.2rem) }
+.contact__sub{ color:var(--muted); margin-top:10px; max-width:52ch }
 
-        span.style.transform  = `translateX(${tx}px) scale(${scale})`;
-        span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
-      });
+.form{
+  background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
+  border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:32px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35); max-width:460px; width:100%;
+}
+.row{ display:block }
+.field{ position:relative; margin-bottom:18px }
+.input{
+  width:100%; padding:18px 14px; border-radius:14px; border:1px solid #1b1b1b; background:#0f0f0f; color:#fff;
+  transition:border-color .25s, box-shadow .25s;
+}
+.input:focus{ border-color:#fff; box-shadow:0 0 0 2px rgba(255,255,255,.15) }
+.label{
+  position:absolute; left:16px; top:14px; padding:2px 6px; border-radius:8px; font-size:.85rem; color:#a9a9a9;
+  background:rgba(255,255,255,.02); transform-origin:left top; transition:transform .2s, opacity .2s;
+}
+.field.filled .label, .input:focus + .label{ transform:translateY(-18px) scale(.88); opacity:.9; color:#fff }
 
-      // Лёгкий “breathing”-эффект на пике (если ты захочешь анимировать классом .breathe в CSS)
-      if (p > 0.95 && !breathing) {
-        logoText.classList.add('breathe');
-        breathing = true;
-      } else if (p < 0.9 && breathing) {
-        logoText.classList.remove('breathe');
-        breathing = false;
-      }
-    };
+.form__status{ min-height:20px; font-size:.9rem; color:var(--muted); margin-top:6px; transition:opacity .3s }
+.form__status--success{ color:#9be7c4 }
+.form__status--error{ color:#ff8a80 }
 
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          applySpread();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
+.actions{ display:flex; align-items:center; justify-content:center; gap:14px; margin-top:24px; flex-wrap:wrap }
+.btn{
+  position:relative; padding:16px 22px; border-radius:999px; border:1px solid #fff; background:#fff; color:#000;
+  font-weight:700; text-transform:uppercase; cursor:pointer; transition:transform .25s, box-shadow .25s; isolation:isolate;
+}
+.btn:hover{ transform:translateY(-2px); box-shadow:0 10px 25px rgba(255,255,255,.1) }
+.btn .glow{
+  position:absolute; inset:-2px; border-radius:inherit;
+  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%), rgba(255,255,255,.35), transparent 60%);
+  opacity:0; transition:opacity .25s; filter:blur(14px);
+}
+.btn:hover .glow{ opacity:1 }
 
-    // стартовые значения
-    recalcMaxScroll();
-    applySpread();
+.icon-btn{
+  width:44px; height:44px; border:1px solid #1b1b1b; border-radius:12px;
+  display:flex; align-items:center; justify-content:center; background:#0f0f0f; color:#fff;
+  transition:background .25s, border-color .25s, transform .2s;
+}
+.icon-btn:hover{ background:#fff; color:#000; border-color:#fff; transform:translateY(-2px) }
+.icon-btn svg{ width:20px; height:20px; fill:currentColor }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => {
-      recalcMaxScroll();
-      applySpread();
-    }, { passive: true });
+/* ===== Footer ===== */
+footer{ padding:48px var(--pad); color:#bdbdbd; text-align:center }
+.footer-left{ font-weight:700; letter-spacing:.18em }
+.footer-contact{ font-size:.9rem; display:flex; gap:10px; align-items:center; justify-content:center; margin-top:12px }
+.footer-contact svg{ width:16px; height:16px; opacity:.8 }
+
+/* ===== Premium cursor (desktop only) ===== */
+@media (hover:hover) and (pointer:fine){
+  html, body{ cursor:none !important }
+  *, a, button, [role="button"], label, input, textarea, select, summary{ cursor:none !important; caret-color:transparent }
+
+  .cursor-dot, .cursor-ring{
+    position:fixed; top:0; left:0; transform:translate(-50%,-50%);
+    pointer-events:none; z-index:2147483647; transition:opacity .25s ease;
+    mix-blend-mode:difference;
   }
+  .cursor-dot{ width:8px; height:8px; border-radius:50%; background:#fff; opacity:0 }
+  .cursor-ring{ width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,.7); opacity:0;
+    transition:transform .28s cubic-bezier(.16,1,.3,1), border-color .2s, opacity .2s }
+  .cursor-ring.cursor--hover{ transform:translate(-50%,-50%) scale(1.4); border-color:#fff }
+}
 
-  // ===== 5. Смена слов в interlude (Event / Creative / BTL / POSM) =====
-  const swapEl = qs('#swap');
-  if (swapEl) {
-    const words = ['Event.', 'Creative.', 'BTL.', 'POSM.'];
-    let i = 0;
-    setInterval(() => {
-      i = (i + 1) % words.length;
-      swapEl.textContent = words[i];
-    }, 2500);
-  }
+/* ===== Mobile polish ===== */
+@media (max-width:768px){
+  #logoText{ display:inline-block; transform-origin:center }
+  .stage#about{ padding:24px 16px 96px; min-height:clamp(300px, 44vh, 520px) }
+}
 
-  // ===== 6. Мобильное меню (гамбургер) =====
-  const burger = qs('.menu-toggle');
-  const mobileMenu = qs('#mobileMenu');
-
-  if (burger && mobileMenu) {
-    const lockBody = lock => {
-      document.documentElement.style.overflow = lock ? 'hidden' : '';
-      document.body.style.overflow = lock ? 'hidden' : '';
-      document.body.style.touchAction = lock ? 'none' : '';
-    };
-
-    burger.addEventListener('click', () => {
-      const active = burger.classList.toggle('active');
-      mobileMenu.classList.toggle('active', active);
-      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
-      burger.setAttribute('aria-expanded', active ? 'true' : 'false');
-      lockBody(active);
-    });
-
-    // закрываем меню по клику на ссылку
-    qsa('a', mobileMenu).forEach(a => {
-      a.addEventListener('click', () => {
-        if (!burger.classList.contains('active')) return;
-        burger.classList.remove('active');
-        mobileMenu.classList.remove('active');
-        mobileMenu.setAttribute('aria-hidden', 'true');
-        burger.setAttribute('aria-expanded', 'false');
-        lockBody(false);
-      });
-    });
-  }
-
-  // ===== 7. Премиальный курсор (десктоп) =====
-  const dot  = qs('#cursorDot');
-  const ring = qs('#cursorRing');
-
-  if (isFinePointer && dot && ring) {
-    let dx = window.innerWidth / 2;
-    let dy = window.innerHeight / 2;
-    let rx = dx;
-    let ry = dy;
-    let targetX = dx;
-    let targetY = dy;
-
-    const DOT_LERP  = 0.35;
-    const RING_LERP = 0.12;
-
-    const move = e => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-      dot.style.opacity  = '1';
-      ring.style.opacity = '1';
-    };
-
-    window.addEventListener('mousemove', move, { passive: true });
-
-    const loop = () => {
-      dx = lerp(dx, targetX, DOT_LERP);
-      dy = lerp(dy, targetY, DOT_LERP);
-      rx = lerp(rx, targetX, RING_LERP);
-      ry = lerp(ry, targetY, RING_LERP);
-
-      dot.style.transform  = `translate(${dx}px, ${dy}px)`;
-      ring.style.transform = `translate(${rx}px, ${ry}px)`;
-
-      requestAnimationFrame(loop);
-    };
-    loop();
-
-    const hoverSel = 'a, button, [role="button"], .link, .tile, .btn, input, textarea, select, label, summary';
-    qsa(hoverSel).forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('cursor--hover'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('cursor--hover'));
-    });
-
-    window.addEventListener('mouseout', e => {
-      if (!e.relatedTarget) {
-        dot.style.opacity  = '0';
-        ring.
-
-
+/* Reduced motion */
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important }
+}

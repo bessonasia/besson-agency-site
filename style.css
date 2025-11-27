@@ -65,10 +65,13 @@ a{ color:inherit; text-decoration:none }
   }
 /* ===== Mobile layout & menu ===== */
 @media (max-width:768px){
-  /* убираем горизонтальный скролл вообще */
-  html, body{
+   /* центр логотипа фиксирован и ничего не вылезает за экран */
+  .hero__content,
+  #logoText{
     max-width:100%;
-    overflow-x:hidden;
+    overflow:hidden;
+  }
+
   }
 
   /* прячем десктопное меню */

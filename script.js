@@ -50,42 +50,65 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* Mobile: Netflix-like spread on scroll */
-  if (logoSpans.length && isMobile){
-    const MAX_SCROLL_BASE = 600;
-    let   maxScroll = Math.max(innerHeight*1.1, MAX_SCROLL_BASE);
-    let   breathing=false, ticking=false;
+  /* Mobile: spread logo on scroll, center pinned */
+if (logoSpans.length && isMobile){
+  const MAX_SCROLL_BASE = 600;
+  let   maxScroll = Math.max(window.innerHeight * 1.1, MAX_SCROLL_BASE);
+  let   breathing = false;
+  let   ticking   = false;
 
-    const recalc = ()=>{ maxScroll=Math.max(innerHeight*1.1, MAX_SCROLL_BASE); };
-    const applySpread = ()=>{
-      const s = Math.min(scrollY, maxScroll);
-      const p = maxScroll===0?0:s/maxScroll;
-      const scale  = 1 + p*1.6;
-      const spread = p*120;
-      const glow   = 8 + p*32;
+  const recalc = () => {
+    maxScroll = Math.max(window.innerHeight * 1.1, MAX_SCROLL_BASE);
+  };
 
-      let i=0;
-      logoSpans.forEach(span=>{
-        if (span.dataset.space==='true'){
-          span.style.transform='translateX(0) scale(1)';
-          span.style.textShadow='none';
-          return;
-        }
-        const dir=(i++%2===0)?-1:1;
-        span.style.transform=`translateX(${dir*spread}px) scale(${scale})`;
-        span.style.textShadow=`0 0 ${glow}px rgba(255,255,255,${0.15+p*0.35})`;
-      });
+  const applySpread = () => {
+    const s = Math.min(window.scrollY, maxScroll);
+    const p = maxScroll === 0 ? 0 : s / maxScroll;     // 0..1
 
-      if (p>0.95 && !breathing){ logoText.classList.add('breathe'); breathing=true; }
-      else if (p<0.9 && breathing){ logoText.classList.remove('breathe'); breathing=false; }
-    };
+    // чуть мягче, чтобы не разъезжалось в космос
+    const scale  = 1 + p * 1.3;
+    const spread = p * 90;                             // было 120
+    const glow   = 6 + p * 26;
 
-    const onScroll=()=>{
-      if (!ticking){
-        requestAnimationFrame(()=>{ applySpread(); ticking=false; });
-        ticking=true;
+    let i = 0;
+    logoSpans.forEach(span => {
+      if (span.dataset.space === 'true') {
+        span.style.transform  = 'translateX(0) scale(1)';
+        span.style.textShadow = 'none';
+        return;
       }
-    };
+
+      // буквы разлетаются симметрично: одна влево, следующая вправо и т.д.
+      const dir = (i++ % 2 === 0) ? -1 : 1;
+      span.style.transform  = `translateX(${dir * spread}px) scale(${scale})`;
+      span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
+    });
+
+    if (p > 0.95 && !breathing){
+      logoText.classList.add('breathe');
+      breathing = true;
+    } else if (p < 0.9 && breathing){
+      logoText.classList.remove('breathe');
+      breathing = false;
+    }
+  };
+
+  const onScroll = () => {
+    if (!ticking){
+      window.requestAnimationFrame(() => {
+        applySpread();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  };
+
+  recalc();
+  applySpread();
+  window.addEventListener('scroll', onScroll,  { passive:true });
+  window.addEventListener('resize', () => { recalc(); applySpread(); }, { passive:true });
+}
+
 
     recalc(); applySpread();
     addEventListener('scroll', onScroll, {passive:true});

@@ -161,12 +161,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* Float labels for inputs */
+   /* Float labels for inputs */
   qsa('.field').forEach(f=>{
     const input = f.querySelector('.input');
     if (!input) return;
     const toggle=()=>f.classList.toggle('filled', !!input.value);
-    input.addEventListener('input',toggle); input.addEventListener('blur',toggle); toggle();
+    input.addEventListener('input',toggle);
+    input.addEventListener('blur',toggle);
+    toggle();
   });
+
+  /* Lead form submit */
+  const leadForm = qs('#leadForm');
+  const statusEl = qs('#formStatus');
+
+  if (leadForm && statusEl) {
+    // endpoint для AJAX-отправки (без перезагрузки страницы)
+    const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
+
+    leadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Ручная проверка валидации (работает даже с novalidate)
+      if (!leadForm.checkValidity()) {
+        statusEl.textContent = 'Проверьте имя и телефон.';
+        statusEl.classList.remove('form__status--success');
+        statusEl.classList.add('form__status--error');
+        return;
+      }
+
+      const formData = new FormData(leadForm);
+      const submitBtn = leadForm.querySelector('button[type="submit"]');
+
+      statusEl.textContent = 'Отправляем...';
+      statusEl.classList.remove('form__status--success', 'form__status--error');
+
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!res.ok) throw new Error('Bad response');
+
+        // Успешно
+        leadForm.reset();
+        // Снимаем класс filled у полей, чтобы лейблы вернулись на место
+        qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
+
+        statusEl.textContent = 'Заявка отправлена. Мы свяжемся с вами в рабочее время.';
+        statusEl.classList.add('form__status--success');
+      } catch (err) {
+        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
+        statusEl.classList.add('form__status--error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
 
 });

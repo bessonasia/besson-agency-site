@@ -327,11 +327,15 @@ footer{ padding:48px var(--pad); color:#bdbdbd; text-align:center }
 /* ===== Mobile polish ===== */
 @media (max-width:768px){
   #logoText{ display:inline-block; transform-origin:center }
-  .stage#about{
-    padding:80px 16px 96px;
-    scroll-margin-top:32vh;
+  .stage#about{ padding:24px 16px 96px; min-height:clamp(300px, 44vh, 520px) }
+
+  /* фикс горизонтального скролла на мобиле */
+  .wall{
+    width:100%;
+    margin-left:0;
   }
 }
+
 
 /* Reduced motion */
 @media (prefers-reduced-motion:reduce){

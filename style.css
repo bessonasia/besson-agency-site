@@ -63,6 +63,132 @@ a{ color:inherit; text-decoration:none }
       transform .25s cubic-bezier(.19,1,.22,1),
       border-color .35s;
   }
+/* ===== Mobile layout & menu ===== */
+@media (max-width:768px){
+  /* убираем горизонтальный скролл вообще */
+  html, body{
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  /* прячем десктопное меню */
+  .nav__group{ display:none }
+
+  /* премиальный круглой бургер */
+  .menu-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:44px;
+    height:44px;
+    border-radius:999px;
+    padding:0;
+    border:1px solid rgba(255,255,255,.35);
+    background:
+      radial-gradient(circle at 25% 20%, rgba(255,255,255,.22), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgba(255,255,255,.08), #000);
+    box-shadow:0 10px 26px rgba(0,0,0,.7);
+    cursor:pointer;
+    z-index:1100;
+  }
+  .menu-toggle span{
+    display:block;
+    width:18px;
+    height:2px;
+    border-radius:999px;
+    background:#fff;
+    transition:transform .25s ease, opacity .2s ease;
+  }
+  .menu-toggle span:nth-child(2){ transform:translateY(-2px) }
+  .menu-toggle span:nth-child(3){ transform:translateY(2px) }
+
+  .menu-toggle.active span:nth-child(1){
+    transform:translateY(0) rotate(45deg);
+  }
+  .menu-toggle.active span:nth-child(2){
+    opacity:0;
+  }
+  .menu-toggle.active span:nth-child(3){
+    transform:translateY(0) rotate(-45deg);
+  }
+
+  /* фуллскрин-оверлей меню, по центру, с запасом от статусбара */
+  .mobile-menu{
+    position:fixed;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:96px 24px 40px; /* верхний отступ, чтобы текст не упирался в часы */
+    box-sizing:border-box;
+    background:
+      radial-gradient(circle at top, rgba(255,255,255,.06), transparent 60%)
+      #050505;
+    backdrop-filter:blur(16px);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .4s ease;
+    z-index:1050;
+  }
+  .mobile-menu.active{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .mobile-menu ul{
+    list-style:none;
+    padding:0;
+    margin:0 0 40px;
+    text-align:center;
+    width:100%;
+  }
+  .mobile-menu li{
+    margin:8px 0;
+  }
+
+  /* более аккуратный размер пунктов */
+  .mobile-menu a{
+    display:inline-block;
+    color:#fff;
+    font-size:1.05rem;              /* было крупнее */
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    font-weight:500;
+    white-space:nowrap;
+  }
+
+  .mobile-menu a::after{
+    content:"";
+    display:block;
+    height:1px;
+    margin:6px auto 0;
+    width:42px;
+    background:rgba(255,255,255,.45);
+    transform:scaleX(0);
+    transform-origin:center;
+    transition:transform .3s ease;
+  }
+  .mobile-menu a:hover::after{
+    transform:scaleX(1);
+  }
+
+  /* фикс горизонтального скролла из-за сетки работ */
+  .wall{
+    width:100%;
+    margin-left:0;
+  }
+
+  /* мобильная подстройка about-блока и логотипа — как было */
+  #logoText{
+    display:inline-block;
+    transform-origin:center;
+  }
+  .stage#about{
+    padding:24px 16px 96px;
+    min-height:clamp(300px, 44vh, 520px);
+  }
+}
 
   /* мягкое дыхание, когда меню закрыто */
   .menu-toggle::before{
@@ -323,19 +449,6 @@ footer{ padding:48px var(--pad); color:#bdbdbd; text-align:center }
     transition:transform .28s cubic-bezier(.16,1,.3,1), border-color .2s, opacity .2s }
   .cursor-ring.cursor--hover{ transform:translate(-50%,-50%) scale(1.4); border-color:#fff }
 }
-
-/* ===== Mobile polish ===== */
-@media (max-width:768px){
-  #logoText{ display:inline-block; transform-origin:center }
-  .stage#about{ padding:24px 16px 96px; min-height:clamp(300px, 44vh, 520px) }
-
-  /* фикс горизонтального скролла на мобиле */
-  .wall{
-    width:100%;
-    margin-left:0;
-  }
-}
-
 
 /* Reduced motion */
 @media (prefers-reduced-motion:reduce){

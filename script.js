@@ -171,18 +171,17 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* Lead form submit */
+    /* Lead form submit (Formsubmit + без редиректа) */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
   if (leadForm && statusEl) {
-    // endpoint для AJAX-отправки (без перезагрузки страницы)
     const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
 
     leadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      e.preventDefault(); // главное — не даём форме уйти по action
 
-      // Ручная проверка валидации (работает даже с novalidate)
+      // Валидация формы
       if (!leadForm.checkValidity()) {
         statusEl.textContent = 'Проверьте имя и телефон.';
         statusEl.classList.remove('form__status--success');
@@ -207,9 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!res.ok) throw new Error('Bad response');
 
-        // Успешно
+        // Успешно отправили
         leadForm.reset();
-        // Снимаем класс filled у полей, чтобы лейблы вернулись на место
         qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
 
         statusEl.textContent = 'Заявка отправлена. Мы свяжемся с вами в рабочее время.';
@@ -222,5 +220,3 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-});

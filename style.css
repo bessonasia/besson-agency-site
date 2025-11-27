@@ -40,33 +40,158 @@ a{ color:inherit; text-decoration:none }
 .link:hover::after{ transform:scaleX(1); opacity:.5 }
 .menu-toggle, .mobile-menu{ display:none }
 
-/* Mobile nav */
 @media (max-width:768px){
   .nav__group{ display:none }
-  .menu-toggle{
-    display:flex; flex-direction:column; gap:6px; width:28px; height:24px;
-    background:none; border:0; cursor:pointer; z-index:1100;
-  }
-  .menu-toggle span{ display:block; width:100%; height:2px; background:#fff; transition:transform .35s, opacity .35s }
-  .menu-toggle.active span:nth-child(1){ transform:translateY(8px) rotate(45deg) }
-  .menu-toggle.active span:nth-child(2){ opacity:0 }
-  .menu-toggle.active span:nth-child(3){ transform:translateY(-8px) rotate(-45deg) }
 
+  .menu-toggle{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:40px;
+    height:40px;
+    border-radius:999px;
+    background:rgba(10,10,10,.75);
+    border:1px solid rgba(255,255,255,.35);
+    cursor:pointer;
+    z-index:1100;
+    overflow:hidden;
+    box-shadow:0 0 0 0 rgba(255,255,255,.18);
+    transition:
+      background .35s cubic-bezier(.19,1,.22,1),
+      box-shadow .35s cubic-bezier(.19,1,.22,1),
+      transform .25s cubic-bezier(.19,1,.22,1),
+      border-color .35s;
+  }
+
+  /* мягкое дыхание, когда меню закрыто */
+  .menu-toggle::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), transparent 55%);
+    opacity:.0;
+    transform:scale(0.8);
+    transition:opacity .35s, transform .35s;
+  }
+
+  .menu-toggle:not(.active):hover::before{
+    opacity:.8;
+    transform:scale(1);
+  }
+
+  .menu-toggle:not(.active){
+    animation:burgerPulse 2.8s ease-in-out infinite;
+  }
+
+  .menu-toggle span{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:18px;
+    height:1.6px;
+    border-radius:999px;
+    background:#fff;
+    transform-origin:center;
+    transition:
+      transform .35s cubic-bezier(.19,1,.22,1),
+      opacity .25s,
+      width .25s;
+  }
+
+  .menu-toggle span:nth-child(1){
+    transform:translate(-50%, -6px);
+  }
+  .menu-toggle span:nth-child(2){
+    transform:translate(-50%, 0);
+    width:14px;
+    opacity:.9;
+  }
+  .menu-toggle span:nth-child(3){
+    transform:translate(-50%, 6px);
+  }
+
+  /* состояние открытого меню: плавный X внутри круга */
+  .menu-toggle.active{
+    background:rgba(255,255,255,.06);
+    border-color:#fff;
+    transform:scale(0.96);
+    box-shadow:0 0 18px rgba(255,255,255,.14);
+    animation:none;
+  }
+
+  .menu-toggle.active::before{
+    opacity:.9;
+    transform:scale(1.08);
+  }
+
+  .menu-toggle.active span:nth-child(1){
+    transform:translate(-50%,0) rotate(45deg);
+  }
+  .menu-toggle.active span:nth-child(2){
+    transform:translate(-50%,0) scaleX(0);
+    opacity:0;
+  }
+  .menu-toggle.active span:nth-child(3){
+    transform:translate(-50%,0) rotate(-45deg);
+  }
+
+  @keyframes burgerPulse{
+    0%,100%{
+      box-shadow:0 0 0 0 rgba(255,255,255,.0);
+      transform:translateZ(0) scale(1);
+    }
+    50%{
+      box-shadow:0 0 12px 0 rgba(255,255,255,.18);
+      transform:translateZ(0) scale(1.02);
+    }
+  }
+
+  /* остальное – как было */
   .mobile-menu{
-    display:flex; position:fixed; inset:0; background:rgba(10,10,10,.85); backdrop-filter:blur(12px);
-    align-items:center; justify-content:center; flex-direction:column;
-    opacity:0; pointer-events:none; transition:opacity .6s cubic-bezier(.19,1,.22,1); z-index:1000;
+    display:flex;
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,10,.85);
+    backdrop-filter:blur(12px);
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .6s cubic-bezier(.19,1,.22,1);
+    z-index:1000;
   }
   .mobile-menu.active{ opacity:1; pointer-events:auto }
   .mobile-menu ul{ list-style:none; text-align:center }
   .mobile-menu li{ margin:18px 0 }
-  .mobile-menu a{ color:#fff; font-size:1.4rem; letter-spacing:.08em; text-transform:uppercase; font-weight:500; position:relative }
-  .mobile-menu a::after{
-    content:""; position:absolute; left:0; bottom:-4px; width:100%; height:1px; background:#fff;
-    transform:scaleX(0); transform-origin:right; transition:transform .3s
+  .mobile-menu a{
+    color:#fff;
+    font-size:1.4rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:500;
+    position:relative;
   }
-  .mobile-menu a:hover::after{ transform:scaleX(1); transform-origin:left }
+  .mobile-menu a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-4px;
+    width:100%;
+    height:1px;
+    background:#fff;
+    transform:scaleX(0);
+    transform-origin:right;
+    transition:transform .3s;
+  }
+  .mobile-menu a:hover::after{
+    transform:scaleX(1);
+    transform-origin:left;
+  }
 }
+
 
 /* ===== Hero ===== */
 .hero{ min-height:100vh; display:grid; place-items:center }

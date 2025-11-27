@@ -95,10 +95,13 @@ a{ color:inherit; text-decoration:none }
   position:relative; z-index:2; display:grid; place-items:center;
   min-height:clamp(360px, 48vh, 620px);
 }
-.stage#about .stage__title{
-  max-width:60ch; margin:0 auto; text-align:center;
-  font-weight:300; letter-spacing:.012em; line-height:1.32;
-  font-size:clamp(18px, 1rem + .8vw, 26px);
+.stage#about{
+  position:relative;
+  z-index:2;
+  display:grid;
+  place-items:center;
+  /* высота по экрану минус высота шапки (76px) */
+  min-height:calc(100vh - 76px);
 }
 
 /* ===== Work (убираем любые декоративные градиенты) ===== */

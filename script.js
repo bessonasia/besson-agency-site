@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leadForm.reset();
         qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
 
-        statusEl.textContent = 'Заявка отправлена. Мы свяжемся с вами в рабочее время.';
+        statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
         statusEl.classList.add('form__status--success');
       } catch (err) {
         statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';

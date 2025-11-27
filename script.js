@@ -14,7 +14,10 @@ const lerp = (a,b,t)=>a+(b-a)*t;
   window.addEventListener('mousemove',apply,{passive:true});
   window.addEventListener('mouseenter',apply,{passive:true});
   window.addEventListener('focus',apply,{passive:true});
-  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['style','class']});
+  new MutationObserver(apply).observe(document.documentElement,{
+    attributes:true,
+    attributeFilter:['style','class']
+  });
 })();
 
 /* DOM ready */
@@ -23,14 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
   /* Year */
-  const yearEl = qs('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
+  const yearEl = qs('#year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ========== Logo: build spans ========== */
   const logoText = qs('#logoText');
   let logoSpans = [];
   if (logoText){
     const text = (logoText.getAttribute('aria-label') || logoText.textContent || 'Besson Agency').trim();
-    logoText.innerHTML = text.split('').map(ch => ch===' ' ? '<span data-space="true">&nbsp;</span>' : `<span>${ch}</span>`).join('');
+    logoText.innerHTML = text.split('').map(
+      ch => ch===' ' ? '<span data-space="true">&nbsp;</span>' : `<span>${ch}</span>`
+    ).join('');
     logoSpans = qsa('span', logoText);
   }
 
@@ -46,22 +52,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Mobile: Netflix-like spread on scroll */
   if (logoSpans.length && isMobile){
-    const letters = logoSpans.filter(s=>s.dataset.space!=='true');
-    const MAX_SCROLL_BASE = 600;               // можно увеличить/уменьшить «ход»
+    const MAX_SCROLL_BASE = 600;
     let   maxScroll = Math.max(innerHeight*1.1, MAX_SCROLL_BASE);
     let   breathing=false, ticking=false;
 
     const recalc = ()=>{ maxScroll=Math.max(innerHeight*1.1, MAX_SCROLL_BASE); };
     const applySpread = ()=>{
       const s = Math.min(scrollY, maxScroll);
-      const p = maxScroll===0?0:s/maxScroll;   // 0..1
-      const scale  = 1 + p*1.6;                // масштаб букв
-      const spread = p*120;                    // разлет по X
+      const p = maxScroll===0?0:s/maxScroll;
+      const scale  = 1 + p*1.6;
+      const spread = p*120;
       const glow   = 8 + p*32;
 
       let i=0;
       logoSpans.forEach(span=>{
-        if (span.dataset.space==='true'){ span.style.transform='translateX(0) scale(1)'; span.style.textShadow='none'; return; }
+        if (span.dataset.space==='true'){
+          span.style.transform='translateX(0) scale(1)';
+          span.style.textShadow='none';
+          return;
+        }
         const dir=(i++%2===0)?-1:1;
         span.style.transform=`translateX(${dir*spread}px) scale(${scale})`;
         span.style.textShadow=`0 0 ${glow}px rgba(255,255,255,${0.15+p*0.35})`;
@@ -72,7 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const onScroll=()=>{
-      if (!ticking){ requestAnimationFrame(()=>{ applySpread(); ticking=false; }); ticking=true; }
+      if (!ticking){
+        requestAnimationFrame(()=>{ applySpread(); ticking=false; });
+        ticking=true;
+      }
     };
 
     recalc(); applySpread();
@@ -84,7 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const swapEl = qs('#swap');
   if (swapEl){
     const words = ['Event.','Creative.','BTL.','POSM.'];
-    let i=0; setInterval(()=>{ i=(i+1)%words.length; swapEl.textContent=words[i]; }, 2500);
+    let i=0;
+    setInterval(()=>{
+      i=(i+1)%words.length;
+      swapEl.textContent=words[i];
+    }, 2500);
   }
 
   /* Mobile menu */
@@ -113,18 +129,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
 
-  /* Premium cursor (desktop) */
+  /* Premium cursor (desktop) — без изменений по поведению */
   const dot = qs('#cursorDot');
   const ring = qs('#cursorRing');
   if (isFinePointer && dot && ring){
     let dx=innerWidth/2, dy=innerHeight/2, rx=dx, ry=dy, tx=dx, ty=dy;
+    const DOT_LERP  = 0.35;
+    const RING_LERP = 0.12;
 
-    // === Настройка «прилипания» курсора ===
-    const DOT_LERP  = 0.35;   // точка (быстрее)
-    const RING_LERP = 0.12;   // кольцо (медленнее/«летает дольше»)
-
-    const move = e => { tx=e.clientX; ty=e.clientY; dot.style.opacity='1'; ring.style.opacity='1'; };
-    addEventListener('mousemove', move, {passive:true});
+    const move = e => {
+      tx=e.clientX; ty=e.clientY;
+      dot.style.opacity='1';
+      ring.style.opacity='1';
+    };
+    addEventListener('mousemove',move,{passive:true});
 
     const loop=()=>{
       dx=lerp(dx,tx,DOT_LERP); dy=lerp(dy,ty,DOT_LERP);
@@ -132,9 +150,9 @@ document.addEventListener('DOMContentLoaded', () => {
       dot.style.transform=`translate(${dx}px,${dy}px)`;
       ring.style.transform=`translate(${rx}px,${ry}px)`;
       requestAnimationFrame(loop);
-    }; loop();
+    };
+    loop();
 
-    // hover-индикатор
     const hoverSel = 'a,button,[role="button"],.link,.tile,.btn,input,textarea,select,label,summary';
     document.addEventListener('pointerover', e=>{
       if (e.pointerType!=='mouse') return;
@@ -145,11 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) ring.classList.remove('cursor--hover');
     });
 
-    // скрывать при уходе за окно
     addEventListener('mouseout', e=>{ if (!e.relatedTarget){ dot.style.opacity='0'; ring.style.opacity='0'; }});
     addEventListener('mouseenter', ()=>{ dot.style.opacity='1'; ring.style.opacity='1'; });
 
-    // кнопка — свечения
     qsa('.btn').forEach(btn=>{
       const glow = btn.querySelector('.glow');
       if (!glow) return;
@@ -161,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-   /* Float labels for inputs */
+  /* Float labels for inputs */
   qsa('.field').forEach(f=>{
     const input = f.querySelector('.input');
     if (!input) return;
@@ -171,4 +187,52 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-    
+  /* Lead form submit (Formsubmit + без редиректа) */
+  const leadForm = qs('#leadForm');
+  const statusEl = qs('#formStatus');
+
+  if (leadForm && statusEl) {
+    const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
+
+    leadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!leadForm.checkValidity()) {
+        statusEl.textContent = 'Проверьте имя и телефон.';
+        statusEl.classList.remove('form__status--success');
+        statusEl.classList.add('form__status--error');
+        return;
+      }
+
+      const formData = new FormData(leadForm);
+      const submitBtn = leadForm.querySelector('button[type="submit"]');
+
+      statusEl.textContent = 'Отправляем...';
+      statusEl.classList.remove('form__status--success', 'form__status--error');
+
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!res.ok) throw new Error('Bad response');
+
+        leadForm.reset();
+        qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
+
+        statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
+        statusEl.classList.add('form__status--success');
+      } catch (err) {
+        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
+        statusEl.classList.add('form__status--error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+});
+

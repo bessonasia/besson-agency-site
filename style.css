@@ -1,8 +1,8 @@
 /* =========================================================
    Reset & base
 ========================================================= */
-*{ box-sizing:border-box; margin:0 }
-html,body{ height:100%; scroll-behavior:smooth }
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;scroll-behavior:smooth}
 html{
   -webkit-text-size-adjust:100%;
   text-size-adjust:100%;
@@ -23,10 +23,10 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
-a{ color:inherit; text-decoration:none }
+a{color:inherit;text-decoration:none}
 
 /* =========================================================
-   Nav
+   Nav + Moon trigger
 ========================================================= */
 .nav{
   position:fixed;
@@ -37,14 +37,14 @@ a{ color:inherit; text-decoration:none }
   justify-content:space-between;
   padding:0 var(--pad);
   z-index:1000;
-  background:linear-gradient(180deg, rgba(10,10,10,.85), rgba(10,10,10,0));
+  background:linear-gradient(180deg,rgba(10,10,10,.85),rgba(10,10,10,0));
   backdrop-filter:saturate(140%) blur(6px);
 }
 .brand__mark{
   font-weight:800;
   letter-spacing:.18em;
   text-transform:uppercase;
-  transition:text-shadow .3s, transform .3s;
+  transition:text-shadow .3s,transform .3s;
 }
 .brand__mark:hover{
   text-shadow:0 0 8px rgba(255,255,255,.4);
@@ -72,14 +72,14 @@ a{ color:inherit; text-decoration:none }
   opacity:.25;
   transform:scaleX(0);
   transform-origin:left;
-  transition:transform .35s, opacity .35s;
+  transition:transform .35s,opacity .35s;
 }
 .link:hover::after{
   transform:scaleX(1);
   opacity:.5;
 }
 
-/* Лунный триггер (база) */
+/* Лунный триггер (кнопка вместо бургера на мобиле) */
 .moon-trigger{
   background:none;
   border:0;
@@ -93,7 +93,7 @@ a{ color:inherit; text-decoration:none }
   justify-content:center;
 }
 
-/* сам орб */
+/* Контейнер-орбита */
 .moon-orb{
   position:relative;
   width:48px;
@@ -104,30 +104,37 @@ a{ color:inherit; text-decoration:none }
   box-shadow:0 0 18px rgba(255,255,255,.18);
 }
 
-/* текстура луны */
+/* Подстраховка: если вдруг .moon-orb не применится, всё равно жмём картинку */
+.moon-trigger img{
+  display:block;
+  max-width:48px;
+  max-height:48px;
+}
+
+/* Текстура луны внутри орбиты */
 .moon-orb img{
   position:absolute;
   inset:0;
   width:140%;
   height:140%;
   object-fit:cover;
-  transform:translate(-12%, -4%);
+  transform:translate(-12%,-4%);
   filter:contrast(1.1) brightness(1.1);
 }
 
-/* лёгкий свет/ореол */
+/* Ореол / свечение */
 .moon-orb::before{
   content:"";
   position:absolute;
   inset:-30%;
   border-radius:50%;
-  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.55), transparent 55%);
+  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.55),transparent 55%);
   opacity:.65;
   mix-blend-mode:screen;
   animation:moonGlow 4.8s ease-in-out infinite alternate;
 }
 
-/* чёрный диск - "затмение" */
+/* Чёрный диск затмения */
 .moon-shadow{
   position:absolute;
   inset:0;
@@ -138,11 +145,12 @@ a{ color:inherit; text-decoration:none }
   transition:transform .8s cubic-bezier(.19,1,.22,1);
 }
 
-/* при активном меню тень заезжает на луну */
+/* Когда меню открыто — диск заезжает на луну */
 .moon-trigger.active .moon-shadow{
   transform:translateX(-5%);
 }
 
+/* Анимация свечения луны */
 @keyframes moonGlow{
   0%{
     opacity:.3;
@@ -154,16 +162,17 @@ a{ color:inherit; text-decoration:none }
   }
 }
 
-
+/* По умолчанию: десктоп — прячем луну и мобильное меню */
 .moon-trigger,
-.mobile-menu{ display:none }
- 
+.mobile-menu{
+  display:none;
+}
 
 /* Mobile nav */
 @media (max-width:768px){
   /* на мобиле скрываем десктопные ссылки и показываем луну */
-  .nav__group{ display:none }
-  .moon-trigger{ display:flex }
+  .nav__group{display:none}
+  .moon-trigger{display:flex}
 
   .mobile-menu{
     display:flex;
@@ -216,8 +225,6 @@ a{ color:inherit; text-decoration:none }
   }
 }
 
-}
-
 /* =========================================================
    Hero
 ========================================================= */
@@ -237,12 +244,12 @@ a{ color:inherit; text-decoration:none }
   text-transform:uppercase;
   margin-bottom:16px;
 }
-#logoText{ color:#fff }
+#logoText{color:#fff}
 #logoText span{
   display:inline-block;
-  transition:transform .25s ease-out, text-shadow .3s ease-out;
+  transition:transform .25s ease-out,text-shadow .3s ease-out;
 }
-#logoText span[data-space="true"]{ pointer-events:none }
+#logoText span[data-space="true"]{pointer-events:none}
 
 .hero__slogan{
   margin-top:24px;
@@ -260,7 +267,7 @@ a{ color:inherit; text-decoration:none }
 }
 .hero__slogan span{
   display:inline-block;
-  transition:color .4s, text-shadow .4s;
+  transition:color .4s,text-shadow .4s;
   animation:subtleGlow 6s ease-in-out infinite alternate;
 }
 .hero__slogan span:hover{
@@ -269,7 +276,6 @@ a{ color:inherit; text-decoration:none }
               0 0 20px rgba(255,255,255,.25),
               0 0 30px rgba(255,255,255,.15);
 }
-
 @keyframes heroSloganIntro{
   to{
     opacity:1;
@@ -277,8 +283,8 @@ a{ color:inherit; text-decoration:none }
   }
 }
 @keyframes subtleGlow{
-  0%,100%{ text-shadow:none }
-  50%{ text-shadow:0 0 6px rgba(255,255,255,.15) }
+  0%,100%{text-shadow:none}
+  50%{text-shadow:0 0 6px rgba(255,255,255,.15)}
 }
 
 /* =========================================================
@@ -340,10 +346,10 @@ a{ color:inherit; text-decoration:none }
   overflow:hidden;
 }
 @media (max-width:1100px){
-  .tile{ grid-column:span 6 }
+  .tile{grid-column:span 6}
 }
 @media (max-width:680px){
-  .tile{ grid-column:1/-1 }
+  .tile{grid-column:1/-1}
 }
 .tile img{
   width:100%;
@@ -355,14 +361,14 @@ a{ color:inherit; text-decoration:none }
   aspect-ratio:16/9;
   object-fit:cover;
 }
-.tile:hover img{ transform:scale(1.06) }
+.tile:hover img{transform:scale(1.06)}
 .tile__caption{
   position:absolute;
   inset:0;
   display:grid;
   place-items:center;
   opacity:0;
-  transition:opacity .35s, backdrop-filter .35s;
+  transition:opacity .35s,backdrop-filter .35s;
   background:rgba(0,0,0,.45);
   color:#fff;
   text-align:center;
@@ -408,7 +414,7 @@ a{ color:inherit; text-decoration:none }
   max-width:460px;
   width:100%;
 }
-.row{ display:block }
+.row{display:block}
 .field{
   position:relative;
   margin-bottom:18px;
@@ -420,7 +426,7 @@ a{ color:inherit; text-decoration:none }
   border:1px solid #1b1b1b;
   background:#0f0f0f;
   color:#fff;
-  transition:border-color .25s, box-shadow .25s;
+  transition:border-color .25s,box-shadow .25s;
 }
 .input:focus{
   border-color:#fff;
@@ -436,7 +442,7 @@ a{ color:inherit; text-decoration:none }
   color:#a9a9a9;
   background:rgba(255,255,255,.02);
   transform-origin:left top;
-  transition:transform .2s, opacity .2s;
+  transition:transform .2s,opacity .2s;
 }
 .field.filled .label,
 .input:focus + .label{
@@ -444,7 +450,6 @@ a{ color:inherit; text-decoration:none }
   opacity:.9;
   color:#fff;
 }
-
 .form__status{
   min-height:20px;
   font-size:.9rem;
@@ -452,8 +457,8 @@ a{ color:inherit; text-decoration:none }
   margin-top:18px;
   transition:opacity .3s;
 }
-.form__status--success{ color:#9be7c4 }
-.form__status--error{  color:#ff8a80 }
+.form__status--success{color:#9be7c4}
+.form__status--error{color:#ff8a80}
 
 .actions{
   display:flex;
@@ -473,7 +478,7 @@ a{ color:inherit; text-decoration:none }
   font-weight:700;
   text-transform:uppercase;
   cursor:pointer;
-  transition:transform .25s, box-shadow .25s;
+  transition:transform .25s,box-shadow .25s;
   isolation:isolate;
 }
 .btn:hover{
@@ -484,12 +489,12 @@ a{ color:inherit; text-decoration:none }
   position:absolute;
   inset:-2px;
   border-radius:inherit;
-  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%), rgba(255,255,255,.35), transparent 60%);
+  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);
   opacity:0;
   transition:opacity .25s;
   filter:blur(14px);
 }
-.btn:hover .glow{ opacity:1 }
+.btn:hover .glow{opacity:1}
 
 .icon-btn{
   width:44px;
@@ -501,7 +506,7 @@ a{ color:inherit; text-decoration:none }
   justify-content:center;
   background:#0f0f0f;
   color:#fff;
-  transition:background .25s, border-color .25s, transform .2s;
+  transition:background .25s,border-color .25s,transform .2s;
 }
 .icon-btn:hover{
   background:#fff;
@@ -545,7 +550,7 @@ footer{
    Premium cursor (desktop only)
 ========================================================= */
 @media (hover:hover) and (pointer:fine){
-  html, body{ cursor:none !important }
+  html,body{cursor:none !important}
   *,
   a,
   button,

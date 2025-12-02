@@ -14,7 +14,10 @@ const lerp = (a,b,t)=>a+(b-a)*t;
   window.addEventListener('mousemove',apply,{passive:true});
   window.addEventListener('mouseenter',apply,{passive:true});
   window.addEventListener('focus',apply,{passive:true});
-  new MutationObserver(apply).observe(document.documentElement,{attributes:true,attributeFilter:['style','class']});
+  new MutationObserver(apply).observe(document.documentElement,{
+    attributes:true,
+    attributeFilter:['style','class']
+  });
 })();
 
 /* DOM ready */
@@ -23,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
   /* Year */
-  const yearEl = qs('#year'); 
+  const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   /* ========== Logo: build spans ========== */
@@ -31,12 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let logoSpans = [];
   if (logoText){
     const text = (logoText.getAttribute('aria-label') || logoText.textContent || 'Besson Agency').trim();
-    logoText.innerHTML = text
-      .split('')
-      .map(ch => ch === ' '
+    logoText.innerHTML = text.split('').map(
+      ch => ch===' '
         ? '<span data-space="true">&nbsp;</span>'
-        : `<span>${ch}</span>`
-      ).join('');
+        : <span>${ch}</span>
+    ).join('');
     logoSpans = qsa('span', logoText);
   }
 
@@ -56,17 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Mobile: Netflix-like spread on scroll */
   if (logoSpans.length && isMobile){
-    const letters = logoSpans.filter(s=>s.dataset.space!=='true');
-    const MAX_SCROLL_BASE = 600;               // можно увеличить/уменьшить «ход»
+    const MAX_SCROLL_BASE = 600;
     let   maxScroll = Math.max(innerHeight*1.1, MAX_SCROLL_BASE);
     let   breathing=false, ticking=false;
 
     const recalc = ()=>{ maxScroll=Math.max(innerHeight*1.1, MAX_SCROLL_BASE); };
     const applySpread = ()=>{
       const s = Math.min(scrollY, maxScroll);
-      const p = maxScroll===0?0:s/maxScroll;   // 0..1
-      const scale  = 1 + p*1.6;                // масштаб букв
-      const spread = p*120;                    // разлет по X
+      const p = maxScroll===0?0:s/maxScroll;
+      const scale  = 1 + p*1.6;
+      const spread = p*120;
       const glow   = 8 + p*32;
 
       let i=0;
@@ -77,8 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         const dir=(i++%2===0)?-1:1;
-        span.style.transform=`translateX(${dir*spread}px) scale(${scale})`;
-        span.style.textShadow=`0 0 ${glow}px rgba(255,255,255,${0.15+p*0.35})`;
+        span.style.transform=translateX(${dir*spread}px) scale(${scale});
+        span.style.textShadow=0 0 ${glow}px rgba(255,255,255,${0.15+p*0.35});
       });
 
       if (p>0.95 && !breathing){
@@ -100,11 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    recalc(); 
+    recalc();
     applySpread();
     addEventListener('scroll', onScroll, {passive:true});
     addEventListener('resize', ()=>{
-      recalc(); 
+      recalc();
       applySpread();
     }, {passive:true});
   }
@@ -146,36 +147,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
 
-  /* Premium cursor (desktop) */
+  /* Premium cursor (desktop) — без изменений по поведению */
   const dot = qs('#cursorDot');
   const ring = qs('#cursorRing');
   if (isFinePointer && dot && ring){
     let dx=innerWidth/2, dy=innerHeight/2, rx=dx, ry=dy, tx=dx, ty=dy;
-
-    // === Настройка «прилипания» курсора ===
-    const DOT_LERP  = 0.35;   // точка (быстрее)
-    const RING_LERP = 0.12;   // кольцо (медленнее/«летает дольше»)
+    const DOT_LERP  = 0.35;
+    const RING_LERP = 0.12;
 
     const move = e => {
-      tx=e.clientX; 
-      ty=e.clientY; 
-      dot.style.opacity='1'; 
+      tx=e.clientX;
+      ty=e.clientY;
+      dot.style.opacity='1';
       ring.style.opacity='1';
     };
-    addEventListener('mousemove', move, {passive:true});
+    addEventListener('mousemove',move,{passive:true});
 
     const loop=()=>{
-      dx=lerp(dx,tx,DOT_LERP); 
+      dx=lerp(dx,tx,DOT_LERP);
       dy=lerp(dy,ty,DOT_LERP);
-      rx=lerp(rx,tx,RING_LERP); 
+      rx=lerp(rx,tx,RING_LERP);
       ry=lerp(ry,ty,RING_LERP);
-      dot.style.transform=`translate(${dx}px,${dy}px)`;
-      ring.style.transform=`translate(${rx}px,${ry}px)`;
+      dot.style.transform=translate(${dx}px,${dy}px);
+      ring.style.transform=translate(${rx}px,${ry}px);
       requestAnimationFrame(loop);
     };
     loop();
 
-    // hover-индикатор
     const hoverSel = 'a,button,[role="button"],.link,.tile,.btn,input,textarea,select,label,summary';
     document.addEventListener('pointerover', e=>{
       if (e.pointerType!=='mouse') return;
@@ -183,24 +181,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.addEventListener('pointerout', e=>{
       if (e.pointerType!=='mouse') return;
-      if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) {
-        ring.classList.remove('cursor--hover');
-      }
+      if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) ring.classList.remove('cursor--hover');
     });
 
-    // скрывать при уходе за окно
     addEventListener('mouseout', e=>{
       if (!e.relatedTarget){
-        dot.style.opacity='0'; 
+        dot.style.opacity='0';
         ring.style.opacity='0';
       }
     });
     addEventListener('mouseenter', ()=>{
-      dot.style.opacity='1'; 
+      dot.style.opacity='1';
       ring.style.opacity='1';
     });
 
-    // кнопка — свечения
     qsa('.btn').forEach(btn=>{
       const glow = btn.querySelector('.glow');
       if (!glow) return;
@@ -217,107 +211,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = f.querySelector('.input');
     if (!input) return;
     const toggle=()=>f.classList.toggle('filled', !!input.value);
-    input.addEventListener('input',toggle); 
-    input.addEventListener('blur',toggle); 
+    input.addEventListener('input',toggle);
+    input.addEventListener('blur',toggle);
     toggle();
   });
 
-  /* ========== Lead form: submit handler ========== */
-  const form   = qs('#leadForm');
-  const status = qs('#formStatus');
+  /* Lead form submit (Formsubmit + без редиректа) */
+  const leadForm = qs('#leadForm');
+  const statusEl = qs('#formStatus');
 
-  if (form && status) {
-    const nameInput  = form.elements['name'];
-    const phoneInput = form.elements['phone'];
-    const honeyInput = form.querySelector('input[name="_honey"]');
-    const submitBtn  = form.querySelector('button[type="submit"]');
+  if (leadForm && statusEl) {
+    const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
 
-    // аккуратный сеттер статуса
-    const setStatus = (msg, type) => {
-      status.textContent = msg || '';
-      status.classList.remove('form__status--success','form__status--error');
-      if (type) status.classList.add(type);
-    };
-
-    form.addEventListener('submit', async (e) => {
+    leadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // honeypot: если бот заполнил скрытое поле — тихо выходим
-      if (honeyInput && honeyInput.value.trim() !== '') {
+      if (!leadForm.checkValidity()) {
+        statusEl.textContent = 'Проверьте имя и телефон.';
+        statusEl.classList.remove('form__status--success');
+        statusEl.classList.add('form__status--error');
         return;
       }
 
-      const name  = nameInput ? nameInput.value.trim()  : '';
-      const phone = phoneInput ? phoneInput.value.trim() : '';
+      const formData = new FormData(leadForm);
+      const submitBtn = leadForm.querySelector('button[type="submit"]');
 
-      // простая проверка заполненности
-      if (!name || !phone) {
-        setStatus('Пожалуйста, укажите имя и номер телефона.','form__status--error');
-        return;
-      }
+      statusEl.textContent = 'Отправляем...';
+      statusEl.classList.remove('form__status--success', 'form__status--error');
 
-      // базовая проверка формата телефона
-      const phoneOk = /^[\d\s+\-()]{6,}$/.test(phone);
-      if (!phoneOk) {
-        setStatus('Проверьте формат номера телефона.','form__status--error');
-        return;
-      }
-
-      setStatus('Отправляем заявку...', null);
       if (submitBtn) submitBtn.disabled = true;
 
-      // можно использовать для визуальных состояний в CSS, если захочешь
-      form.classList.add('form--submitting');
-
       try {
-        const payload = {
-          name,
-          phone,
-          source: 'besson.asia',
-          ts: new Date().toISOString()
-        };
-
-        // TODO: сюда вставляем реальный endpoint (Telegram, CRM, почтовый сервис и т.п.)
-        const ENDPOINT = ''; // пример: 'https://your-api.example.com/lead'
-
-        if (ENDPOINT) {
-          const res = await fetch(ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/json' },
-            body: JSON.stringify(payload)
-          });
-          if (!res.ok) throw new Error('Network error: ' + res.status);
-        } else {
-          // временно — просто логируем, но для пользователя форма «отправлена»
-          console.log('[LeadForm] payload:', payload);
-        }
-
-        setStatus('Заявка отправлена. Мы свяжемся с вами в рабочие часы.','form__status--success');
-
-        // чистим поля и состояния «filled» для плавающих лейблов
-        form.reset();
-        qsa('.field', form).forEach(f => f.classList.remove('filled'));
-
-        // GTM / dataLayer — чтобы можно было строить аналитику
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event:      'leadFormSubmit',
-          formName:   'bessonLeadForm',
-          formStatus: 'success'
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
         });
 
+        if (!res.ok) throw new Error('Bad response');
+
+        leadForm.reset();
+        qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
+
+        statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
+        statusEl.classList.add('form__status--success');
       } catch (err) {
-        console.error('[LeadForm] error:', err);
-        setStatus('Не удалось отправить заявку. Попробуйте ещё раз позже.','form__status--error');
-
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
-          event:      'leadFormSubmit',
-          formName:   'bessonLeadForm',
-          formStatus: 'error'
-        });
+        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
+        statusEl.classList.add('form__status--error');
       } finally {
-        form.classList.remove('form--submitting');
         if (submitBtn) submitBtn.disabled = false;
       }
     });

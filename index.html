@@ -10,26 +10,38 @@
 <body>
   <!-- NAV -->
   <header class="nav">
-    <a href="#top" class="brand__mark">BESSON</a>
+  <a href="#top" class="brand__mark">BESSON</a>
 
-    <button class="menu-toggle" aria-label="Открыть меню" aria-controls="mobileMenu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+  <!-- Десктопное меню как было -->
+  <nav class="nav__group">
+    <a class="link" href="#about">Об агентстве</a>
+    <a class="link" href="#work">Проекты</a>
+    <a class="link" href="#contact">Контакты</a>
+  </nav>
 
-    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
-      <ul>
-        <li><a href="#about">Об агентстве</a></li>
-        <li><a href="#work">Проекты</a></li>
-        <li><a href="#contact">Контакты</a></li>
-      </ul>
-    </nav>
+  <!-- Лунный триггер (mobile) -->
+  <button
+    class="moon-trigger"
+    aria-label="Открыть меню"
+    aria-controls="mobileMenu"
+    aria-expanded="false"
+  >
+    <span class="moon-orb">
+      <img src="assets/moon-besson.png" alt="" loading="lazy" aria-hidden="true">
+      <span class="moon-shadow"></span>
+    </span>
+  </button>
 
-    <nav class="nav__group">
-      <a class="link" href="#about">Об агентстве</a>
-      <a class="link" href="#work">Проекты</a>
-      <a class="link" href="#contact">Контакты</a>
-    </nav>
-  </header>
+  <!-- Мобильное меню (то же самое, только сдвинули вниз) -->
+  <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <ul>
+      <li><a href="#about">Об агентстве</a></li>
+      <li><a href="#work">Проекты</a></li>
+      <li><a href="#contact">Контакты</a></li>
+    </ul>
+  </nav>
+</header>
+
 
   <main>
     <!-- HERO -->

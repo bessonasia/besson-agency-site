@@ -26,7 +26,7 @@ body{
 a{color:inherit;text-decoration:none}
 
 /* =========================================================
-   Nav + Moon trigger
+   Nav + mobile moon
 ========================================================= */
 .nav{
   position:fixed;
@@ -37,19 +37,20 @@ a{color:inherit;text-decoration:none}
   justify-content:space-between;
   padding:0 var(--pad);
   z-index:1000;
-  background:linear-gradient(180deg,rgba(10,10,10,.85),rgba(10,10,10,0));
+  background:linear-gradient(180deg, rgba(10,10,10,.85), rgba(10,10,10,0));
   backdrop-filter:saturate(140%) blur(6px);
 }
 .brand__mark{
   font-weight:800;
   letter-spacing:.18em;
   text-transform:uppercase;
-  transition:text-shadow .3s,transform .3s;
+  transition:text-shadow .3s, transform .3s;
 }
 .brand__mark:hover{
   text-shadow:0 0 8px rgba(255,255,255,.4);
   transform:translateY(-1px);
 }
+
 .nav__group{
   display:flex;
   align-items:center;
@@ -72,28 +73,27 @@ a{color:inherit;text-decoration:none}
   opacity:.25;
   transform:scaleX(0);
   transform-origin:left;
-  transition:transform .35s,opacity .35s;
+  transition:transform .35s, opacity .35s;
 }
 .link:hover::after{
   transform:scaleX(1);
   opacity:.5;
 }
 
-/* Лунный триггер (кнопка вместо бургера на мобиле) */
+/* Луна-триггер (по умолчанию скрыта, показываем только на мобиле) */
 .moon-trigger{
   background:none;
   border:0;
   padding:0;
   margin-left:auto;
-  width:54px;
-  height:54px;
+  width:56px;
+  height:56px;
   border-radius:50%;
-  display:flex;
+  display:none;              /* включим в @media */
   align-items:center;
   justify-content:center;
+  cursor:pointer;
 }
-
-/* Контейнер-орбита */
 .moon-orb{
   position:relative;
   width:48px;
@@ -103,127 +103,112 @@ a{color:inherit;text-decoration:none}
   background:#000;
   box-shadow:0 0 18px rgba(255,255,255,.18);
 }
-
-/* Подстраховка: если вдруг .moon-orb не применится, всё равно жмём картинку */
-.moon-trigger img{
-  display:block;
-  max-width:48px;
-  max-height:48px;
-}
-
-/* Текстура луны внутри орбиты */
 .moon-orb img{
   position:absolute;
   inset:0;
   width:140%;
   height:140%;
   object-fit:cover;
-  transform:translate(-12%,-4%);
-  filter:contrast(1.1) brightness(1.1);
+  transform:translate(-12%, -4%);
+  filter:contrast(1.05) brightness(1.05);
 }
 
-/* Ореол / свечение */
+/* Свечение */
 .moon-orb::before{
   content:"";
   position:absolute;
-  inset:-30%;
+  inset:-35%;
   border-radius:50%;
-  background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.55),transparent 55%);
+  background:radial-gradient(circle at 30% 20%, rgba(255,255,255,.55), transparent 55%);
   opacity:.65;
   mix-blend-mode:screen;
   animation:moonGlow 4.8s ease-in-out infinite alternate;
 }
 
-/* Чёрный диск затмения */
+/* Чёрный диск затмения
+   — по умолчанию СИЛЬНО закрывает луну (молодой месяц)
+   — при .active уходит вправо и открывает полную луну
+*/
 .moon-shadow{
   position:absolute;
   inset:0;
   border-radius:50%;
   background:#000;
-  transform:translateX(110%);
-  box-shadow:0 0 20px rgba(0,0,0,.85);
-  transition:transform .8s cubic-bezier(.19,1,.22,1);
+  box-shadow:0 0 22px rgba(0,0,0,.9);
+  transform:translateX(-70%); /* закрыто: серп справа */
+  transition:transform .9s cubic-bezier(.19,1,.22,1);
 }
-
-/* Когда меню открыто — диск заезжает на луну */
 .moon-trigger.active .moon-shadow{
-  transform:translateX(-5%);
+  transform:translateX(130%); /* открыто: диск ушёл -> полная луна */
 }
 
-/* Анимация свечения луны */
 @keyframes moonGlow{
   0%{
-    opacity:.3;
+    opacity:.35;
     transform:translate3d(0,0,0) scale(1);
   }
   100%{
-    opacity:.8;
+    opacity:.85;
     transform:translate3d(-4px,2px,0) scale(1.04);
   }
 }
 
-/* По умолчанию: десктоп — прячем луну и мобильное меню */
-.moon-trigger,
-.mobile-menu{
-  display:none;
-}
+/* Скрываем мобильное меню по умолчанию на десктопе */
+.mobile-menu{ display:none; }
 
-/* Mobile nav */
+/* =========================================================
+   Mobile nav (<= 768px)
+========================================================= */
 @media (max-width:768px){
-  /* на мобиле скрываем десктопные ссылки и показываем луну */
-  .nav__group{display:none}
-  .moon-trigger{display:flex}
+  .nav__group{
+    display:none;           /* убираем десктопные ссылки */
+  }
+
+  .moon-trigger{
+    display:flex;
+    z-index:1101;           /* поверх затемнения */
+  }
 
   .mobile-menu{
     display:flex;
     position:fixed;
     inset:0;
-    background:rgba(10,10,10,.85);
-    backdrop-filter:blur(12px);
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
+    padding:0 var(--pad);
+    background:rgba(10,10,10,.9);
+    backdrop-filter:blur(14px);
+    align-items:flex-start;
+    justify-content:flex-end;
     opacity:0;
     pointer-events:none;
-    transition:opacity .6s cubic-bezier(.19,1,.22,1);
-    z-index:1000;
+    transition:opacity .45s cubic-bezier(.19,1,.22,1);
+    z-index:1100;
   }
   .mobile-menu.active{
     opacity:1;
     pointer-events:auto;
   }
+
+  /* Блок пунктов рядом с луной */
   .mobile-menu ul{
     list-style:none;
-    text-align:center;
+    margin:0;
+    padding:0;
+    margin-top:92px;      /* чуть ниже строки навигации */
+    text-align:right;
   }
   .mobile-menu li{
-    margin:18px 0;
+    margin:6px 0;
   }
+
   .mobile-menu a{
+    display:inline-block;
     color:#fff;
-    font-size:1.4rem;
-    letter-spacing:.08em;
+    font-size:.95rem;
+    letter-spacing:.16em;
     text-transform:uppercase;
     font-weight:500;
-    position:relative;
-  }
-  .mobile-menu a::after{
-    content:"";
-    position:absolute;
-    left:0;
-    bottom:-4px;
-    width:100%;
-    height:1px;
-    background:#fff;
-    transform:scaleX(0);
-    transform-origin:right;
-    transition:transform .3s;
-  }
-  .mobile-menu a:hover::after{
-    transform:scaleX(1);
-    transform-origin:left;
-  }
-}
+    white-space:now
+
 
 /* =========================================================
    Hero

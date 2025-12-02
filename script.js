@@ -147,37 +147,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ------------------------------------------------------
-     4) Mobile menu (бургер)
-        — этот блок будем позже менять на "луну"
-  ------------------------------------------------------ */
-  const burger     = qs('.menu-toggle');
-  const mobileMenu = qs('#mobileMenu');
+  /* ===== Mobile menu (луна) ===== */
+const burger     = qs('.moon-trigger');
+const mobileMenu = qs('#mobileMenu');
 
-  if (burger && mobileMenu) {
-    const lock = v => {
-      document.documentElement.style.overflow = v ? 'hidden' : '';
-      document.body.style.overflow           = v ? 'hidden' : '';
-      document.body.style.touchAction        = v ? 'none'   : '';
-    };
+if (burger && mobileMenu) {
+  const lock = (v) => {
+    document.documentElement.style.overflow = v ? 'hidden' : '';
+    document.body.style.overflow           = v ? 'hidden' : '';
+    document.body.style.touchAction        = v ? 'none'   : '';
+  };
 
-    burger.addEventListener('click', () => {
-      const active = burger.classList.toggle('active');
-      mobileMenu.classList.toggle('active', active);
-      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
-      burger.setAttribute('aria-expanded', active ? 'true' : 'false');
-      lock(active);
-    });
+  burger.addEventListener('click', () => {
+    const active = burger.classList.toggle('active');
+    mobileMenu.classList.toggle('active', active);
+    mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
+    burger.setAttribute('aria-expanded', active ? 'true' : 'false');
+    lock(active);
+  });
 
-    qsa('a', mobileMenu).forEach(a => a.addEventListener('click', () => {
+  qsa('a', mobileMenu).forEach((a) =>
+    a.addEventListener('click', () => {
       if (!burger.classList.contains('active')) return;
       burger.classList.remove('active');
       mobileMenu.classList.remove('active');
       mobileMenu.setAttribute('aria-hidden', 'true');
       burger.setAttribute('aria-expanded', 'false');
       lock(false);
-    }));
-  }
+    })
+  );
+}
+
 
   /* ------------------------------------------------------
      5) Premium cursor (desktop)

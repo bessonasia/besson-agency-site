@@ -1,9 +1,14 @@
-/* ========== helpers ========== */
+/* =========================================================
+   helpers
+========================================================= */
 const qs  = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const lerp = (a, b, t) => a + (b - a) * t;
 
-/* ensure system cursor never shows on desktop (Safari-safe) */
+/* =========================================================
+   enforceNoCursor — отключаем системный курсор на десктопе
+   (независимый модуль, не трогаем его при доработках меню)
+========================================================= */
 (function enforceNoCursor() {
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
 
@@ -13,9 +18,9 @@ const lerp = (a, b, t) => a + (b - a) * t;
   };
 
   apply();
-  window.addEventListener('mousemove', apply, { passive: true });
+  window.addEventListener('mousemove', apply,   { passive: true });
   window.addEventListener('mouseenter', apply, { passive: true });
-  window.addEventListener('focus', apply, { passive: true });
+  window.addEventListener('focus',     apply,  { passive: true });
 
   new MutationObserver(apply).observe(document.documentElement, {
     attributes: true,
@@ -23,16 +28,24 @@ const lerp = (a, b, t) => a + (b - a) * t;
   });
 })();
 
-/* DOM ready */
+/* =========================================================
+   DOM ready — всё, что зависит от разметки
+========================================================= */
 document.addEventListener('DOMContentLoaded', () => {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  /* ===== Year в футере ===== */
+  /* ------------------------------------------------------
+     1) Year в футере
+  ------------------------------------------------------ */
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ===== Logo: собираем по буквам ===== */
+  /* ------------------------------------------------------
+     2) Logo: сборка по буквам + поведение
+        - desktop: микро-ховер по буквам
+        - mobile: Netflix-like spread на скролл
+  ------------------------------------------------------ */
   const logoText = qs('#logoText');
   let logoSpans = [];
 
@@ -49,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     logoSpans = qsa('span', logoText);
   }
 
-  /* ===== Desktop: микро-ховер по буквам ===== */
+  // Desktop: микро-ховер
   if (logoSpans.length && !isMobile) {
     logoSpans.forEach(span => {
       if (span.dataset.space === 'true') return;
@@ -63,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Mobile: Netflix-spread на скролл ===== */
+  // Mobile: разъезжающийся логотип на скролл
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
@@ -84,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let i = 0;
       logoSpans.forEach(span => {
         if (span.dataset.space === 'true') {
-          span.style.transform   = 'translateX(0) scale(1)';
-          span.style.textShadow  = 'none';
+          span.style.transform  = 'translateX(0) scale(1)';
+          span.style.textShadow = 'none';
           return;
         }
         const dir = (i++ % 2 === 0) ? -1 : 1;
@@ -121,7 +134,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   }
 
-  /* ===== Interlude word swap ===== */
+  /* ------------------------------------------------------
+     3) Interlude word swap — смена слов Event / Creative / BTL / POSM
+  ------------------------------------------------------ */
   const swapEl = qs('#swap');
   if (swapEl) {
     const words = ['Event.', 'Creative.', 'BTL.', 'POSM.'];
@@ -132,7 +147,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile menu (бургер) ===== */
+  /* ------------------------------------------------------
+     4) Mobile menu (бургер)
+        — этот блок будем позже менять на "луну"
+  ------------------------------------------------------ */
   const burger     = qs('.menu-toggle');
   const mobileMenu = qs('#mobileMenu');
 
@@ -161,7 +179,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
   }
 
-  /* ===== Premium cursor (desktop) ===== */
+  /* ------------------------------------------------------
+     5) Premium cursor (desktop)
+        — живёт отдельно, чтобы не трогать его при работе с меню
+  ------------------------------------------------------ */
   const dot  = qs('#cursorDot');
   const ring = qs('#cursorRing');
 
@@ -238,17 +259,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Float labels для полей формы ===== */
+  /* ------------------------------------------------------
+     6) Float labels — поведение лейблов в полях формы
+  ------------------------------------------------------ */
   qsa('.field').forEach(f => {
     const input = f.querySelector('.input');
     if (!input) return;
     const toggle = () => f.classList.toggle('filled', !!input.value);
     input.addEventListener('input', toggle);
-    input.addEventListener('blur', toggle);
+    input.addEventListener('blur',  toggle);
     toggle();
   });
 
-  /* ===== Lead form submit (Formsubmit + без редиректа) ===== */
+  /* ------------------------------------------------------
+     7) Lead form submit — AJAX на formsubmit.co
+        без редиректа, статус в #formStatus
+  ------------------------------------------------------ */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -295,6 +321,5 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
 });
 

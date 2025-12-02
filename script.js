@@ -132,48 +132,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-    /* ===== Mobile menu — луна ===== */
+  /* ===== Mobile menu / Лунный триггер ===== */
   const moonTrigger = qs('.moon-trigger');
   const mobileMenu  = qs('#mobileMenu');
 
   if (moonTrigger && mobileMenu) {
-    const lock = (v) => {
-      document.documentElement.style.overflow = v ? 'hidden' : '';
-      document.body.style.overflow           = v ? 'hidden' : '';
-      document.body.style.touchAction        = v ? 'none'   : '';
+    const lockScroll = (lock) => {
+      document.documentElement.style.overflow = lock ? 'hidden' : '';
+      document.body.style.overflow           = lock ? 'hidden' : '';
+      document.body.style.touchAction        = lock ? 'none'   : '';
     };
 
-    const setState = (active) => {
-      moonTrigger.classList.toggle('active', active);
+    const toggleMenu = () => {
+      const active = moonTrigger.classList.toggle('active');
       mobileMenu.classList.toggle('active', active);
       mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
       moonTrigger.setAttribute('aria-expanded', active ? 'true' : 'false');
-      lock(active);
+      lockScroll(active);
     };
 
-    // тап по луне — переключаем меню туда-обратно
-    moonTrigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const willOpen = !moonTrigger.classList.contains('active');
-      setState(willOpen);
-    });
+    moonTrigger.addEventListener('click', toggleMenu);
 
-    // клик по пункту меню — закрываем
-    qsa('a', mobileMenu).forEach(a => {
-      a.addEventListener('click', () => setState(false));
-    });
-
-    // клик по затемнённому фону вокруг — тоже закрываем
-    mobileMenu.addEventListener('click', (e) => {
-      if (e.target === mobileMenu) setState(false);
-    });
-
-    // закрытие по Esc (на всякий случай)
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') setState(false);
-    });
+    // Клик по пункту меню — закрываем
+    qsa('a', mobileMenu).forEach(a => a.addEventListener('click', () => {
+      if (!moonTrigger.classList.contains('active')) return;
+      toggleMenu();
+    }));
   }
-
 
   /* ===== Premium cursor (desktop) ===== */
   const dot  = qs('#cursorDot');

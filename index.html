@@ -19,7 +19,7 @@
       <a class="link" href="#contact">Контакты</a>
     </nav>
 
-    <!-- Core-триггер (mobile) -->
+    <!-- Core-триггер (только мобильный) -->
     <button
       class="core-trigger"
       aria-label="Открыть меню"
@@ -27,7 +27,7 @@
       aria-expanded="false"
     >
       <span class="core-orbit">
-        <span class="core-dot"></span>
+        <span class="core-dot core-idle"></span>
       </span>
     </button>
 
@@ -52,21 +52,21 @@
       </div>
     </section>
 
-    <!-- INTERLUDE (светлый фон) -->
-    <section class="interlude" data-theme="light">
+    <!-- INTERLUDE -->
+    <section class="interlude">
       <h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
     </section>
 
-    <!-- ABOUT (светлый фон) -->
-    <section class="stage" id="about" data-theme="light">
+    <!-- ABOUT -->
+    <section class="stage" id="about">
       <h2 class="stage__title">
         Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
         Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
       </h2>
     </section>
 
-    <!-- WORK (светлый фон) -->
-    <section id="work" data-theme="light">
+    <!-- WORK -->
+    <section id="work">
       <div class="wall" id="wall">
         <!-- Плейсхолдеры проектов -->
         <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1"  width="1600" height="900" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
@@ -84,7 +84,7 @@
       </div>
     </section>
 
-    <!-- CONTACT (тёмный фон) -->
+    <!-- CONTACT -->
     <section class="contact" id="contact">
       <div class="contact__grid">
         <h2 class="contact__lead">Оставьте заявку</h2>
@@ -108,7 +108,7 @@
             </div>
             <div class="field">
               <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
-                     placeholder=" " required pattern="[\d\s\+\-\(\)]{6,}">
+                     placeholder=" " required pattern="[\\d\\s\\+\\-\\(\\)]{6,}">
               <label class="label" for="phone">Телефон</label>
             </div>
           </div>

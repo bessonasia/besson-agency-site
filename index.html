@@ -19,15 +19,15 @@
       <a class="link" href="#contact">Контакты</a>
     </nav>
 
-    <!-- Core-триггер (только мобильный) -->
+    <!-- CORE-триггер (мобильный) -->
     <button
       class="core-trigger"
       aria-label="Открыть меню"
       aria-controls="mobileMenu"
       aria-expanded="false"
     >
-      <span class="core-orbit">
-        <span class="core-dot core-idle"></span>
+      <span class="core-outer">
+        <span class="core-inner"></span>
       </span>
     </button>
 
@@ -42,7 +42,7 @@
   </header>
 
   <main>
-    <!-- HERO -->
+    <!-- HERO (тёмный фон) -->
     <section class="hero" id="top">
       <div class="hero__content">
         <div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
@@ -52,21 +52,21 @@
       </div>
     </section>
 
-    <!-- INTERLUDE -->
-    <section class="interlude">
+    <!-- INTERLUDE (светлый блок) -->
+    <section class="interlude" data-theme="light">
       <h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
     </section>
 
-    <!-- ABOUT -->
-    <section class="stage" id="about">
+    <!-- ABOUT (светлый блок) -->
+    <section class="stage" id="about" data-theme="light">
       <h2 class="stage__title">
         Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
         Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
       </h2>
     </section>
 
-    <!-- WORK -->
-    <section id="work">
+    <!-- WORK (светлый блок) -->
+    <section id="work" data-theme="light">
       <div class="wall" id="wall">
         <!-- Плейсхолдеры проектов -->
         <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1"  width="1600" height="900" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
@@ -84,7 +84,7 @@
       </div>
     </section>
 
-    <!-- CONTACT -->
+    <!-- CONTACT (тёмный фон) -->
     <section class="contact" id="contact">
       <div class="contact__grid">
         <h2 class="contact__lead">Оставьте заявку</h2>
@@ -108,7 +108,7 @@
             </div>
             <div class="field">
               <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
-                     placeholder=" " required pattern="[\\d\\s\\+\\-\\(\\)]{6,}">
+                     placeholder=" " required pattern="[\d\s\+\-\(\)]{6,}">
               <label class="label" for="phone">Телефон</label>
             </div>
           </div>
@@ -158,3 +158,4 @@
   <script defer src="script.js"></script>
 </body>
 </html>
+

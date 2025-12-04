@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
+  const nav = qs('.nav');
+
   /* ===== Year в футере ===== */
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -132,32 +134,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile menu / Лунный триггер ===== */
-  const moonTrigger = qs('.moon-trigger');
+  /* ===== Mobile core trigger & menu ===== */
+  const coreTrigger = qs('.core-trigger') || qs('.moon-trigger');
   const mobileMenu  = qs('#mobileMenu');
+  const coreDot     = coreTrigger ? coreTrigger.querySelector('.core-dot') : null;
 
-  if (moonTrigger && mobileMenu) {
+  if (coreTrigger && mobileMenu) {
+    let menuOpen = false;
+
     const lockScroll = (lock) => {
       document.documentElement.style.overflow = lock ? 'hidden' : '';
       document.body.style.overflow           = lock ? 'hidden' : '';
       document.body.style.touchAction        = lock ? 'none'   : '';
     };
 
-    const toggleMenu = () => {
-      const active = moonTrigger.classList.toggle('active');
-      mobileMenu.classList.toggle('active', active);
-      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
-      moonTrigger.setAttribute('aria-expanded', active ? 'true' : 'false');
-      lockScroll(active);
+    const setAligned = (aligned) => {
+      if (!coreDot) return;
+      coreTrigger.classList.toggle('core-trigger--aligned', aligned);
     };
 
-    moonTrigger.addEventListener('click', toggleMenu);
+    const openMenu = () => {
+      if (menuOpen) return;
+      menuOpen = true;
+      setAligned(true);
+      mobileMenu.classList.add('active');
+      coreTrigger.setAttribute('aria-expanded', 'true');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      lockScroll(true);
+    };
 
-    // Клик по пункту меню — закрываем
-    qsa('a', mobileMenu).forEach(a => a.addEventListener('click', () => {
-      if (!moonTrigger.classList.contains('active')) return;
-      toggleMenu();
-    }));
+    const closeMenu = () => {
+      if (!menuOpen) return;
+      menuOpen = false;
+      mobileMenu.classList.remove('active');
+      coreTrigger.setAttribute('aria-expanded', 'false');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      setAligned(false);
+      lockScroll(false);
+    };
+
+    const toggleMenu = () => {
+      if (menuOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    };
+
+    coreTrigger.addEventListener('click', toggleMenu);
+
+    // закрываем по клику на пункт меню
+    qsa('a', mobileMenu).forEach(a => {
+      a.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
   }
 
   /* ===== Premium cursor (desktop) ===== */
@@ -295,5 +326,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-});
+  /* ===== Переключение навигации в "светлый" режим
+         только на interlude + about
+         (на блоке проектов #work core снова белый) ===== */
+  if (nav) {
+    const whiteSections = [];
+    const interlude = qs('.interlude');
+    if (interlude) whiteSections.push(interlude);
 
+    qsa('.stage').forEach(s => {
+      if (s.id === 'about') whiteSections.push(s);
+    });
+
+    if (whiteSections.length) {
+      let whiteTop = 0;
+      let whiteBottom = 0;
+
+      const recalcBreakpoints = () => {
+        const navH = nav.offsetHeight || 76;
+        whiteTop = Infinity;
+        whiteBottom = -Infinity;
+        whiteSections.forEach(sec => {
+          const top = sec.offsetTop - navH;
+          const bottom = sec.offsetTop + sec.offsetHeight - navH;
+          if (top < whiteTop) whiteTop = top;
+          if (bottom > whiteBottom) whiteBottom = bottom;
+        });
+      };
+
+      const handleNavTone = () => {
+        const y = window.scrollY || window.pageYOffset || 0;
+        const onLight = y >= whiteTop && y < whiteBottom;
+        nav.classList.toggle('nav--on-light', onLight);
+      };
+
+      recalcBreakpoints();
+      handleNavTone();
+
+      window.addEventListener('scroll', handleNavTone, { passive: true });
+      window.addEventListener('resize', () => {
+        recalcBreakpoints();
+        handleNavTone();
+      }, { passive: true });
+    }
+  }
+
+});

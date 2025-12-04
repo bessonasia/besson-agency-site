@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ===== Logo: собираем по буквам ===== */
+  /* ===== Logo по буквам ===== */
   const logoText = qs('#logoText');
   let logoSpans = [];
 
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const applySpread = () => {
       const s = Math.min(scrollY, maxScroll);
-      const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
+      const p = maxScroll === 0 ? 0 : s / maxScroll;
       const scale  = 1 + p * 1.6;
       const spread = p * 120;
       const glow   = 8 + p * 32;
@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     coreTrigger.addEventListener('click', toggleMenu);
 
-    // Клик по пункту меню — закрываем
     qsa('a', mobileMenu).forEach(a => {
       a.addEventListener('click', () => {
         if (coreTrigger.classList.contains('core-open')) toggleMenu();
@@ -161,23 +160,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Переключение темы шапки по светлым секциям ===== */
+  /* ===== Переключение темы шапки по секциям ===== */
   const navEl = qs('.nav');
   const themedSections = qsa('[data-theme]');
 
   const updateNavTheme = () => {
     if (!navEl || !themedSections.length) return;
-    const probeY = 80; // точка под шапкой
-    let onLight = false;
+    const probeY = 80;
+    let currentIsLight = false;
 
     themedSections.forEach(sec => {
       const r = sec.getBoundingClientRect();
       if (r.top <= probeY && r.bottom >= probeY) {
-        if (sec.dataset.theme === 'light') onLight = true;
+        // Берём тему последней пересечённой секции
+        currentIsLight = sec.dataset.theme === 'light';
       }
     });
 
-    navEl.classList.toggle('nav--on-light', onLight);
+    navEl.classList.toggle('nav--on-light', currentIsLight);
   };
 
   updateNavTheme();
@@ -196,8 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let tx = dx;
     let ty = dy;
 
-    const DOT_LERP  = 0.35; // точка — быстрее
-    const RING_LERP = 0.12; // кольцо — плавнее
+    const DOT_LERP  = 0.35;
+    const RING_LERP = 0.12;
 
     const move = e => {
       tx = e.clientX;
@@ -249,7 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ring.style.opacity = '1';
     });
 
-    // Glow на кнопке отправки
     qsa('.btn').forEach(btn => {
       const glow = btn.querySelector('.glow');
       if (!glow) return;
@@ -271,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit (Formsubmit + без редиректа) ===== */
+  /* ===== Lead form submit (AJAX + резерв) ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -311,8 +310,10 @@ document.addEventListener('DOMContentLoaded', () => {
         statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
         statusEl.classList.add('form__status--success');
       } catch (err) {
-        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
+        // Если AJAX не сработал, уходим на обычную отправку
+        statusEl.textContent = 'Проблема с отправкой. Переключаемся на резервный способ.';
         statusEl.classList.add('form__status--error');
+        leadForm.submit();
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
@@ -320,5 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+
 
 

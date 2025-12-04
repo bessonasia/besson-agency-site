@@ -43,7 +43,7 @@
 
   <main>
     <!-- HERO (тёмный фон) -->
-    <section class="hero" id="top">
+    <section class="hero" id="top" data-theme="dark">
       <div class="hero__content">
         <div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
         <div class="hero__slogan" id="slogan">
@@ -85,7 +85,7 @@
     </section>
 
     <!-- CONTACT (тёмный фон) -->
-    <section class="contact" id="contact">
+    <section class="contact" id="contact" data-theme="dark">
       <div class="contact__grid">
         <h2 class="contact__lead">Оставьте заявку</h2>
         <p class="contact__sub">
@@ -93,13 +93,21 @@
           <span class="line">Работаем 24/7.</span>
         </p>
 
-        <form class="form" id="leadForm" method="POST" novalidate>
+        <form
+          class="form"
+          id="leadForm"
+          action="https://formsubmit.co/hello@besson.asia"
+          method="POST"
+          novalidate
+        >
           <!-- honeypot -->
           <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;">
 
           <!-- Настройки письма -->
           <input type="hidden" name="_subject"  value="Заявка с сайта Besson Agency">
           <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha"  value="false">
+          <input type="hidden" name="_next"     value="https://besson.asia/#contact">
 
           <div class="row">
             <div class="field">

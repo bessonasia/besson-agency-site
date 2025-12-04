@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ===== Logo: собираем по буквам ===== */
+  /* ===== Logo: посимвольная сборка ===== */
   const logoText = qs('#logoText');
   let logoSpans = [];
 
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Mobile: Netflix-spread на скролл ===== */
+  /* ===== Mobile: Netflix-spread на скролл (оригинальная логика) ===== */
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const applySpread = () => {
-      const s = Math.min(scrollY, maxScroll);
+      const s = Math.min(window.scrollY || 0, maxScroll);
       const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
       const scale  = 1 + p * 1.6;
       const spread = p * 120;
@@ -132,44 +132,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Switch nav theme (светлый / тёмный фон) ===== */
+  /* ===== Переключение темы навигации по светлым секциям ===== */
   const navEl = qs('.nav');
   const lightSections = qsa('[data-theme="light"]');
+  if (navEl && lightSections.length && 'IntersectionObserver' in window) {
+    const state = new Map();
 
-  if (navEl && lightSections.length) {
-    let tickingTheme = false;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        state.set(entry.target, entry.isIntersecting && entry.intersectionRatio > 0.35);
+      });
+      const anyLight = Array.from(state.values()).some(Boolean);
+      navEl.classList.toggle('nav--on-light', anyLight);
+    }, {
+      threshold: [0.35, 0.55]
+    });
 
-    const updateTheme = () => {
-      tickingTheme = false;
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      let onLight = false;
-
-      for (const sec of lightSections) {
-        const rect = sec.getBoundingClientRect();
-        const mid  = rect.top + rect.height / 2;
-        if (mid > 0 && mid < vh) {
-          onLight = true;
-          break;
-        }
-      }
-
-      navEl.classList.toggle('nav--on-light', onLight);
-    };
-
-    updateTheme();
-
-    const themeScroll = () => {
-      if (!tickingTheme) {
-        tickingTheme = true;
-        requestAnimationFrame(updateTheme);
-      }
-    };
-
-    window.addEventListener('scroll', themeScroll, { passive: true });
-    window.addEventListener('resize', themeScroll);
+    lightSections.forEach(sec => {
+      state.set(sec, false);
+      observer.observe(sec);
+    });
   }
 
-  /* ===== Mobile menu / Core trigger ===== */
+  /* ===== Мобильное меню / CORE trigger ===== */
   const coreTrigger = qs('.core-trigger');
   const mobileMenu  = qs('#mobileMenu');
 
@@ -182,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toggleMenu = () => {
       const active = coreTrigger.classList.toggle('active');
-      coreTrigger.classList.toggle('core-trigger--aligned', active);
       mobileMenu.classList.toggle('active', active);
       mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
       coreTrigger.setAttribute('aria-expanded', active ? 'true' : 'false');
@@ -191,11 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     coreTrigger.addEventListener('click', toggleMenu);
 
-    // Клик по пункту меню — закрываем
-    qsa('a', mobileMenu).forEach(a => a.addEventListener('click', () => {
-      if (!coreTrigger.classList.contains('active')) return;
-      toggleMenu();
-    }));
+    qsa('a', mobileMenu).forEach(a =>
+      a.addEventListener('click', () => {
+        if (!coreTrigger.classList.contains('active')) return;
+        toggleMenu();
+      })
+    );
   }
 
   /* ===== Premium cursor (desktop) ===== */
@@ -274,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Float labels ===== */
+  /* ===== Float labels для полей формы ===== */
   qsa('.field').forEach(f => {
     const input = f.querySelector('.input');
     if (!input) return;
@@ -284,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit ===== */
+  /* ===== Lead form submit (Formsubmit без редиректа) ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 

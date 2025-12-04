@@ -28,8 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  const nav = qs('.nav');
-
   /* ===== Year в футере ===== */
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -134,61 +132,70 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile core trigger & menu ===== */
-  const coreTrigger = qs('.core-trigger') || qs('.moon-trigger');
+  /* ===== Switch nav theme (светлый / тёмный фон) ===== */
+  const navEl = qs('.nav');
+  const lightSections = qsa('[data-theme="light"]');
+
+  if (navEl && lightSections.length) {
+    let tickingTheme = false;
+
+    const updateTheme = () => {
+      tickingTheme = false;
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      let onLight = false;
+
+      for (const sec of lightSections) {
+        const rect = sec.getBoundingClientRect();
+        const mid  = rect.top + rect.height / 2;
+        if (mid > 0 && mid < vh) {
+          onLight = true;
+          break;
+        }
+      }
+
+      navEl.classList.toggle('nav--on-light', onLight);
+    };
+
+    updateTheme();
+
+    const themeScroll = () => {
+      if (!tickingTheme) {
+        tickingTheme = true;
+        requestAnimationFrame(updateTheme);
+      }
+    };
+
+    window.addEventListener('scroll', themeScroll, { passive: true });
+    window.addEventListener('resize', themeScroll);
+  }
+
+  /* ===== Mobile menu / Core trigger ===== */
+  const coreTrigger = qs('.core-trigger');
   const mobileMenu  = qs('#mobileMenu');
-  const coreDot     = coreTrigger ? coreTrigger.querySelector('.core-dot') : null;
 
   if (coreTrigger && mobileMenu) {
-    let menuOpen = false;
-
     const lockScroll = (lock) => {
-      document.documentElement.style.overflow = lock ? 'hidden' : '';
-      document.body.style.overflow           = lock ? 'hidden' : '';
-      document.body.style.touchAction        = lock ? 'none'   : '';
-    };
-
-    const setAligned = (aligned) => {
-      if (!coreDot) return;
-      coreTrigger.classList.toggle('core-trigger--aligned', aligned);
-    };
-
-    const openMenu = () => {
-      if (menuOpen) return;
-      menuOpen = true;
-      setAligned(true);
-      mobileMenu.classList.add('active');
-      coreTrigger.setAttribute('aria-expanded', 'true');
-      mobileMenu.setAttribute('aria-hidden', 'false');
-      lockScroll(true);
-    };
-
-    const closeMenu = () => {
-      if (!menuOpen) return;
-      menuOpen = false;
-      mobileMenu.classList.remove('active');
-      coreTrigger.setAttribute('aria-expanded', 'false');
-      mobileMenu.setAttribute('aria-hidden', 'true');
-      setAligned(false);
-      lockScroll(false);
+      document.documentElement.style.overflowY = lock ? 'hidden' : '';
+      document.body.style.overflowY           = lock ? 'hidden' : '';
+      document.body.style.touchAction         = lock ? 'none'   : '';
     };
 
     const toggleMenu = () => {
-      if (menuOpen) {
-        closeMenu();
-      } else {
-        openMenu();
-      }
+      const active = coreTrigger.classList.toggle('active');
+      coreTrigger.classList.toggle('core-trigger--aligned', active);
+      mobileMenu.classList.toggle('active', active);
+      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
+      coreTrigger.setAttribute('aria-expanded', active ? 'true' : 'false');
+      lockScroll(active);
     };
 
     coreTrigger.addEventListener('click', toggleMenu);
 
-    // закрываем по клику на пункт меню
-    qsa('a', mobileMenu).forEach(a => {
-      a.addEventListener('click', () => {
-        closeMenu();
-      });
-    });
+    // Клик по пункту меню — закрываем
+    qsa('a', mobileMenu).forEach(a => a.addEventListener('click', () => {
+      if (!coreTrigger.classList.contains('active')) return;
+      toggleMenu();
+    }));
   }
 
   /* ===== Premium cursor (desktop) ===== */
@@ -203,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let tx = dx;
     let ty = dy;
 
-    const DOT_LERP  = 0.35; // точка — быстрее
-    const RING_LERP = 0.12; // кольцо — плавнее
+    const DOT_LERP  = 0.35;
+    const RING_LERP = 0.12;
 
     const move = e => {
       tx = e.clientX;
@@ -256,7 +263,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ring.style.opacity = '1';
     });
 
-    // Glow на кнопке отправки
     qsa('.btn').forEach(btn => {
       const glow = btn.querySelector('.glow');
       if (!glow) return;
@@ -268,7 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Float labels для полей формы ===== */
+  /* ===== Float labels ===== */
   qsa('.field').forEach(f => {
     const input = f.querySelector('.input');
     if (!input) return;
@@ -278,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit (Formsubmit + без редиректа) ===== */
+  /* ===== Lead form submit ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -326,49 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Переключение навигации в "светлый" режим
-         только на interlude + about
-         (на блоке проектов #work core снова белый) ===== */
-  if (nav) {
-    const whiteSections = [];
-    const interlude = qs('.interlude');
-    if (interlude) whiteSections.push(interlude);
-
-    qsa('.stage').forEach(s => {
-      if (s.id === 'about') whiteSections.push(s);
-    });
-
-    if (whiteSections.length) {
-      let whiteTop = 0;
-      let whiteBottom = 0;
-
-      const recalcBreakpoints = () => {
-        const navH = nav.offsetHeight || 76;
-        whiteTop = Infinity;
-        whiteBottom = -Infinity;
-        whiteSections.forEach(sec => {
-          const top = sec.offsetTop - navH;
-          const bottom = sec.offsetTop + sec.offsetHeight - navH;
-          if (top < whiteTop) whiteTop = top;
-          if (bottom > whiteBottom) whiteBottom = bottom;
-        });
-      };
-
-      const handleNavTone = () => {
-        const y = window.scrollY || window.pageYOffset || 0;
-        const onLight = y >= whiteTop && y < whiteBottom;
-        nav.classList.toggle('nav--on-light', onLight);
-      };
-
-      recalcBreakpoints();
-      handleNavTone();
-
-      window.addEventListener('scroll', handleNavTone, { passive: true });
-      window.addEventListener('resize', () => {
-        recalcBreakpoints();
-        handleNavTone();
-      }, { passive: true });
-    }
-  }
-
 });
+
+

@@ -19,7 +19,7 @@ body{
   font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',system-ui,sans-serif;
   background:var(--bg);
   color:var(--fg);
-  overflow-x:hidden;
+  overflow-x:hidden; /* убираем горизонтальный скролл */
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
@@ -83,7 +83,7 @@ a{color:inherit;text-decoration:none}
 
 /* CORE-триггер (бургер) — на десктопе скрыт, на мобиле будет показан */
 .core-trigger{
-  display:none;
+  display:none; /* мобилка покажет через media query */
   background:none;
   border:0;
   margin-left:auto;
@@ -99,7 +99,7 @@ a{color:inherit;text-decoration:none}
   width:36px;
   height:36px;
   border-radius:50%;
-  border:1px solid rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.9); /* толщина как у десктопного курсора */
   box-shadow:0 0 18px rgba(255,255,255,.35);
   display:flex;
   align-items:center;
@@ -112,12 +112,12 @@ a{color:inherit;text-decoration:none}
   border-radius:50%;
   background:#fff;
   box-shadow:0 0 8px rgba(255,255,255,.9);
-  animation:coreDrift 24s ease-in-out infinite;
+  animation:coreDrift 24s ease-in-out infinite; /* медленное хаотичное движение */
   transition:transform .35s ease-out;
 }
 
 /* Пока меню открыто — точка центрируется */
-.core-trigger.is-open .core-inner{
+.core-trigger.core-open .core-inner{
   animation:none;
   transform:translate(0,0);
 }
@@ -155,7 +155,7 @@ a{color:inherit;text-decoration:none}
   font-size:.95rem;
   letter-spacing:.16em;
   text-transform:uppercase;
-  font-weight:500;
+  font-weight:500; /* тоньше, премиальный */
 }
 .mobile-menu.active{
   opacity:1;
@@ -267,7 +267,7 @@ a{color:inherit;text-decoration:none}
   text-align:center;
 }
 .stage#about{
-  scroll-margin-top:45vh;
+  scroll-margin-top:45vh; /* при клике по «Об агентстве» в кадре interlude + about */
 }
 .stage__title{
   max-width:56rem;
@@ -289,7 +289,7 @@ a{color:inherit;text-decoration:none}
   content:none !important;
 }
 .wall{
-  width:100%;
+  width:100%; /* вместо 100vw, чтобы убрать горизонтальный скролл */
   margin:0 auto;
   display:grid;
   grid-template-columns:repeat(12,1fr);
@@ -556,6 +556,7 @@ footer{
    Mobile polish
 ========================================================= */
 @media (max-width:768px){
+  /* На мобиле скрываем десктопное меню и показываем CORE-бургер */
   .nav__group{display:none;}
   .core-trigger{display:flex;}
 

@@ -34,9 +34,9 @@
     <!-- Мобильное меню -->
     <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
       <ul>
-        <li><a class="mobile-menu__link" href="#about">Об агентстве</a></li>
-        <li><a class="mobile-menu__link" href="#work">Проекты</a></li>
-        <li><a class="mobile-menu__link" href="#contact">Контакты</a></li>
+        <li><a href="#about">Об агентстве</a></li>
+        <li><a href="#work">Проекты</a></li>
+        <li><a href="#contact">Контакты</a></li>
       </ul>
     </nav>
   </header>
@@ -96,19 +96,17 @@
         <form
           class="form"
           id="leadForm"
-          action="https://formsubmit.co/hello@besson.asia"
+          action="https://api.web3forms.com/submit"
           method="POST"
-          target="_top"
           novalidate
         >
-          <!-- honeypot -->
-          <input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;">
-
-          <!-- Настройки письма -->
-          <input type="hidden" name="_subject"  value="Заявка с сайта Besson Agency">
-          <input type="hidden" name="_template" value="table">
-          <input type="hidden" name="_captcha"  value="false">
-          <input type="hidden" name="_next"     value="https://besson.asia/#contact">
+          <!-- Web3Forms: ключ + служебные поля -->
+          <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e">
+          <input type="hidden" name="subject" value="Новая заявка с сайта Besson Agency">
+          <input type="hidden" name="from_name" value="Besson Agency Website">
+          <input type="hidden" name="redirect" value="https://besson.asia/#contact">
+          <!-- honeypot для ботов -->
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
 
           <div class="row">
             <div class="field">
@@ -164,6 +162,6 @@
   <div class="cursor-dot"  id="cursorDot"  aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
-  <script src="script.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>

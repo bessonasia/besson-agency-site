@@ -94,18 +94,39 @@ a{color:inherit;text-decoration:none}
   align-items:center;
   justify-content:center;
 }
+
+/* Внутренний круг + крутящийся ореол */
 .core-outer{
   position:relative;
   width:36px;
   height:36px;
   border-radius:50%;
-  border:1px solid rgba(255,255,255,.9); /* толщина как у десктопного курсора */
+  border:1px solid rgba(255,255,255,.9); /* базовое кольцо */
   box-shadow:0 0 18px rgba(255,255,255,.35);
   display:flex;
   align-items:center;
   justify-content:center;
   transition:border-color .35s,box-shadow .35s,background-color .35s;
+  overflow:visible; /* даём второму кольцу чуть вылезти наружу */
 }
+
+/* Вращающееся кольцо, как курсор в CodePen */
+.core-outer::before{
+  content:"";
+  position:absolute;
+  inset:-4px;                 /* чуть больше, чем базовый круг */
+  border-radius:50%;
+  border:1px solid transparent;
+  border-top-color:rgba(255,255,255,.9);
+  border-right-color:rgba(255,255,255,.5);
+  border-bottom-color:rgba(255,255,255,.18);
+  border-left-color:rgba(255,255,255,.35);
+  opacity:.8;
+  pointer-events:none;
+  transform-origin:50% 50%;
+  animation:coreHaloSpin 18s linear infinite; /* постоянное вращение */
+}
+
 .core-inner{
   width:7px;
   height:7px;
@@ -116,13 +137,17 @@ a{color:inherit;text-decoration:none}
   transition:transform .35s ease-out;
 }
 
-/* Пока меню открыто — точка центрируется */
-.core-trigger.core-open .core-inner{
+/* Пока меню открыто — точка центрируется, ореол усиливается */
+.core-trigger.is-open .core-inner{
   animation:none;
   transform:translate(0,0);
 }
+.core-trigger.is-open .core-outer::before{
+  opacity:1;
+  box-shadow:0 0 16px rgba(255,255,255,.4);
+}
 
-/* Плавный хаотичный полёт точки по рваной траектории */
+/* Плавный хаотичный полёт точки */
 @keyframes coreDrift{
   0%   {transform:translate(-8px,-7px);}
   14%  {transform:translate(6px,-5px);}
@@ -133,7 +158,13 @@ a{color:inherit;text-decoration:none}
   100% {transform:translate(-8px,-7px);}
 }
 
-/* Мобильное меню-панель */
+/* Вращение внешнего кольца */
+@keyframes coreHaloSpin{
+  0%   { transform:rotate(0deg); }
+  100% { transform:rotate(360deg); }
+}
+
+/* Мобильное меню-панель (как было) */
 .mobile-menu{
   position:fixed;
   top:80px;
@@ -155,7 +186,7 @@ a{color:inherit;text-decoration:none}
   font-size:.95rem;
   letter-spacing:.16em;
   text-transform:uppercase;
-  font-weight:500; /* тоньше, премиальный */
+  font-weight:500;
 }
 .mobile-menu.active{
   opacity:1;
@@ -173,11 +204,18 @@ a{color:inherit;text-decoration:none}
   background:#000;
   box-shadow:0 0 7px rgba(0,0,0,.8);
 }
+.nav.nav--on-light .core-outer::before{
+  border-top-color:rgba(0,0,0,.9);
+  border-right-color:rgba(0,0,0,.5);
+  border-bottom-color:rgba(0,0,0,.18);
+  border-left-color:rgba(0,0,0,.35);
+}
 .nav.nav--on-light .mobile-menu{
   background:rgba(255,255,255,.96);
   color:#000;
 }
 .nav.nav--on-light .mobile-menu a{color:#000;}
+
 
 /* =========================================================
    Hero
@@ -359,6 +397,8 @@ a{color:inherit;text-decoration:none}
   margin-top:10px;
   max-width:52ch;
 }
+
+/* Карта формы */
 .form{
   background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
   border:1px solid rgba(255,255,255,.08);
@@ -373,37 +413,57 @@ a{color:inherit;text-decoration:none}
   position:relative;
   margin-bottom:18px;
 }
+
+/* Поле ввода */
 .input{
   width:100%;
-  padding:18px 14px;
+  padding:18px 16px 14px;
   border-radius:14px;
   border:1px solid #1b1b1b;
   background:#0f0f0f;
   color:#fff;
-  transition:border-color .25s,box-shadow .25s;
+  font-size:.96rem;
+  outline:none;
+  -webkit-appearance:none;
+  transition:border-color .25s,box-shadow .25s,background .25s,transform .18s;
 }
+.input::placeholder{
+  color:transparent; /* чтобы не мешал лейблу */
+}
+
+/* свой спокойный фокус, без синей системной рамки */
 .input:focus{
+  outline:none;
   border-color:#fff;
-  box-shadow:0 0 0 2px rgba(255,255,255,.15);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12);
+  background:#111111;
+  transform:translateY(-1px);
 }
+
+/* Лейбл внутри поля */
 .label{
   position:absolute;
-  left:16px;
-  top:14px;
+  left:18px;
+  top:18px;
   padding:2px 6px;
   border-radius:8px;
-  font-size:.85rem;
+  font-size:.82rem;
   color:#a9a9a9;
   background:rgba(255,255,255,.02);
-  transform-origin:left top;
-  transition:transform .2s,opacity .2s;
+  transform-origin:left center;
+  transition:top .18s ease, transform .18s ease, opacity .18s ease, color .18s ease;
 }
+
+/* Поднимаем лейбл ещё выше при фокусе/заполнении */
 .field.filled .label,
 .input:focus + .label{
-  transform:translateY(-18px) scale(.88);
-  opacity:.9;
-  color:#fff;
+  top:4px;              /* было 6px — теперь выше */
+  transform:scale(.88);
+  opacity:.95;
+  color:#ffffff;
 }
+
+/* Статус отправки */
 .form__status{
   min-height:20px;
   font-size:.9rem;
@@ -414,6 +474,7 @@ a{color:inherit;text-decoration:none}
 .form__status--success{color:#9be7c4;}
 .form__status--error{color:#ff8a80;}
 
+/* Кнопки */
 .actions{
   display:flex;
   align-items:center;
@@ -473,6 +534,7 @@ a{color:inherit;text-decoration:none}
   height:20px;
   fill:currentColor;
 }
+
 
 /* =========================================================
    Footer

@@ -23,7 +23,7 @@ const lerp = (a, b, t) => a + (b - a) * t;
   });
 })();
 
-/* DOM ready */
+/* ========== main ========== */
 document.addEventListener('DOMContentLoaded', () => {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ===== Logo по буквам ===== */
+  /* ===== Logo: собираем по буквам ===== */
   const logoText = qs('#logoText');
   let logoSpans = [];
 
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Mobile: Netflix-spread на скролл ===== */
+  /* ===== Mobile: Netflix-спред на скролл (через window.scrollY) ===== */
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
@@ -75,8 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const applySpread = () => {
-      const s = Math.min(scrollY, maxScroll);
-      const p = maxScroll === 0 ? 0 : s / maxScroll;
+      const s = Math.min(window.scrollY || 0, maxScroll);
+      const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
+
       const scale  = 1 + p * 1.6;
       const spread = p * 120;
       const glow   = 8 + p * 32;
@@ -84,8 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
       let i = 0;
       logoSpans.forEach(span => {
         if (span.dataset.space === 'true') {
-          span.style.transform   = 'translateX(0) scale(1)';
-          span.style.textShadow  = 'none';
+          span.style.transform  = 'translateX(0) scale(1)';
+          span.style.textShadow = 'none';
           return;
         }
         const dir = (i++ % 2 === 0) ? -1 : 1;
@@ -132,63 +133,140 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Мобильное меню / CORE trigger ===== */
-  const coreTrigger = qs('.core-trigger');
+  /* ===== Mobile Core-orb + меню (оставляем как есть) ===== */
+  const coreTrigger = qs('.core-trigger') || qs('.moon-trigger');
   const mobileMenu  = qs('#mobileMenu');
 
   if (coreTrigger && mobileMenu) {
+    const orb =
+      coreTrigger.querySelector('.core-orb') ||
+      coreTrigger.querySelector('.moon-orb') ||
+      coreTrigger;
+    const dot =
+      coreTrigger.querySelector('.core-dot') ||
+      coreTrigger.querySelector('.core-dot-inner') ||
+      coreTrigger.querySelector('.core-inner') ||
+      coreTrigger.querySelector('.moon-dot') ||
+      orb;
+
+    let menuOpen = false;
+
+    // хаотичное плавное движение точки
+    let t = 0;
+    let curX = 0;
+    let curY = 0;
+
+    const radius = 12;      // радиус движения
+    const speed  = 0.0014;  // медленная скорость
+
+    const animateDot = () => {
+      t += speed;
+
+      // "рваные" оси
+      const ax = Math.cos(t * 0.7) * 0.6 + Math.sin(t * 1.123) * 0.4;
+      const ay = Math.sin(t * 0.52) * 0.7 + Math.cos(t * 0.31) * 0.3;
+
+      const targetX = menuOpen ? 0 : ax * radius;
+      const targetY = menuOpen ? 0 : ay * radius;
+
+      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
+      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
+
+      if (dot && dot.style) {
+        dot.style.transform = `translate(${curX}px, ${curY}px)`;
+      }
+
+      requestAnimationFrame(animateDot);
+    };
+    animateDot();
+
     const lockScroll = (lock) => {
-      document.documentElement.style.overflowY = lock ? 'hidden' : '';
-      document.body.style.overflowY           = lock ? 'hidden' : '';
-      document.body.style.touchAction         = lock ? 'none'   : '';
+      const html = document.documentElement;
+      if (lock) {
+        html.dataset.navLock = '1';
+        html.style.overflowY = 'hidden';
+        document.body.style.overflowY = 'hidden';
+      } else {
+        html.dataset.navLock = '0';
+        html.style.overflowY = '';
+        document.body.style.overflowY = '';
+      }
     };
 
-    const toggleMenu = () => {
-      const active = coreTrigger.classList.toggle('core-open');
-      mobileMenu.classList.toggle('active', active);
-      mobileMenu.setAttribute('aria-hidden', active ? 'false' : 'true');
-      coreTrigger.setAttribute('aria-expanded', active ? 'true' : 'false');
-      lockScroll(active);
+    const setMenuState = (open) => {
+      menuOpen = open;
+      coreTrigger.classList.toggle('is-open', open);
+      mobileMenu.classList.toggle('active', open);
+      mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+      coreTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      lockScroll(open);
     };
 
-    coreTrigger.addEventListener('click', toggleMenu);
-
-    qsa('a', mobileMenu).forEach(a => {
-      a.addEventListener('click', () => {
-        if (coreTrigger.classList.contains('core-open')) toggleMenu();
-      });
+    coreTrigger.addEventListener('click', () => {
+      setMenuState(!menuOpen);
     });
+
+    qsa('a', mobileMenu).forEach(a =>
+      a.addEventListener('click', () => {
+        if (!menuOpen) return;
+        setMenuState(false);
+      })
+    );
   }
 
-  /* ===== Переключение темы шапки по секциям ===== */
-  const navEl = qs('.nav');
-  const themedSections = qsa('[data-theme]');
+  /* ===== Цвет меню / круга в зависимости от фона ===== */
+  const nav = qs('.nav');
 
-  const updateNavTheme = () => {
-    if (!navEl || !themedSections.length) return;
-    const probeY = 80;
-    let currentIsLight = false;
+  const updateNavOnLight = () => {
+    if (!nav) return;
 
-    themedSections.forEach(sec => {
-      const r = sec.getBoundingClientRect();
-      if (r.top <= probeY && r.bottom >= probeY) {
-        // Берём тему последней пересечённой секции
-        currentIsLight = sec.dataset.theme === 'light';
+    const navRect = nav.getBoundingClientRect();
+    const y = Math.max(navRect.bottom + 4, 40);
+    const x = window.innerWidth - 10;
+
+    let el = document.elementFromPoint(x, y);
+    let isLight = false;
+    let depth = 0;
+
+    while (el && depth < 6) {
+      const style = window.getComputedStyle(el);
+      const bg = style.backgroundColor;
+      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+        const m = bg.match(/rgba?\(([^)]+)\)/);
+        if (m) {
+          const parts = m[1].split(',').map(v => parseFloat(v.trim()));
+          const r = parts[0], g = parts[1], b = parts[2];
+          const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+          isLight = lum > 0.5;
+          break;
+        }
       }
-    });
+      el = el.parentElement;
+      depth++;
+    }
 
-    navEl.classList.toggle('nav--on-light', currentIsLight);
+    nav.classList.toggle('nav--on-light', isLight);
   };
 
-  updateNavTheme();
-  window.addEventListener('scroll', updateNavTheme, { passive:true });
-  window.addEventListener('resize', updateNavTheme, { passive:true });
+  let colorTicking = false;
+  const onScrollColor = () => {
+    if (colorTicking) return;
+    colorTicking = true;
+    requestAnimationFrame(() => {
+      updateNavOnLight();
+      colorTicking = false;
+    });
+  };
+
+  updateNavOnLight();
+  window.addEventListener('scroll', onScrollColor, { passive: true });
+  window.addEventListener('resize', updateNavOnLight);
 
   /* ===== Premium cursor (desktop) ===== */
-  const dot  = qs('#cursorDot');
-  const ring = qs('#cursorRing');
+  const dotCur  = qs('#cursorDot');
+  const ringCur = qs('#cursorRing');
 
-  if (isFinePointer && dot && ring) {
+  if (isFinePointer && dotCur && ringCur) {
     let dx = innerWidth / 2;
     let dy = innerHeight / 2;
     let rx = dx;
@@ -202,8 +280,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const move = e => {
       tx = e.clientX;
       ty = e.clientY;
-      dot.style.opacity  = '1';
-      ring.style.opacity = '1';
+      dotCur.style.opacity  = '1';
+      ringCur.style.opacity = '1';
     };
 
     window.addEventListener('mousemove', move, { passive: true });
@@ -214,8 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
       rx = lerp(rx, tx, RING_LERP);
       ry = lerp(ry, ty, RING_LERP);
 
-      dot.style.transform  = `translate(${dx}px,${dy}px)`;
-      ring.style.transform = `translate(${rx}px,${ry}px)`;
+      dotCur.style.transform  = `translate(${dx}px,${dy}px)`;
+      ringCur.style.transform = `translate(${rx}px,${ry}px)`;
 
       requestAnimationFrame(loop);
     };
@@ -226,27 +304,27 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('pointerover', e => {
       if (e.pointerType !== 'mouse') return;
       if (e.target.closest(hoverSel)) {
-        ring.classList.add('cursor--hover');
+        ringCur.classList.add('cursor--hover');
       }
     });
 
     document.addEventListener('pointerout', e => {
       if (e.pointerType !== 'mouse') return;
       if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) {
-        ring.classList.remove('cursor--hover');
+        ringCur.classList.remove('cursor--hover');
       }
     });
 
     window.addEventListener('mouseout', e => {
       if (!e.relatedTarget) {
-        dot.style.opacity  = '0';
-        ring.style.opacity = '0';
+        dotCur.style.opacity  = '0';
+        ringCur.style.opacity = '0';
       }
     });
 
     window.addEventListener('mouseenter', () => {
-      dot.style.opacity  = '1';
-      ring.style.opacity = '1';
+      dotCur.style.opacity  = '1';
+      ringCur.style.opacity = '1';
     });
 
     qsa('.btn').forEach(btn => {
@@ -260,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Float labels для полей формы ===== */
+  /* ===== Float labels ===== */
   qsa('.field').forEach(f => {
     const input = f.querySelector('.input');
     if (!input) return;
@@ -270,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit (AJAX + резерв) ===== */
+  /* ===== Lead form submit ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -310,16 +388,13 @@ document.addEventListener('DOMContentLoaded', () => {
         statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
         statusEl.classList.add('form__status--success');
       } catch (err) {
-        // Если AJAX не сработал, уходим на обычную отправку
-        statusEl.textContent = 'Проблема с отправкой. Переключаемся на резервный способ.';
+        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
         statusEl.classList.add('form__status--error');
-        leadForm.submit();
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
     });
   }
-
 });
 
 

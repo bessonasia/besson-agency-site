@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-    /* ===== Mobile: Netflix-спред на скролл без горизонтального скролла ===== */
+  /* ===== Mobile: Netflix-спред на скролл без горизонтального скролла ===== */
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
@@ -144,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   }
 
-
   /* ===== Interlude word swap ===== */
   const swapEl = qs('#swap');
   if (swapEl) {
@@ -156,52 +155,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile Core-orb + меню (оставляем как есть) ===== */
-  const coreTrigger = qs('.core-trigger') || qs('.moon-trigger');
-  const mobileMenu  = qs('#mobileMenu');
+  /* ===== Mobile Core-orb + радиальное меню (объединённый блок) ===== */
+  const coreTriggerEl = qs('.core-trigger') || qs('.moon-trigger');
+  const mobileMenuEl  = qs('#mobileMenu');
 
-  if (coreTrigger && mobileMenu) {
-    const orb =
-      coreTrigger.querySelector('.core-orb') ||
-      coreTrigger.querySelector('.moon-orb') ||
-      coreTrigger;
-    const dot =
-      coreTrigger.querySelector('.core-dot') ||
-      coreTrigger.querySelector('.core-dot-inner') ||
-      coreTrigger.querySelector('.core-inner') ||
-      coreTrigger.querySelector('.moon-dot') ||
-      orb;
-
+  if (coreTriggerEl && mobileMenuEl) {
+    const rootStyle = document.documentElement.style;
     let menuOpen = false;
 
-    // хаотичное плавное движение точки
-    let t = 0;
-    let curX = 0;
-    let curY = 0;
-
-    const radius = 12;      // радиус движения
-    const speed  = 0.0014;  // медленная скорость
-
-    const animateDot = () => {
-      t += speed;
-
-      // "рваные" оси
-      const ax = Math.cos(t * 0.7) * 0.6 + Math.sin(t * 1.123) * 0.4;
-      const ay = Math.sin(t * 0.52) * 0.7 + Math.cos(t * 0.31) * 0.3;
-
-      const targetX = menuOpen ? 0 : ax * radius;
-      const targetY = menuOpen ? 0 : ay * radius;
-
-      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
-      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
-
-      if (dot && dot.style) {
-        dot.style.transform = `translate(${curX}px, ${curY}px)`;
-      }
-
-      requestAnimationFrame(animateDot);
+    // координаты источника света = центр триггера
+    const setCoreBeamOrigin = () => {
+      const rect = coreTriggerEl.getBoundingClientRect();
+      const cx = rect.left + rect.width  / 2;
+      const cy = rect.top  + rect.height / 2;
+      rootStyle.setProperty('--core-x', cx + 'px');
+      rootStyle.setProperty('--core-y', cy + 'px');
     };
-    animateDot();
 
     const lockScroll = (lock) => {
       const html = document.documentElement;
@@ -218,23 +187,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const setMenuState = (open) => {
       menuOpen = open;
-      coreTrigger.classList.toggle('is-open', open);
-      mobileMenu.classList.toggle('active', open);
-      mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
-      coreTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      coreTriggerEl.classList.toggle('is-open', open);
+      mobileMenuEl.classList.toggle('active', open);
+      mobileMenuEl.setAttribute('aria-hidden', open ? 'false' : 'true');
+      coreTriggerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+      if (open) setCoreBeamOrigin();
       lockScroll(open);
     };
 
-    coreTrigger.addEventListener('click', () => {
+    coreTriggerEl.addEventListener('click', () => {
       setMenuState(!menuOpen);
     });
 
-    qsa('a', mobileMenu).forEach(a =>
+    // клики по пунктам меню закрывают его
+    qsa('.mobile-menu__link', mobileMenuEl).forEach(a => {
       a.addEventListener('click', () => {
-        if (!menuOpen) return;
-        setMenuState(false);
-      })
-    );
+        if (menuOpen) setMenuState(false);
+      });
+    });
+
+    // на случай поворота экрана при открытом меню
+    window.addEventListener('resize', () => {
+      if (menuOpen) setCoreBeamOrigin();
+    }, { passive: true });
+
+    // хаотичное плавное движение точки
+    const orb =
+      coreTriggerEl.querySelector('.core-orb') ||
+      coreTriggerEl.querySelector('.moon-orb') ||
+      coreTriggerEl;
+    const dot =
+      coreTriggerEl.querySelector('.core-dot') ||
+      coreTriggerEl.querySelector('.core-dot-inner') ||
+      coreTriggerEl.querySelector('.core-inner') ||
+      coreTriggerEl.querySelector('.moon-dot') ||
+      orb;
+
+    let tDot = 0;
+    let curX = 0;
+    let curY = 0;
+
+    const radius = 12;      // радиус движения
+    const speed  = 0.0014;  // медленная скорость
+
+    const animateDot = () => {
+      tDot += speed;
+
+      // "рваные" оси
+      const ax = Math.cos(tDot * 0.7) * 0.6 + Math.sin(tDot * 1.123) * 0.4;
+      const ay = Math.sin(tDot * 0.52) * 0.7 + Math.cos(tDot * 0.31) * 0.3;
+
+      const targetX = menuOpen ? 0 : ax * radius;
+      const targetY = menuOpen ? 0 : ay * radius;
+
+      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
+      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
+
+      if (dot && dot.style) {
+        dot.style.transform = `translate(${curX}px, ${curY}px)`;
+      }
+
+      requestAnimationFrame(animateDot);
+    };
+    animateDot();
   }
 
   /* ===== Цвет меню / круга в зависимости от фона ===== */

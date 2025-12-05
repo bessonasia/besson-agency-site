@@ -23,8 +23,8 @@ const lerp = (a, b, t) => a + (b - a) * t;
   });
 })();
 
-/* ========== main ========== */
-document.addEventListener('DOMContentLoaded', () => {
+/* ========== main init ========== */
+function initBesson() {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
@@ -68,9 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
 
-    // максимально допустимое "разъезжание" в пикселях, пересчитывается от ширины экрана
     let maxSpread = 40;
-
     let breathing = false;
     let ticking   = false;
 
@@ -90,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const applySpread = () => {
       const s = Math.min(window.scrollY || 0, maxScroll);
-      const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
+      const p = maxScroll === 0 ? 0 : s / maxScroll;
 
       const scale  = 1 + p * 1.6;
       const spread = p * maxSpread;
@@ -149,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile Core-orb + меню (как было) ===== */
+  /* ===== Mobile Core-orb + меню ===== */
   const coreTriggerEl = qs('.core-trigger') || qs('.moon-trigger');
   const mobileMenuEl  = qs('#mobileMenu');
 
@@ -221,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setMenuState(!menuOpen);
     });
 
-    qsa('a', mobileMenuEl).forEach(a =>
+    qsa('.mobile-menu__link', mobileMenuEl).forEach(a =>
       a.addEventListener('click', () => {
         if (!menuOpen) return;
         setMenuState(false);
@@ -348,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('mousemove', e => {
         const r = btn.getBoundingClientRect();
         glow.style.setProperty('--x', ((e.clientX - r.left) / r.width * 100) + '%');
-        glow.style.setProperty('--y', ((e.clientX - r.left) / r.width * 100) + '%');
+        glow.style.setProperty('--y', ((e.clientY - r.top)  / r.height * 100) + '%');
       });
     });
   }
@@ -363,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit (AJAX + надёжный fallback) ===== */
+  /* ===== Lead form submit (AJAX + fallback) ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -371,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
 
     const onSubmit = async (e) => {
-      // сначала своя валидация
+      // валидация
       if (!leadForm.checkValidity()) {
         e.preventDefault();
         statusEl.textContent = 'Проверьте имя и телефон.';
@@ -412,7 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
         statusEl.classList.add('form__status--success');
       } catch (err) {
         console.error('Form AJAX failed, fallback to normal submit:', err);
-        // fallback: даём форме уйти обычным POST на action
         statusEl.textContent = '';
         statusEl.classList.remove('form__status--success', 'form__status--error');
         leadForm.removeEventListener('submit', onSubmit);
@@ -425,5 +422,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     leadForm.addEventListener('submit', onSubmit);
   }
-});
+}
 
+/* Гарантируем инициализацию и в обычной странице, и в CodePen */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBesson);
+} else {
+  initBesson();
+}

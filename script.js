@@ -23,8 +23,8 @@ const lerp = (a, b, t) => a + (b - a) * t;
   });
 })();
 
-/* ========== main init ========== */
-function initBesson() {
+/* ========== main ========== */
+document.addEventListener('DOMContentLoaded', () => {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
@@ -63,7 +63,7 @@ function initBesson() {
     });
   }
 
-  /* ===== Mobile: Netflix-спред на скролл без горизонтального скролла ===== */
+  /* ===== Mobile: Netflix-спред на скролл ===== */
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
@@ -165,11 +165,9 @@ function initBesson() {
 
     let menuOpen = false;
 
-    // хаотичное плавное движение точки
     let tDot = 0;
     let curX = 0;
     let curY = 0;
-
     const radius = 12;
     const speed  = 0.0014;
 
@@ -219,7 +217,7 @@ function initBesson() {
       setMenuState(!menuOpen);
     });
 
-    qsa('.mobile-menu__link', mobileMenuEl).forEach(a =>
+    qsa('a', mobileMenuEl).forEach(a =>
       a.addEventListener('click', () => {
         if (!menuOpen) return;
         setMenuState(false);
@@ -227,7 +225,7 @@ function initBesson() {
     );
   }
 
-  /* ===== Цвет меню / круга в зависимости от фона ===== */
+  /* ===== Цвет меню в зависимости от фона ===== */
   const nav = qs('.nav');
 
   const updateNavOnLight = () => {
@@ -361,72 +359,73 @@ function initBesson() {
     toggle();
   });
 
-  /* ===== Lead form submit (AJAX + fallback) ===== */
+  /* ===== Lead form submit via Web3Forms ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
   if (leadForm && statusEl) {
-    const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
+    const endpoint  = 'https://api.web3forms.com/submit';
+    const submitBtn = leadForm.querySelector('button[type="submit"]');
 
-    const onSubmit = async (e) => {
-      // валидация
+    leadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // кастомная валидация
       if (!leadForm.checkValidity()) {
-        e.preventDefault();
         statusEl.textContent = 'Проверьте имя и телефон.';
         statusEl.classList.remove('form__status--success');
         statusEl.classList.add('form__status--error');
         return;
       }
 
-      e.preventDefault(); // пробуем AJAX
+      const formData = new FormData(leadForm);
 
-      const formData  = new FormData(leadForm);
-      const submitBtn = leadForm.querySelector('button[type="submit"]');
+      // гарантируем, что уходит правильный access_key
+      formData.delete('access_key');
+      formData.append('access_key', '65638ee2-839d-4959-a4e8-9c354e48ad8e');
 
       statusEl.textContent = 'Отправляем...';
       statusEl.classList.remove('form__status--success', 'form__status--error');
 
       if (submitBtn) submitBtn.disabled = true;
 
-      let ajaxOk = false;
-
       try {
-        const res = await fetch(endpoint, {
+        const response = await fetch(endpoint, {
           method: 'POST',
-          body: formData,
-          headers: { 'Accept': 'application/json' }
+          body: formData
         });
 
-        if (!res.ok) {
-          throw new Error('Bad response: ' + res.status);
+        let data = null;
+        try {
+          data = await response.json();
+        } catch (err) {
+          data = null;
         }
 
-        ajaxOk = true;
+        if (response.ok && data && data.success) {
+          statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
+          statusEl.classList.add('form__status--success');
+          statusEl.classList.remove('form__status--error');
 
-        leadForm.reset();
-        qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
-
-        statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
-        statusEl.classList.add('form__status--success');
-      } catch (err) {
-        console.error('Form AJAX failed, fallback to normal submit:', err);
-        statusEl.textContent = '';
-        statusEl.classList.remove('form__status--success', 'form__status--error');
-        leadForm.removeEventListener('submit', onSubmit);
-        leadForm.submit();
-        return;
+          leadForm.reset();
+          qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
+        } else {
+          const msg =
+            (data && data.message) ||
+            'Не удалось отправить форму. Попробуйте ещё раз позже.';
+          statusEl.textContent = msg;
+          statusEl.classList.add('form__status--error');
+          statusEl.classList.remove('form__status--success');
+        }
+      } catch (error) {
+        console.error('Web3Forms error:', error);
+        statusEl.textContent =
+          'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
+        statusEl.classList.add('form__status--error');
+        statusEl.classList.remove('form__status--success');
       } finally {
-        if (submitBtn && !ajaxOk) submitBtn.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
       }
-    };
-
-    leadForm.addEventListener('submit', onSubmit);
+    });
   }
-}
-
-/* Гарантируем инициализацию и в обычной странице, и в CodePen */
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initBesson);
-} else {
-  initBesson();
-}
+});

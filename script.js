@@ -63,15 +63,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Mobile: Netflix-спред на скролл (через window.scrollY) ===== */
+    /* ===== Mobile: Netflix-спред на скролл без горизонтального скролла ===== */
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
+
+    // максимально допустимое "разъезжание" в пикселях, пересчитывается от ширины экрана
+    let maxSpread = 40;
+
     let breathing = false;
     let ticking   = false;
 
     const recalc = () => {
       maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
+
+      // считаем, сколько свободного места по краям у логотипа
+      if (logoText) {
+        const rect     = logoText.getBoundingClientRect();
+        const viewport = window.innerWidth
+          || document.documentElement.clientWidth
+          || rect.width;
+
+        // свободное пространство слева + справа = viewport - ширина текста
+        // нас интересует максимум, на который можно уйти от центра, не вылезая за экран
+        const free = Math.max(0, (viewport - rect.width) / 2);
+
+        // оставляем небольшой запас (90%), чтобы точно не вылезти
+        maxSpread = free * 0.9;
+      }
     };
 
     const applySpread = () => {
@@ -79,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
 
       const scale  = 1 + p * 1.6;
-      const spread = p * 120;
+      const spread = p * maxSpread;           // вместо жёстких 120px
       const glow   = 8 + p * 32;
 
       let i = 0;
@@ -89,11 +108,14 @@ document.addEventListener('DOMContentLoaded', () => {
           span.style.textShadow = 'none';
           return;
         }
+
         const dir = (i++ % 2 === 0) ? -1 : 1;
         span.style.transform  = `translateX(${dir * spread}px) scale(${scale})`;
-        span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
+        span.style.textShadow =
+          `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
       });
 
+      // лёгкий "breathing"-эффект, когда анимация дошла до конца
       if (p > 0.95 && !breathing) {
         logoText.classList.add('breathe');
         breathing = true;
@@ -104,23 +126,24 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          applySpread();
-          ticking = false;
-        });
-        ticking = true;
-      }
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        applySpread();
+        ticking = false;
+      });
     };
 
     recalc();
     applySpread();
+
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => {
       recalc();
       applySpread();
     }, { passive: true });
   }
+
 
   /* ===== Interlude word swap ===== */
   const swapEl = qs('#swap');
@@ -396,6 +419,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
-
 
 

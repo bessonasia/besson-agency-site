@@ -77,18 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const recalc = () => {
       maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
 
-      // считаем, сколько свободного места по краям у логотипа
       if (logoText) {
         const rect     = logoText.getBoundingClientRect();
         const viewport = window.innerWidth
           || document.documentElement.clientWidth
           || rect.width;
 
-        // свободное пространство слева + справа = viewport - ширина текста
-        // нас интересует максимум, на который можно уйти от центра, не вылезая за экран
         const free = Math.max(0, (viewport - rect.width) / 2);
-
-        // оставляем небольшой запас (90%), чтобы точно не вылезти
         maxSpread = free * 0.9;
       }
     };
@@ -98,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const p = maxScroll === 0 ? 0 : s / maxScroll; // 0..1
 
       const scale  = 1 + p * 1.6;
-      const spread = p * maxSpread;           // вместо жёстких 120px
+      const spread = p * maxSpread;
       const glow   = 8 + p * 32;
 
       let i = 0;
@@ -115,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
           `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
       });
 
-      // лёгкий "breathing"-эффект, когда анимация дошла до конца
       if (p > 0.95 && !breathing) {
         logoText.classList.add('breathe');
         breathing = true;
@@ -155,22 +149,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile Core-orb + радиальное меню (объединённый блок) ===== */
+  /* ===== Mobile Core-orb + меню (как было) ===== */
   const coreTriggerEl = qs('.core-trigger') || qs('.moon-trigger');
   const mobileMenuEl  = qs('#mobileMenu');
 
   if (coreTriggerEl && mobileMenuEl) {
-    const rootStyle = document.documentElement.style;
+    const orb =
+      coreTriggerEl.querySelector('.core-orb') ||
+      coreTriggerEl.querySelector('.moon-orb') ||
+      coreTriggerEl;
+    const dot =
+      coreTriggerEl.querySelector('.core-dot') ||
+      coreTriggerEl.querySelector('.core-dot-inner') ||
+      coreTriggerEl.querySelector('.core-inner') ||
+      coreTriggerEl.querySelector('.moon-dot') ||
+      orb;
+
     let menuOpen = false;
 
-    // координаты источника света = центр триггера
-    const setCoreBeamOrigin = () => {
-      const rect = coreTriggerEl.getBoundingClientRect();
-      const cx = rect.left + rect.width  / 2;
-      const cy = rect.top  + rect.height / 2;
-      rootStyle.setProperty('--core-x', cx + 'px');
-      rootStyle.setProperty('--core-y', cy + 'px');
+    // хаотичное плавное движение точки
+    let tDot = 0;
+    let curX = 0;
+    let curY = 0;
+
+    const radius = 12;
+    const speed  = 0.0014;
+
+    const animateDot = () => {
+      tDot += speed;
+
+      const ax = Math.cos(tDot * 0.7) * 0.6 + Math.sin(tDot * 1.123) * 0.4;
+      const ay = Math.sin(tDot * 0.52) * 0.7 + Math.cos(tDot * 0.31) * 0.3;
+
+      const targetX = menuOpen ? 0 : ax * radius;
+      const targetY = menuOpen ? 0 : ay * radius;
+
+      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
+      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
+
+      if (dot && dot.style) {
+        dot.style.transform = `translate(${curX}px, ${curY}px)`;
+      }
+
+      requestAnimationFrame(animateDot);
     };
+    animateDot();
 
     const lockScroll = (lock) => {
       const html = document.documentElement;
@@ -191,8 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenuEl.classList.toggle('active', open);
       mobileMenuEl.setAttribute('aria-hidden', open ? 'false' : 'true');
       coreTriggerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
-
-      if (open) setCoreBeamOrigin();
       lockScroll(open);
     };
 
@@ -200,57 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setMenuState(!menuOpen);
     });
 
-    // клики по пунктам меню закрывают его
-    qsa('.mobile-menu__link', mobileMenuEl).forEach(a => {
+    qsa('a', mobileMenuEl).forEach(a =>
       a.addEventListener('click', () => {
-        if (menuOpen) setMenuState(false);
-      });
-    });
-
-    // на случай поворота экрана при открытом меню
-    window.addEventListener('resize', () => {
-      if (menuOpen) setCoreBeamOrigin();
-    }, { passive: true });
-
-    // хаотичное плавное движение точки
-    const orb =
-      coreTriggerEl.querySelector('.core-orb') ||
-      coreTriggerEl.querySelector('.moon-orb') ||
-      coreTriggerEl;
-    const dot =
-      coreTriggerEl.querySelector('.core-dot') ||
-      coreTriggerEl.querySelector('.core-dot-inner') ||
-      coreTriggerEl.querySelector('.core-inner') ||
-      coreTriggerEl.querySelector('.moon-dot') ||
-      orb;
-
-    let tDot = 0;
-    let curX = 0;
-    let curY = 0;
-
-    const radius = 12;      // радиус движения
-    const speed  = 0.0014;  // медленная скорость
-
-    const animateDot = () => {
-      tDot += speed;
-
-      // "рваные" оси
-      const ax = Math.cos(tDot * 0.7) * 0.6 + Math.sin(tDot * 1.123) * 0.4;
-      const ay = Math.sin(tDot * 0.52) * 0.7 + Math.cos(tDot * 0.31) * 0.3;
-
-      const targetX = menuOpen ? 0 : ax * radius;
-      const targetY = menuOpen ? 0 : ay * radius;
-
-      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
-      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
-
-      if (dot && dot.style) {
-        dot.style.transform = `translate(${curX}px, ${curY}px)`;
-      }
-
-      requestAnimationFrame(animateDot);
-    };
-    animateDot();
+        if (!menuOpen) return;
+        setMenuState(false);
+      })
+    );
   }
 
   /* ===== Цвет меню / круга в зависимости от фона ===== */
@@ -372,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.addEventListener('mousemove', e => {
         const r = btn.getBoundingClientRect();
         glow.style.setProperty('--x', ((e.clientX - r.left) / r.width * 100) + '%');
-        glow.style.setProperty('--y', ((e.clientY - r.top)  / r.height * 100) + '%');
+        glow.style.setProperty('--y', ((e.clientX - r.left) / r.width * 100) + '%');
       });
     });
   }
@@ -387,22 +363,24 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit ===== */
+  /* ===== Lead form submit (AJAX + надёжный fallback) ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
   if (leadForm && statusEl) {
     const endpoint = 'https://formsubmit.co/ajax/hello@besson.asia';
 
-    leadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
+    const onSubmit = async (e) => {
+      // сначала своя валидация
       if (!leadForm.checkValidity()) {
+        e.preventDefault();
         statusEl.textContent = 'Проверьте имя и телефон.';
         statusEl.classList.remove('form__status--success');
         statusEl.classList.add('form__status--error');
         return;
       }
+
+      e.preventDefault(); // пробуем AJAX
 
       const formData  = new FormData(leadForm);
       const submitBtn = leadForm.querySelector('button[type="submit"]');
@@ -412,6 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (submitBtn) submitBtn.disabled = true;
 
+      let ajaxOk = false;
+
       try {
         const res = await fetch(endpoint, {
           method: 'POST',
@@ -419,7 +399,11 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: { 'Accept': 'application/json' }
         });
 
-        if (!res.ok) throw new Error('Bad response');
+        if (!res.ok) {
+          throw new Error('Bad response: ' + res.status);
+        }
+
+        ajaxOk = true;
 
         leadForm.reset();
         qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
@@ -427,13 +411,19 @@ document.addEventListener('DOMContentLoaded', () => {
         statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
         statusEl.classList.add('form__status--success');
       } catch (err) {
-        statusEl.textContent = 'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
-        statusEl.classList.add('form__status--error');
+        console.error('Form AJAX failed, fallback to normal submit:', err);
+        // fallback: даём форме уйти обычным POST на action
+        statusEl.textContent = '';
+        statusEl.classList.remove('form__status--success', 'form__status--error');
+        leadForm.removeEventListener('submit', onSubmit);
+        leadForm.submit();
+        return;
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn && !ajaxOk) submitBtn.disabled = false;
       }
-    });
+    };
+
+    leadForm.addEventListener('submit', onSubmit);
   }
 });
-
 

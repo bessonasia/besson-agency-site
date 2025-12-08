@@ -1,9 +1,13 @@
-/* ========== helpers ========== */
+/* =========================================================
+   Utils
+========================================================= */
 const qs  = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const lerp = (a, b, t) => a + (b - a) * t;
 
-/* ensure system cursor never shows on desktop (Safari-safe) */
+/* =========================================================
+   Enforce no system cursor on desktop
+========================================================= */
 (function enforceNoCursor() {
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
 
@@ -23,16 +27,18 @@ const lerp = (a, b, t) => a + (b - a) * t;
   });
 })();
 
-/* ========== main ========== */
-document.addEventListener('DOMContentLoaded', () => {
+/* =========================================================
+   Main init
+========================================================= */
+function initBesson() {
   const isMobile      = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  /* ===== Year в футере ===== */
+  /* ===== 1. Year в футере ===== */
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ===== Logo: собираем по буквам ===== */
+  /* ===== 2. Лого / Hero ===== */
   const logoText = qs('#logoText');
   let logoSpans = [];
 
@@ -49,11 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
     logoSpans = qsa('span', logoText);
   }
 
-  /* ===== Desktop: микро-ховер по буквам ===== */
   if (logoSpans.length && !isMobile) {
     logoSpans.forEach(span => {
       if (span.dataset.space === 'true') return;
-      span.style.transition = 'transform .22s ease-out';
       span.addEventListener('mouseenter', () => {
         span.style.transform = 'translateY(-6px) scale(1.06)';
       });
@@ -63,11 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Mobile: Netflix-спред на скролл ===== */
+  // Mobile: лёгкий spread по скроллу
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
-
     let maxSpread = 40;
     let breathing = false;
     let ticking   = false;
@@ -77,12 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (logoText) {
         const rect     = logoText.getBoundingClientRect();
-        const viewport = window.innerWidth
-          || document.documentElement.clientWidth
-          || rect.width;
-
-        const free = Math.max(0, (viewport - rect.width) / 2);
-        maxSpread = free * 0.9;
+        const viewport = window.innerWidth || document.documentElement.clientWidth || rect.width;
+        const free     = Math.max(0, (viewport - rect.width) / 2);
+        maxSpread      = free * 0.9;
       }
     };
 
@@ -101,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
           span.style.textShadow = 'none';
           return;
         }
-
         const dir = (i++ % 2 === 0) ? -1 : 1;
         span.style.transform  = `translateX(${dir * spread}px) scale(${scale})`;
         span.style.textShadow =
@@ -117,26 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     };
 
-    const onScroll = () => {
+    recalc();
+    applySpread();
+
+    window.addEventListener('scroll', () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         applySpread();
         ticking = false;
       });
-    };
+    }, { passive: true });
 
-    recalc();
-    applySpread();
-
-    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', () => {
       recalc();
       applySpread();
     }, { passive: true });
   }
 
-  /* ===== Interlude word swap ===== */
+  /* ===== 3. Interlude word swap ===== */
   const swapEl = qs('#swap');
   if (swapEl) {
     const words = ['Event.', 'Creative.', 'BTL.', 'POSM.'];
@@ -147,133 +145,211 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2500);
   }
 
-  /* ===== Mobile Core-orb + меню ===== */
-  const coreTriggerEl = qs('.core-trigger') || qs('.moon-trigger');
-  const mobileMenuEl  = qs('#mobileMenu');
+  /* ===== 4. Hero reveal + scroll indicator fade ===== */
+  const hero        = qs('.hero');
+  const heroReveal  = qs('.hero__reveal');
+  const heroScroll  = qs('.hero__scroll');
+  let heroHeight    = hero ? hero.offsetHeight : 0;
+  let heroMaxOffset = heroHeight * 0.45;
 
-  if (coreTriggerEl && mobileMenuEl) {
-    const orb =
-      coreTriggerEl.querySelector('.core-orb') ||
-      coreTriggerEl.querySelector('.moon-orb') ||
-      coreTriggerEl;
-    const dot =
-      coreTriggerEl.querySelector('.core-dot') ||
-      coreTriggerEl.querySelector('.core-dot-inner') ||
-      coreTriggerEl.querySelector('.core-inner') ||
-      coreTriggerEl.querySelector('.moon-dot') ||
-      orb;
+  const updateHeroReveal = () => {
+    if (!hero || !heroReveal) return;
+    heroHeight    = hero.offsetHeight || window.innerHeight;
+    heroMaxOffset = heroHeight * 0.45;
 
-    let menuOpen = false;
+    const scrollY  = window.scrollY || 0;
+    const progress = Math.max(0, Math.min(scrollY / heroHeight, 1)); // 0..1
+    const offset   = (1 - progress) * heroMaxOffset;
 
-    let tDot = 0;
-    let curX = 0;
-    let curY = 0;
-    const radius = 12;
-    const speed  = 0.0014;
+    heroReveal.style.transform = `translateY(${offset}px)`;
 
-    const animateDot = () => {
-      tDot += speed;
+    if (heroScroll) {
+      const alpha = Math.max(0, 1 - progress * 1.4);
+      heroScroll.style.opacity = alpha;
+    }
+  };
 
-      const ax = Math.cos(tDot * 0.7) * 0.6 + Math.sin(tDot * 1.123) * 0.4;
-      const ay = Math.sin(tDot * 0.52) * 0.7 + Math.cos(tDot * 0.31) * 0.3;
+  updateHeroReveal();
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(updateHeroReveal);
+  }, { passive: true });
+  window.addEventListener('resize', updateHeroReveal);
 
-      const targetX = menuOpen ? 0 : ax * radius;
-      const targetY = menuOpen ? 0 : ay * radius;
+  /* ===== 5. Nav: цвет, показ/скрытие, бургер ===== */
+  const nav           = qs('#siteNav');
+  const burger        = qs('.burger');
+  const mobileMenu    = qs('#mobileMenu');
+  const themeSections = qsa('section[data-theme]');
+  let currentTheme    = 'dark';
+  let lastScrollY     = window.scrollY || 0;
+  const SCROLL_DELTA  = 6;
+  const HIDE_START    = 80;
+  let menuOpen        = false;
+  let tickingNav      = false;
 
-      curX = lerp(curX, targetX, menuOpen ? 0.18 : 0.1);
-      curY = lerp(curY, targetY, menuOpen ? 0.18 : 0.1);
+  const setMobileMenuState = (open) => {
+    if (!burger || !mobileMenu) return;
+    menuOpen = open;
+    burger.classList.toggle('burger--active', open);
+    mobileMenu.classList.toggle('mobile-menu--open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    mobileMenu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    document.body.classList.toggle('nav-lock', open);
 
-      if (dot && dot.style) {
-        dot.style.transform = `translate(${curX}px, ${curY}px)`;
-      }
-
-      requestAnimationFrame(animateDot);
-    };
-    animateDot();
-
-    const lockScroll = (lock) => {
-      const html = document.documentElement;
-      if (lock) {
-        html.dataset.navLock = '1';
-        html.style.overflowY = 'hidden';
-        document.body.style.overflowY = 'hidden';
+    if (nav) {
+      if (open) {
+        nav.classList.remove('nav--hidden');
+        nav.classList.add('nav--menu-open'); // для крестика поверх лого
       } else {
-        html.dataset.navLock = '0';
-        html.style.overflowY = '';
-        document.body.style.overflowY = '';
+        nav.classList.remove('nav--menu-open');
       }
-    };
+    }
+  };
 
-    const setMenuState = (open) => {
-      menuOpen = open;
-      coreTriggerEl.classList.toggle('is-open', open);
-      mobileMenuEl.classList.toggle('active', open);
-      mobileMenuEl.setAttribute('aria-hidden', open ? 'false' : 'true');
-      coreTriggerEl.setAttribute('aria-expanded', open ? 'true' : 'false');
-      lockScroll(open);
-    };
-
-    coreTriggerEl.addEventListener('click', () => {
-      setMenuState(!menuOpen);
+  if (burger && mobileMenu) {
+    burger.addEventListener('click', () => {
+      setMobileMenuState(!menuOpen);
     });
 
-    qsa('a', mobileMenuEl).forEach(a =>
+    // Закрываем меню по клику на пункт
+    qsa('a', mobileMenu).forEach(a => {
       a.addEventListener('click', () => {
         if (!menuOpen) return;
-        setMenuState(false);
-      })
-    );
+        setMobileMenuState(false);
+      });
+    });
   }
 
-  /* ===== Цвет меню в зависимости от фона ===== */
-  const nav = qs('.nav');
+  const updateNavTheme = () => {
+    if (!nav || !themeSections.length) return;
+    const navHeight = nav.offsetHeight || 0;
+    const markerY   = navHeight + 2;
 
-  const updateNavOnLight = () => {
-    if (!nav) return;
-
-    const navRect = nav.getBoundingClientRect();
-    const y = Math.max(navRect.bottom + 4, 40);
-    const x = window.innerWidth - 10;
-
-    let el = document.elementFromPoint(x, y);
-    let isLight = false;
-    let depth = 0;
-
-    while (el && depth < 6) {
-      const style = window.getComputedStyle(el);
-      const bg = style.backgroundColor;
-      if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-        const m = bg.match(/rgba?\(([^)]+)\)/);
-        if (m) {
-          const parts = m[1].split(',').map(v => parseFloat(v.trim()));
-          const r = parts[0], g = parts[1], b = parts[2];
-          const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-          isLight = lum > 0.5;
-          break;
-        }
+    let theme = 'dark';
+    for (const section of themeSections) {
+      const rect = section.getBoundingClientRect();
+      if (rect.bottom <= 0) continue;
+      if (rect.top <= markerY && rect.bottom >= markerY) {
+        theme = section.dataset.theme || 'dark';
+        break;
       }
-      el = el.parentElement;
-      depth++;
     }
 
-    nav.classList.toggle('nav--on-light', isLight);
+    if (theme !== currentTheme) {
+      currentTheme = theme;
+      const isLight = theme === 'light';
+      nav.classList.toggle('nav--on-light', isLight);
+    }
   };
 
-  let colorTicking = false;
-  const onScrollColor = () => {
-    if (colorTicking) return;
-    colorTicking = true;
+  const handleNavScroll = () => {
+    if (!nav) return;
+    const currentY = window.scrollY || 0;
+    const diff     = currentY - lastScrollY;
+
+    if (!menuOpen && Math.abs(diff) > SCROLL_DELTA) {
+      if (currentY > HIDE_START && diff > 0) {
+        nav.classList.add('nav--hidden');    // скролл вниз – прячем
+      } else if (diff < 0) {
+        nav.classList.remove('nav--hidden'); // скролл вверх – показываем
+      }
+      lastScrollY = currentY;
+    } else if (menuOpen) {
+      nav.classList.remove('nav--hidden');
+      lastScrollY = currentY;
+    }
+
+    updateNavTheme();
+  };
+
+  updateNavTheme();
+
+  window.addEventListener('scroll', () => {
+    if (tickingNav) return;
+    tickingNav = true;
     requestAnimationFrame(() => {
-      updateNavOnLight();
-      colorTicking = false;
+      handleNavScroll();
+      tickingNav = false;
     });
+  }, { passive: true });
+
+  window.addEventListener('resize', updateNavTheme);
+
+  /* ===== 6. Вертикальная капсула "связаться" ===== */
+const contactPill  = qs('#contactPill');
+const aboutSection = qs('#about');
+const workSection  = qs('#work');
+
+if (contactPill && (aboutSection || workSection)) {
+  const setPillState = (visible, variant) => {
+    contactPill.classList.toggle('contact-pill--visible', visible);
+    contactPill.classList.toggle('contact-pill--on-about', visible && variant === 'about');
+    contactPill.classList.toggle('contact-pill--on-work',  visible && variant === 'work');
+
+    if (!visible) {
+      contactPill.classList.remove('contact-pill--open');
+      contactPill.setAttribute('aria-expanded', 'false');
+    }
   };
 
-  updateNavOnLight();
-  window.addEventListener('scroll', onScrollColor, { passive: true });
-  window.addEventListener('resize', updateNavOnLight);
+  // Определяем, над каким блоком находится центр экрана
+  const updatePillByScroll = () => {
+    const vh      = window.innerHeight || document.documentElement.clientHeight;
+    const centerY = vh / 2;
+    let variant   = null;
 
-  /* ===== Premium cursor (desktop) ===== */
+    if (aboutSection) {
+      const r = aboutSection.getBoundingClientRect();
+      if (r.top <= centerY && r.bottom >= centerY) variant = 'about';
+    }
+
+    if (!variant && workSection) {
+      const r = workSection.getBoundingClientRect();
+      if (r.top <= centerY && r.bottom >= centerY) variant = 'work';
+    }
+
+    if (variant) {
+      setPillState(true, variant);
+    } else {
+      setPillState(false, null);
+    }
+  };
+
+  updatePillByScroll();
+  window.addEventListener('scroll', () => {
+    requestAnimationFrame(updatePillByScroll);
+  }, { passive: true });
+  window.addEventListener('resize', updatePillByScroll);
+
+  const toggleOpen = () => {
+    const open = !contactPill.classList.contains('contact-pill--open');
+    contactPill.classList.toggle('contact-pill--open', open);
+    contactPill.setAttribute('aria-expanded', open ? 'true' : 'false');
+  };
+
+  contactPill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleOpen();
+  });
+
+  contactPill.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleOpen();
+    }
+  });
+
+  // Клик вне капсулы — закрываем выпадающие иконки
+  document.addEventListener('click', (e) => {
+    if (!contactPill.classList.contains('contact-pill--open')) return;
+    if (e.target.closest('#contactPill')) return;
+    contactPill.classList.remove('contact-pill--open');
+    contactPill.setAttribute('aria-expanded', 'false');
+  });
+}
+
+
+  /* ===== 7. Premium cursor (desktop) ===== */
   const dotCur  = qs('#cursorDot');
   const ringCur = qs('#cursorRing');
 
@@ -349,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ===== Float labels ===== */
+  /* ===== 8. Float labels ===== */
   qsa('.field').forEach(f => {
     const input = f.querySelector('.input');
     if (!input) return;
@@ -359,30 +435,26 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle();
   });
 
-  /* ===== Lead form submit via Web3Forms ===== */
+  /* ===== 9. Lead form submit (Web3Forms AJAX) ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
   if (leadForm && statusEl) {
-    const endpoint  = 'https://api.web3forms.com/submit';
-    const submitBtn = leadForm.querySelector('button[type="submit"]');
+    const endpoint = leadForm.getAttribute('action') || 'https://api.web3forms.com/submit';
 
-    leadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      // кастомная валидация
+    const onSubmit = async (e) => {
       if (!leadForm.checkValidity()) {
+        e.preventDefault();
         statusEl.textContent = 'Проверьте имя и телефон.';
         statusEl.classList.remove('form__status--success');
         statusEl.classList.add('form__status--error');
         return;
       }
 
-      const formData = new FormData(leadForm);
+      e.preventDefault();
 
-      // гарантируем, что уходит правильный access_key
-      formData.delete('access_key');
-      formData.append('access_key', '65638ee2-839d-4959-a4e8-9c354e48ad8e');
+      const formData  = new FormData(leadForm);
+      const submitBtn = leadForm.querySelector('button[type="submit"]');
 
       statusEl.textContent = 'Отправляем...';
       statusEl.classList.remove('form__status--success', 'form__status--error');
@@ -390,43 +462,41 @@ document.addEventListener('DOMContentLoaded', () => {
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const response = await fetch(endpoint, {
+        const res = await fetch(endpoint, {
           method: 'POST',
           body: formData
         });
 
-        let data = null;
-        try {
-          data = await response.json();
-        } catch (err) {
-          data = null;
+        if (!res.ok) {
+          throw new Error('Bad response: ' + res.status);
         }
 
-        if (response.ok && data && data.success) {
-          statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
-          statusEl.classList.add('form__status--success');
-          statusEl.classList.remove('form__status--error');
+        leadForm.reset();
+        qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
 
-          leadForm.reset();
-          qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
-        } else {
-          const msg =
-            (data && data.message) ||
-            'Не удалось отправить форму. Попробуйте ещё раз позже.';
-          statusEl.textContent = msg;
-          statusEl.classList.add('form__status--error');
-          statusEl.classList.remove('form__status--success');
-        }
-      } catch (error) {
-        console.error('Web3Forms error:', error);
-        statusEl.textContent =
-          'Не удалось отправить форму. Попробуйте ещё раз или напишите на hello@besson.asia.';
-        statusEl.classList.add('form__status--error');
-        statusEl.classList.remove('form__status--success');
+        statusEl.textContent = 'Все получилось! Мы уже обрабатываем вашу заявку.';
+        statusEl.classList.add('form__status--success');
+      } catch (err) {
+        console.error('Web3Forms AJAX failed, fallback to normal submit:', err);
+        statusEl.textContent = '';
+        statusEl.classList.remove('form__status--success', 'form__status--error');
+        leadForm.removeEventListener('submit', onSubmit);
+        leadForm.submit();
+        return;
       } finally {
         if (submitBtn) submitBtn.disabled = false;
       }
-    });
-  }
-});
+    };
 
+    leadForm.addEventListener('submit', onSubmit);
+  }
+}
+
+/* =========================================================
+   Boot
+========================================================= */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initBesson);
+} else {
+  initBesson();
+}

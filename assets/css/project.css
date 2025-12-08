@@ -270,11 +270,7 @@ a {
    HERO ПРОЕКТА
 ========================= */
 .project-hero {
-  position: relative;
-  min-height: 100vh;
-  color: #ffffff;
-  display: grid;
-  grid-template-rows: minmax(0, 1fr);
+  ...
 }
 
 .project-hero__media {
@@ -290,6 +286,26 @@ a {
   object-fit: cover;
   display: block;
   filter: brightness(0.82);
+}
+/* Мягкий глобальный блюр по всей картинке, как у Departament */
+.project-hero__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* лёгкое затемнение + градиент к низу, чтобы тайтл и мета читались */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 5, 5, 0.15) 0%,
+      rgba(5, 5, 5, 0.45) 40%,
+      rgba(5, 5, 5, 0.75) 100%
+    );
+
+  /* собственно блюр фоновой картинки */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .project-hero__overlay {

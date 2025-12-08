@@ -19,14 +19,14 @@ body{
   font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',system-ui,sans-serif;
   background:var(--bg);
   color:var(--fg);
-  overflow-x:hidden; /* убираем горизонтальный скролл */
+  overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
 }
 a{color:inherit;text-decoration:none}
 
 /* =========================================================
-   Nav + CORE trigger
+   Nav + burger
 ========================================================= */
 .nav{
   position:fixed;
@@ -37,31 +37,38 @@ a{color:inherit;text-decoration:none}
   justify-content:space-between;
   padding:0 var(--pad);
   z-index:1000;
-  background:linear-gradient(180deg,rgba(10,10,10,.85),rgba(10,10,10,0));
-  backdrop-filter:saturate(140%) blur(6px);
+  background:transparent;
+  color:#f5f5f5;
+  transition:
+    transform .32s cubic-bezier(.19,1,.22,1),
+    color .25s ease;
+}
+.nav--hidden{
+  transform:translateY(-110%);
 }
 .brand__mark{
   font-weight:800;
   letter-spacing:.18em;
   text-transform:uppercase;
-  transition:text-shadow .3s,transform .3s,color .3s;
+  font-size:.92rem;
+  transition:transform .25s,text-shadow .25s,opacity .25s;
 }
 .brand__mark:hover{
   text-shadow:0 0 8px rgba(255,255,255,.4);
-  transform:translateY(-1px);
 }
 
 /* Десктопное меню */
 .nav__group{
   display:flex;
   align-items:center;
-  gap:18px;
+  gap:20px;
 }
 .link{
   position:relative;
   text-transform:uppercase;
-  font-size:.78rem;
+  font-size:.8rem;
   letter-spacing:.18em;
+  font-weight:500; /* чуть толще */
 }
 .link::after{
   content:"";
@@ -70,8 +77,8 @@ a{color:inherit;text-decoration:none}
   right:0;
   bottom:-6px;
   height:1px;
-  background:#fff;
-  opacity:.25;
+  background:currentColor;
+  opacity:.2;
   transform:scaleX(0);
   transform-origin:left;
   transition:transform .35s,opacity .35s;
@@ -81,141 +88,84 @@ a{color:inherit;text-decoration:none}
   opacity:.5;
 }
 
-/* CORE-триггер (бургер) — на десктопе скрыт, на мобиле будет показан */
-.core-trigger{
-  display:none; /* мобилка покажет через media query */
+/* Бургер: по умолчанию скрыт, показываем только на мобилке */
+.burger{
+  display:none;
   background:none;
   border:0;
-  margin-left:auto;
   padding:0;
-  width:52px;
-  height:52px;
+  width:32px;
+  height:32px;
+  flex-shrink:0;
+  color:#e5e5e5; /* стильный серый */
+  flex-direction:column;
+  justify-content:center;
+  gap:7px;
+  cursor:pointer;
+  transition:color .2s ease,transform .2s ease;
+}
+.burger__line{
+  height:2px;
   border-radius:999px;
-  align-items:center;
-  justify-content:center;
+  background:currentColor;
+  width:100%;
+  transition:transform .25s ease,opacity .18s ease,background-color .2s ease;
+}
+.burger--active .burger__line:nth-child(1){
+  transform:translateY(4px) rotate(45deg);
+}
+.burger--active .burger__line:nth-child(2){
+  transform:translateY(-4px) rotate(-45deg);
 }
 
-/* Внутренний круг + крутящийся ореол */
-.core-outer{
-  position:relative;
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.9); /* базовое кольцо */
-  box-shadow:0 0 18px rgba(255,255,255,.35);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:border-color .35s,box-shadow .35s,background-color .35s;
-  overflow:visible; /* даём второму кольцу чуть вылезти наружу */
+/* Цвет шапки на светлом фоне */
+.nav.nav--on-light{
+  color:#111;
+}
+.nav.nav--on-light .burger{
+  color:#111;
 }
 
-/* Вращающееся кольцо, как курсор в CodePen */
-.core-outer::before{
-  content:"";
-  position:absolute;
-  inset:-4px;                 /* чуть больше, чем базовый круг */
-  border-radius:50%;
-  border:1px solid transparent;
-  border-top-color:rgba(255,255,255,.9);
-  border-right-color:rgba(255,255,255,.5);
-  border-bottom-color:rgba(255,255,255,.18);
-  border-left-color:rgba(255,255,255,.35);
-  opacity:.8;
-  pointer-events:none;
-  transform-origin:50% 50%;
-  animation:coreHaloSpin 18s linear infinite; /* постоянное вращение */
-}
-
-.core-inner{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 8px rgba(255,255,255,.9);
-  animation:coreDrift 24s ease-in-out infinite; /* медленное хаотичное движение */
-  transition:transform .35s ease-out;
-}
-
-/* Пока меню открыто — точка центрируется, ореол усиливается */
-.core-trigger.is-open .core-inner{
-  animation:none;
-  transform:translate(0,0);
-}
-.core-trigger.is-open .core-outer::before{
-  opacity:1;
-  box-shadow:0 0 16px rgba(255,255,255,.4);
-}
-
-/* Плавный хаотичный полёт точки */
-@keyframes coreDrift{
-  0%   {transform:translate(-8px,-7px);}
-  14%  {transform:translate(6px,-5px);}
-  28%  {transform:translate(9px,7px);}
-  43%  {transform:translate(-6px,9px);}
-  61%  {transform:translate(7px,2px);}
-  78%  {transform:translate(-9px,-3px);}
-  100% {transform:translate(-8px,-7px);}
-}
-
-/* Вращение внешнего кольца */
-@keyframes coreHaloSpin{
-  0%   { transform:rotate(0deg); }
-  100% { transform:rotate(360deg); }
-}
-
-/* Мобильное меню-панель (как было) */
+/* Мобильное меню (по умолчанию закрыто трансформом) */
 .mobile-menu{
   position:fixed;
-  top:80px;
-  right:var(--pad);
-  background:rgba(0,0,0,.94);
+  top:0;
+  right:0;
+  bottom:0;
+  width:min(80vw,320px);
+  background:#000;
   color:#fff;
-  border-radius:22px;
-  padding:22px 26px;
-  box-shadow:0 22px 60px rgba(0,0,0,.66);
+  padding:76px 28px 32px;
+  transform:translateX(100%);
   opacity:0;
-  transform:translateY(-8px);
   pointer-events:none;
-  transition:opacity .28s ease,transform .28s ease,background-color .3s,color .3s;
+  transition:transform .28s ease,opacity .28s ease;
   z-index:999;
 }
-.mobile-menu ul{list-style:none;padding:0;margin:0;}
-.mobile-menu li{margin:8px 0;}
-.mobile-menu a{
-  font-size:.95rem;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  font-weight:500;
+.mobile-menu ul{
+  list-style:none;
+  padding:0;
+  margin:0;
 }
-.mobile-menu.active{
+.mobile-menu li{margin:14px 0;}
+.mobile-menu a{
+  font-size:.92rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:400; /* тоньше шрифт */
+}
+.mobile-menu--open{
+  transform:translateX(0);
   opacity:1;
-  transform:translateY(0);
   pointer-events:auto;
 }
 
-/* Состояние шапки на светлых секциях */
-.nav.nav--on-light .brand__mark{color:#111;}
-.nav.nav--on-light .core-outer{
-  border-color:rgba(0,0,0,.9);
-  box-shadow:0 0 18px rgba(0,0,0,.25);
+/* На десктопе мобильное меню вообще не используем */
+@media (min-width:769px){
+  .mobile-menu{
+    display:none !important;
+  }
 }
-.nav.nav--on-light .core-inner{
-  background:#000;
-  box-shadow:0 0 7px rgba(0,0,0,.8);
-}
-.nav.nav--on-light .core-outer::before{
-  border-top-color:rgba(0,0,0,.9);
-  border-right-color:rgba(0,0,0,.5);
-  border-bottom-color:rgba(0,0,0,.18);
-  border-left-color:rgba(0,0,0,.35);
-}
-.nav.nav--on-light .mobile-menu{
-  background:rgba(255,255,255,.96);
-  color:#000;
-}
-.nav.nav--on-light .mobile-menu a{color:#000;}
-
 
 /* =========================================================
    Hero
@@ -224,10 +174,12 @@ a{color:inherit;text-decoration:none}
   min-height:100vh;
   display:grid;
   place-items:center;
+  position:relative;
+  overflow:hidden;
 }
 .hero__content{
   text-align:center;
-  padding:120px var(--pad) 60px;
+  padding:120px var(--pad) 80px;
 }
 .hero__name{
   font-size:clamp(2rem,6vw,4rem);
@@ -236,10 +188,9 @@ a{color:inherit;text-decoration:none}
   text-transform:uppercase;
   margin-bottom:16px;
 }
-#logoText{color:#fff}
 #logoText span{
   display:inline-block;
-  transition:transform .25s ease-out,text-shadow .3s ease-out;
+  transition:transform .22s ease-out,text-shadow .3s ease-out;
 }
 #logoText span[data-space="true"]{pointer-events:none;}
 
@@ -268,6 +219,49 @@ a{color:inherit;text-decoration:none}
               0 0 20px rgba(255,255,255,.25),
               0 0 30px rgba(255,255,255,.15);
 }
+
+/* Индикатор скролла */
+.hero__scroll{
+  position:absolute;
+  left:50%;
+  bottom:40px;
+  transform:translateX(-50%);
+  opacity:0;
+  animation:indicatorFadeIn 1.2s ease forwards .9s;
+  pointer-events:none;
+}
+.scroll-indicator__mouse{
+  width:22px;
+  height:36px;
+  border-radius:14px;
+  border:1.5px solid rgba(255,255,255,.7);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:7px;
+  box-shadow:0 0 10px rgba(0,0,0,.6);
+}
+.scroll-indicator__wheel{
+  width:3px;
+  height:7px;
+  border-radius:999px;
+  background:rgba(255,255,255,.9);
+  animation:scrollWheel 1.5s ease-in-out infinite;
+}
+
+/* Белая панель, которая выезжает вверх */
+.hero__reveal{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:40vh;
+  background:#ffffff;
+  transform:translateY(40vh);
+  pointer-events:none;
+}
+
+/* Animations */
 @keyframes heroSloganIntro{
   to{
     opacity:1;
@@ -278,9 +272,17 @@ a{color:inherit;text-decoration:none}
   0%,100%{text-shadow:none}
   50%{text-shadow:0 0 6px rgba(255,255,255,.15)}
 }
+@keyframes indicatorFadeIn{
+  to{opacity:1;}
+}
+@keyframes scrollWheel{
+  0%{transform:translateY(0);opacity:1;}
+  60%{transform:translateY(8px);opacity:0.2;}
+  100%{transform:translateY(0);opacity:0;}
+}
 
 /* =========================================================
-   Interlude (меняющийся заголовок)
+   Interlude
 ========================================================= */
 .interlude{
   background:#fff;
@@ -305,7 +307,7 @@ a{color:inherit;text-decoration:none}
   text-align:center;
 }
 .stage#about{
-  scroll-margin-top:45vh; /* при клике по «Об агентстве» в кадре interlude + about */
+  scroll-margin-top:45vh;
 }
 .stage__title{
   max-width:56rem;
@@ -316,18 +318,14 @@ a{color:inherit;text-decoration:none}
 }
 
 /* =========================================================
-   Work
+   Work (проекты) — тёмный блок
 ========================================================= */
 #work{
-  background:#fff !important;
+  background:#050505;
   padding:0;
 }
-#work::before,
-#work::after{
-  content:none !important;
-}
 .wall{
-  width:100%; /* вместо 100vw, чтобы убрать горизонтальный скролл */
+  width:100%;
   margin:0 auto;
   display:grid;
   grid-template-columns:repeat(12,1fr);
@@ -398,7 +396,7 @@ a{color:inherit;text-decoration:none}
   max-width:52ch;
 }
 
-/* Карта формы */
+/* Форма */
 .form{
   background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
   border:1px solid rgba(255,255,255,.08);
@@ -414,7 +412,6 @@ a{color:inherit;text-decoration:none}
   margin-bottom:18px;
 }
 
-/* Поле ввода */
 .input{
   width:100%;
   padding:18px 16px 14px;
@@ -427,20 +424,14 @@ a{color:inherit;text-decoration:none}
   -webkit-appearance:none;
   transition:border-color .25s,box-shadow .25s,background .25s,transform .18s;
 }
-.input::placeholder{
-  color:transparent; /* чтобы не мешал лейблу */
-}
-
-/* свой спокойный фокус, без синей системной рамки */
+.input::placeholder{color:transparent;}
 .input:focus{
-  outline:none;
   border-color:#fff;
   box-shadow:0 0 0 2px rgba(255,255,255,.12);
   background:#111111;
   transform:translateY(-1px);
 }
 
-/* Лейбл внутри поля */
 .label{
   position:absolute;
   left:18px;
@@ -453,17 +444,14 @@ a{color:inherit;text-decoration:none}
   transform-origin:left center;
   transition:top .18s ease, transform .18s ease, opacity .18s ease, color .18s ease;
 }
-
-/* Поднимаем лейбл ещё выше при фокусе/заполнении */
 .field.filled .label,
 .input:focus + .label{
-  top:4px;              /* было 6px — теперь выше */
+  top:4px;
   transform:scale(.88);
   opacity:.95;
   color:#ffffff;
 }
 
-/* Статус отправки */
 .form__status{
   min-height:20px;
   font-size:.9rem;
@@ -474,7 +462,6 @@ a{color:inherit;text-decoration:none}
 .form__status--success{color:#9be7c4;}
 .form__status--error{color:#ff8a80;}
 
-/* Кнопки */
 .actions{
   display:flex;
   align-items:center;
@@ -533,6 +520,159 @@ a{color:inherit;text-decoration:none}
   width:20px;
   height:20px;
   fill:currentColor;
+}
+
+/* =========================================================
+   Вертикальная капсула "связаться"
+========================================================= */
+.contact-pill{
+  position:fixed;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%) translateX(64px); /* за кадром, пока скрыта */
+  width:32px;
+  min-height:110px;
+  padding:8px 4px;
+  border-radius:999px;
+  border:1px solid #000;
+  background:linear-gradient(180deg,#151515,#000000); /* по умолчанию чёрная, выпуклая */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:.72rem;
+  font-weight:400;
+  color:#f5f5f5;
+  cursor:pointer;
+  z-index:950;
+  opacity:0;
+  pointer-events:none;
+  box-shadow:
+    0 6px 18px rgba(0,0,0,.55),
+    inset 0 1px 0 rgba(255,255,255,.14);
+  transition:
+    transform .35s cubic-bezier(.19,1,.22,1),
+    opacity .3s ease,
+    box-shadow .3s ease,
+    border-color .3s ease,
+    background .3s ease,
+    color .25s ease;
+}
+
+.contact-pill--visible{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(-50%) translateX(0);
+}
+
+.contact-pill:hover{
+  box-shadow:
+    0 10px 24px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.18);
+}
+
+/* Вариант на блоке "О нас" (светлый фон страницы) — чёрная капсула, белый текст/иконки */
+.contact-pill--on-about{
+  background:linear-gradient(180deg,#171717,#000000);
+  border-color:#000;
+  color:#f5f5f5;
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.16);
+}
+
+/* Вариант на блоке "Проекты" (тёмный фон страницы) — белая капсула, чёрный текст/иконки */
+.contact-pill--on-work{
+  background:linear-gradient(180deg,#ffffff,#dcdcdc);
+  border-color:#d0d0d0;
+  color:#111111;
+  box-shadow:
+    0 7px 20px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+.contact-pill__label{
+  line-height:1.3;
+}
+
+/* Блок с выпадающими иконками */
+.contact-pill__icons{
+  position:absolute;
+  right:calc(100% + 10px);
+  top:50%;
+  transform:translateY(-50%) translateX(10px);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease;
+}
+
+.contact-pill--open .contact-pill__icons{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(-50%) translateX(0);
+}
+
+/* Базовый вид иконок */
+.contact-pill__icon{
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.9);
+  background:#050505;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#f5f5f5; /* на чёрной капсуле иконки белые */
+  transition:
+    background .25s ease,
+    border-color .25s ease,
+    transform .2s ease,
+    opacity .2s ease,
+    color .25s ease;
+}
+.contact-pill__icon svg{
+  width:18px;
+  height:18px;
+}
+
+/* Когда капсула белая (на блоке "Проекты") — иконки по умолчанию чёрные на белом фоне */
+.contact-pill--on-work .contact-pill__icon{
+  background:#ffffff;
+  border-color:#c7c7c7;
+  color:#111111;
+}
+
+/* На чёрной капсуле оставляем белые иконки */
+.contact-pill--on-about .contact-pill__icon{
+  background:#050505;
+  border-color:#000000;
+  color:#f5f5f5;
+}
+
+.contact-pill__icon:hover{
+  transform:translateX(-2px);
+}
+
+/* Мобайл-твик для капсулы */
+@media (max-width:768px){
+  .contact-pill{
+    right:10px;
+    width:30px;
+    min-height:100px;
+    font-size:.7rem;
+  }
+  .contact-pill__icon{
+    width:28px;
+    height:28px;
+  }
 }
 
 
@@ -614,18 +754,29 @@ footer{
   }
 }
 
+/* Блокируем скролл при открытом мобильном меню */
+body.nav-lock{
+  overflow:hidden;
+}
+
 /* =========================================================
    Mobile polish
 ========================================================= */
 @media (max-width:768px){
-  /* На мобиле скрываем десктопное меню и показываем CORE-бургер */
   .nav__group{display:none;}
-  .core-trigger{display:flex;}
+  .burger{display:flex;}
 
-  #logoText{
-    display:inline-block;
-    transform-origin:center;
+  /* Когда меню открыто: крестик перекрывает логотип слева */
+  .nav.nav--menu-open .brand__mark{
+    opacity:0;
+    pointer-events:none;
   }
+  .nav.nav--menu-open .burger{
+    position:absolute;
+    left:var(--pad);
+    right:auto;
+  }
+
   .stage#about{
     padding:80px 16px 96px;
     scroll-margin-top:32vh;
@@ -641,5 +792,3 @@ footer{
     transition:none !important;
   }
 }
-
-

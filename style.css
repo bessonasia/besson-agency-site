@@ -284,11 +284,14 @@ a{color:inherit;text-decoration:none}
 /* =========================================================
    Interlude
 ========================================================= */
+/* Блок со сменной надписью (Event / Creative / ...) */
 .interlude{
   background:#fff;
   color:#0a0a0a;
   text-align:center;
-  padding:140px var(--pad);
+
+  /* верх оставляем как было, двигаем только низ, чтобы описание подошло ближе */
+  padding:140px var(--pad) 80px;
 }
 .hero__title{
   font-size:clamp(3rem,9.6vw,7rem);
@@ -306,16 +309,62 @@ a{color:inherit;text-decoration:none}
   padding:160px var(--pad);
   text-align:center;
 }
+
+/* Конкретно блок "О нас": ближе к сменной надписи,
+   но остаётся хороший запас снизу под сетку */
 .stage#about{
-  scroll-margin-top:45vh;
+  background:#fff;
+  color:#0a0a0a;
+  padding:20px var(--pad) 360px;  /* было больше сверху и/или снизу */
+  text-align:center;
+  scroll-margin-top:32vh;
 }
+
 .stage__title{
-  max-width:56rem;
+  max-width:52rem;
   margin:0 auto;
-  font-size:clamp(1.05rem,1.6vw,1.35rem);
-  font-weight:400;
-  line-height:1.7;
+  font-family:
+    "SF Pro Text",
+    "Inter",
+    "Helvetica Neue",
+    "Segoe UI",
+    system-ui,
+    sans-serif;          /* все эти гарнитуры хорошо поддерживают кириллицу */
+
+  font-weight:301;       /* лёгкое начертание */
+  font-size:clamp(1.02rem,1.5vw,1.26rem);
+  line-height:1.8;
+  letter-spacing:.01em;  /* лёгкий «воздух» между буквами */
 }
+
+/* =========================================================
+   About — глобус с градусами и филиалами
+========================================================= */
+
+.stage#about{
+  background:#fff;
+  color:#0a0a0a;
+  padding:40px var(--pad) 320px;  /* верх чуть больше, низ оставляем большим под глобус */
+  text-align:center;
+  scroll-margin-top:32vh;
+}
+
+.about-globe{
+  position:relative;
+  max-width:var(--grid);
+  margin:120px auto 0;          /* отступ от текста вниз */
+  height:clamp(220px,34vw,320px); /* большой купол как на скетче */
+  pointer-events:auto;          /* будем ловить курсор на контейнере */
+}
+
+#aboutGlobe{
+  width:100%;
+  height:100%;
+  display:block;
+  pointer-events:none;          /* курсор отслеживаем на .about-globe, не на canvas */
+}
+
+
 
 /* =========================================================
    Work (проекты) — тёмный блок
@@ -331,19 +380,18 @@ a{color:inherit;text-decoration:none}
   grid-template-columns:repeat(12,1fr);
 }
 
-/* 3 проекта в ряд на десктопе — span 4 оставляем */
 .tile{
   grid-column:span 4;
   position:relative;
   overflow:hidden;
 }
 
-/* Планшет — по два в ряд */
+/* 2 колонки на средних экранах */
 @media (max-width:1100px){
   .tile{grid-column:span 6;}
 }
 
-/* Мобайл — один проект в ряд */
+/* 1 колонка на мобильных */
 @media (max-width:680px){
   .tile{grid-column:1/-1;}
 }
@@ -351,13 +399,17 @@ a{color:inherit;text-decoration:none}
 .tile img{
   width:100%;
   height:auto;
-  min-height:380px;        /* было 300px — делаем крупнее */
   display:block;
   background:#111;
   transition:transform .7s ease;
   aspect-ratio:16/9;
   object-fit:cover;
+
+  /* Ключ: размер “как у Departament” */
+  /* На больших экранах высота ~ 430–450px, на меньших — пропорционально меньше */
+  min-height:clamp(320px, 28vw, 460px);
 }
+
 
 }
 .tile:hover img{transform:scale(1.06);}

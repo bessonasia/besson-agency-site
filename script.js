@@ -43,7 +43,7 @@ function initGlobeStrip() {
   const CITIES = [
     { name: 'Алматы',  lat: 31.0, lon: 20.0 },  // ✅ было lon 40 -> левее ~15%
     { name: 'Москва',  lat: 60.0, lon: -5.0 }, // без изменений
-    { name: 'Ташкент', lat: 20.0, lon: -20.0 }  // ✅ было lat 38 -> ниже ~10%
+    { name: 'Ташкент', lat: 30.0, lon: -20.0 }  // ✅ было lat 38 -> ниже ~10%
   ];
 
   const renderer = new THREE.WebGLRenderer({

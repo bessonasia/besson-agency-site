@@ -781,7 +781,7 @@ Reduced motion
   }
 
   .globe-dome{
-    height: clamp(1300px, 40vh, 200px); /* ✅ купол крупнее/виднее */
+    height: clamp(1230px, 40vh, 200px); /* ✅ купол крупнее/виднее */
     bottom: var(--domeBottom, -58vh);     /* ✅ дефолт ниже */
   }
 }

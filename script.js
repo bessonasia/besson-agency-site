@@ -1,12 +1,9 @@
-/* =========================================================
-   Utils
-========================================================= */
-const qs  = (sel, root = document) => root.querySelector(sel);
+const qs = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const lerp = (a, b, t) => a + (b - a) * t;
 
 /* =========================================================
-   Enforce no system cursor on desktop
+Enforce no system cursor on desktop
 ========================================================= */
 (function enforceNoCursor() {
   if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
@@ -28,13 +25,322 @@ const lerp = (a, b, t) => a + (b - a) * t;
 })();
 
 /* =========================================================
-   Main init
+Globe: dome + cities + runner line
+========================================================= */
+function initGlobeStrip() {
+  const dome = qs('#globeDome');
+  const canvas = qs('#globeCanvas');
+  const label = qs('#globeLabel');
+  if (!dome || !canvas || !window.THREE) return;
+
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ✅ Правки по ТЗ:
+     - Ташкент ниже ~10% => lat уменьшаем
+     - Алматы левее ~15% => lon уменьшаем
+     - Остальные принципы (треугольник/разнос/анимация) сохраняем
+  */
+  const CITIES = [
+    { name: 'Алматы',  lat: 31.0, lon: 20.0 },  // ✅ было lon 40 -> левее ~15%
+    { name: 'Москва',  lat: 60.0, lon: -5.0 }, // без изменений
+    { name: 'Ташкент', lat: 25.0, lon: -20.0 }  // ✅ было lat 38 -> ниже ~10%
+  ];
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: true,
+    powerPreference: 'high-performance'
+  });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const radius = 5.3;
+
+  const baseGeo = new THREE.IcosahedronGeometry(radius, 5);
+  const wireGeo = new THREE.WireframeGeometry(baseGeo);
+  const wireMat = new THREE.LineBasicMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.15
+  });
+  const wire = new THREE.LineSegments(wireGeo, wireMat);
+  wire.renderOrder = 1;
+  group.add(wire);
+
+  group.position.y = -radius * 0.95;
+
+  const posAttr = baseGeo.getAttribute('position');
+  const vertsUnit = [];
+  const tmp = new THREE.Vector3();
+  for (let i = 0; i < posAttr.count; i++) {
+    tmp.fromBufferAttribute(posAttr, i).normalize();
+    vertsUnit.push(tmp.clone());
+  }
+
+  const vecFromLatLon = (latDeg, lonDeg) => {
+    const lat = THREE.MathUtils.degToRad(latDeg);
+    const lon = THREE.MathUtils.degToRad(lonDeg);
+    const x = Math.cos(lat) * Math.sin(lon);
+    const y = Math.sin(lat);
+    const z = Math.cos(lat) * Math.cos(lon);
+    return new THREE.Vector3(x, y, z).normalize();
+  };
+
+  const snapToVertex = (vUnit) => {
+    let best = vertsUnit[0];
+    let bestDot = -1;
+    for (const vv of vertsUnit) {
+      const d = vv.dot(vUnit);
+      if (d > bestDot) { bestDot = d; best = vv; }
+    }
+    return best.clone().multiplyScalar(radius * 1.006);
+  };
+
+  const dotGeo = new THREE.SphereGeometry(radius * 0.021, 18, 18);
+  const dotMat = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+    depthTest: false,
+    depthWrite: false
+  });
+
+  const cities = [];
+  for (const c of CITIES) {
+    const v = vecFromLatLon(c.lat, c.lon);
+    const p = snapToVertex(v);
+
+    const mesh = new THREE.Mesh(dotGeo, dotMat.clone());
+    mesh.position.copy(p);
+    mesh.renderOrder = 10;
+
+    group.add(mesh);
+    cities.push({ ...c, mesh });
+  }
+
+  const lineMat = new THREE.LineBasicMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.65,
+    depthTest: false,
+    depthWrite: false
+  });
+  const lineGeo = new THREE.BufferGeometry();
+  const runner = new THREE.Line(lineGeo, lineMat);
+  runner.renderOrder = 9;
+  group.add(runner);
+
+  const buildArc = (fromIdx, toIdx) => {
+    const a = cities[fromIdx].mesh.position.clone().normalize();
+    const b = cities[toIdx].mesh.position.clone().normalize();
+
+    const axis = new THREE.Vector3().crossVectors(a, b);
+    if (axis.length() < 1e-6) axis.set(0, 1, 0);
+    else axis.normalize();
+
+    const angle = Math.acos(THREE.MathUtils.clamp(a.dot(b), -1, 1));
+
+    const STEPS = 110;
+    const arr = new Float32Array((STEPS + 1) * 3);
+
+    for (let k = 0; k <= STEPS; k++) {
+      const t = k / STEPS;
+      const p = a.clone().applyAxisAngle(axis, angle * t).multiplyScalar(radius * 1.004);
+      arr[k * 3 + 0] = p.x;
+      arr[k * 3 + 1] = p.y;
+      arr[k * 3 + 2] = p.z;
+    }
+
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    lineGeo.setDrawRange(0, 2);
+    lineGeo.computeBoundingSphere();
+    return STEPS + 1;
+  };
+
+  let activeIndex = 0;
+  const wp = new THREE.Vector3();
+
+  const showLabelFor = (i) => {
+    if (!label) return;
+    label.textContent = cities[i]?.name || '';
+    label.classList.remove('globe-label--visible', 'globe-label--flash');
+    void label.offsetWidth;
+    label.classList.add('globe-label--visible', 'globe-label--flash');
+  };
+
+  const updateLabelPosition = () => {
+    if (!label || !cities[activeIndex]) return;
+
+    const w = dome.clientWidth;
+    const h = dome.clientHeight;
+
+    cities[activeIndex].mesh.getWorldPosition(wp);
+    wp.project(camera);
+
+    let x = (wp.x * 0.5 + 0.5) * w;
+    let y = (-wp.y * 0.5 + 0.5) * h;
+
+    const name = cities[activeIndex].name;
+    const ox = (name === 'Ташкент') ? -18 : 18; // ✅ оставляем
+    const oy = -8;
+
+    x += ox;
+    y += oy;
+
+    const m = 14;
+    x = Math.max(m, Math.min(w - m, x));
+    y = Math.max(m, Math.min(h - m, y));
+
+    label.style.left = x + 'px';
+    label.style.top = y + 'px';
+  };
+
+  const resize = () => {
+    const w = dome.clientWidth;
+    const h = dome.clientHeight;
+
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+
+    const vFov = THREE.MathUtils.degToRad(camera.fov);
+    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+
+    const isMobile = matchMedia('(max-width:768px)').matches;
+
+    // ✅ камеру не ломаем: мобилка как была, десктоп стабильный
+    const fitW = isMobile ? 1.08 : 0.92;
+    const fitH = isMobile ? 0.98 : 0.86;
+    const zPad = isMobile ? 0.35 : 0.18;
+
+    const fitWidthDist  = (radius * fitW) / Math.tan(hFov / 2);
+    const fitHeightDist = (radius * fitH) / Math.tan(vFov / 2);
+
+    camera.position.set(0, 1.15, Math.max(fitWidthDist, fitHeightDist) + zPad);
+    camera.lookAt(0, group.position.y, 0);
+    camera.updateProjectionMatrix();
+
+    updateLabelPosition();
+  };
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(dome);
+  resize();
+
+  const setActiveCity = (i) => {
+    activeIndex = i;
+    cities.forEach((c, idx) => {
+      const on = idx === i;
+      c.mesh.scale.setScalar(on ? 1.35 : 1.0);
+    });
+    showLabelFor(i);
+  };
+
+  let current = 0;
+  let next = cities.length > 1 ? 1 : 0;
+  let arcCount = cities.length > 1 ? buildArc(current, next) : 0;
+
+  setActiveCity(current);
+
+  let segT = 0;
+  const SEG_DUR = 1.55;
+
+  let last = performance.now();
+  const startTime = last;
+
+  const tick = (now) => {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    const t = (now - startTime) / 1000;
+
+    if (!prefersReduced) {
+      group.rotation.y = 0.22 * Math.sin(t * 0.45);
+      group.rotation.x = 0.05 * Math.sin(t * 0.22);
+    }
+
+    if (cities.length > 1) {
+      segT += dt;
+      const p = Math.min(segT / SEG_DUR, 1);
+      const draw = Math.max(2, Math.floor(p * arcCount));
+      lineGeo.setDrawRange(0, draw);
+
+      if (p >= 1) {
+        current = next;
+        next = (current + 1) % cities.length;
+
+        setActiveCity(current);
+
+        segT = 0;
+        arcCount = buildArc(current, next);
+      }
+    }
+
+    updateLabelPosition();
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
+
+
+/* =========================================================
+Globe: scroll "выезд из-за проектов"
+========================================================= */
+function initGlobeDomeScroll(){
+  const bridge = qs('#globeBridge');
+  const dome = qs('#globeDome');
+  if (!bridge || !dome) return;
+
+  const clamp01 = (x) => Math.max(0, Math.min(1, x));
+
+  const apply = () => {
+    const rect = bridge.getBoundingClientRect();
+    const vh = window.innerHeight;
+
+    const start = vh * 0.90;
+    const end = vh * 0.20;
+    const p = clamp01((start - rect.top) / (start - end));
+
+    const isMobile = matchMedia('(max-width:768px)').matches;
+
+    // ✅ Мобилка — как была. Десктоп — ОПУСКАЕМ ниже (больше отрицательное значение)
+    const from = isMobile ? -56 : -124;
+    const to   = isMobile ? -42 : -98;
+
+    const val = from + (to - from) * p;
+    dome.style.setProperty('--domeBottom', `${val}vh`);
+  };
+
+  apply();
+
+  let raf = 0;
+  const onScroll = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      apply();
+    });
+  };
+
+  window.addEventListener('scroll', onScroll, { passive:true });
+  window.addEventListener('resize', apply);
+}
+
+
+/* =========================================================
+Main init
 ========================================================= */
 function initBesson() {
-  const isMobile      = window.matchMedia('(max-width: 768px)').matches;
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const isFinePointer = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
 
-  /* ===== 1. Year в футере ===== */
+  /* ===== 1. Year ===== */
   const yearEl = qs('#year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
@@ -46,11 +352,7 @@ function initBesson() {
     const text = (logoText.getAttribute('aria-label') || logoText.textContent || 'Besson Agency').trim();
     logoText.innerHTML = text
       .split('')
-      .map(ch =>
-        ch === ' '
-          ? '<span data-space="true">&nbsp;</span>'
-          : `<span>${ch}</span>`
-      )
+      .map(ch => ch === ' ' ? '<span data-space="true">&nbsp;</span>' : `<span>${ch}</span>`)
       .join('');
     logoSpans = qsa('span', logoText);
   }
@@ -58,31 +360,25 @@ function initBesson() {
   if (logoSpans.length && !isMobile) {
     logoSpans.forEach(span => {
       if (span.dataset.space === 'true') return;
-      span.addEventListener('mouseenter', () => {
-        span.style.transform = 'translateY(-6px) scale(1.06)';
-      });
-      span.addEventListener('mouseleave', () => {
-        span.style.transform = 'translateY(0) scale(1)';
-      });
+      span.addEventListener('mouseenter', () => { span.style.transform = 'translateY(-6px) scale(1.06)'; });
+      span.addEventListener('mouseleave', () => { span.style.transform = 'translateY(0) scale(1)'; });
     });
   }
 
-  // Mobile: лёгкий spread по скроллу
   if (logoSpans.length && isMobile) {
     const MAX_SCROLL_BASE = 600;
     let maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
     let maxSpread = 40;
     let breathing = false;
-    let ticking   = false;
+    let ticking = false;
 
     const recalc = () => {
       maxScroll = Math.max(innerHeight * 1.1, MAX_SCROLL_BASE);
-
       if (logoText) {
-        const rect     = logoText.getBoundingClientRect();
+        const rect = logoText.getBoundingClientRect();
         const viewport = window.innerWidth || document.documentElement.clientWidth || rect.width;
-        const free     = Math.max(0, (viewport - rect.width) / 2);
-        maxSpread      = free * 0.9;
+        const free = Math.max(0, (viewport - rect.width) / 2);
+        maxSpread = free * 0.9;
       }
     };
 
@@ -90,21 +386,20 @@ function initBesson() {
       const s = Math.min(window.scrollY || 0, maxScroll);
       const p = maxScroll === 0 ? 0 : s / maxScroll;
 
-      const scale  = 1 + p * 1.6;
+      const scale = 1 + p * 1.6;
       const spread = p * maxSpread;
-      const glow   = 8 + p * 32;
+      const glow = 8 + p * 32;
 
       let i = 0;
       logoSpans.forEach(span => {
         if (span.dataset.space === 'true') {
-          span.style.transform  = 'translateX(0) scale(1)';
+          span.style.transform = 'translateX(0) scale(1)';
           span.style.textShadow = 'none';
           return;
         }
         const dir = (i++ % 2 === 0) ? -1 : 1;
-        span.style.transform  = `translateX(${dir * spread}px) scale(${scale})`;
-        span.style.textShadow =
-          `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
+        span.style.transform = `translateX(${dir * spread}px) scale(${scale})`;
+        span.style.textShadow = `0 0 ${glow}px rgba(255,255,255,${0.15 + p * 0.35})`;
       });
 
       if (p > 0.95 && !breathing) {
@@ -145,21 +440,25 @@ function initBesson() {
     }, 2500);
   }
 
-  /* ===== 4. Hero reveal + scroll indicator fade ===== */
-  const hero        = qs('.hero');
-  const heroReveal  = qs('.hero__reveal');
-  const heroScroll  = qs('.hero__scroll');
-  let heroHeight    = hero ? hero.offsetHeight : 0;
+  /* ===== 3.1 Globe ===== */
+  initGlobeStrip();
+  initGlobeDomeScroll();
+
+  /* ===== 4. Hero reveal ===== */
+  const hero = qs('.hero');
+  const heroReveal = qs('.hero__reveal');
+  const heroScroll = qs('.hero__scroll');
+  let heroHeight = hero ? hero.offsetHeight : 0;
   let heroMaxOffset = heroHeight * 0.45;
 
   const updateHeroReveal = () => {
     if (!hero || !heroReveal) return;
-    heroHeight    = hero.offsetHeight || window.innerHeight;
+    heroHeight = hero.offsetHeight || window.innerHeight;
     heroMaxOffset = heroHeight * 0.45;
 
-    const scrollY  = window.scrollY || 0;
-    const progress = Math.max(0, Math.min(scrollY / heroHeight, 1)); // 0..1
-    const offset   = (1 - progress) * heroMaxOffset;
+    const scrollY = window.scrollY || 0;
+    const progress = Math.max(0, Math.min(scrollY / heroHeight, 1));
+    const offset = (1 - progress) * heroMaxOffset;
 
     heroReveal.style.transform = `translateY(${offset}px)`;
 
@@ -170,22 +469,20 @@ function initBesson() {
   };
 
   updateHeroReveal();
-  window.addEventListener('scroll', () => {
-    requestAnimationFrame(updateHeroReveal);
-  }, { passive: true });
+  window.addEventListener('scroll', () => { requestAnimationFrame(updateHeroReveal); }, { passive: true });
   window.addEventListener('resize', updateHeroReveal);
 
-  /* ===== 5. Nav: цвет, показ/скрытие, бургер ===== */
-  const nav           = qs('#siteNav');
-  const burger        = qs('.burger');
-  const mobileMenu    = qs('#mobileMenu');
+  /* ===== 5. Nav ===== */
+  const nav = qs('#siteNav');
+  const burger = qs('.burger');
+  const mobileMenu = qs('#mobileMenu');
   const themeSections = qsa('section[data-theme]');
-  let currentTheme    = 'dark';
-  let lastScrollY     = window.scrollY || 0;
-  const SCROLL_DELTA  = 6;
-  const HIDE_START    = 80;
-  let menuOpen        = false;
-  let tickingNav      = false;
+  let currentTheme = 'dark';
+  let lastScrollY = window.scrollY || 0;
+  const SCROLL_DELTA = 6;
+  const HIDE_START = 80;
+  let menuOpen = false;
+  let tickingNav = false;
 
   const setMobileMenuState = (open) => {
     if (!burger || !mobileMenu) return;
@@ -199,7 +496,7 @@ function initBesson() {
     if (nav) {
       if (open) {
         nav.classList.remove('nav--hidden');
-        nav.classList.add('nav--menu-open'); // для крестика поверх лого
+        nav.classList.add('nav--menu-open');
       } else {
         nav.classList.remove('nav--menu-open');
       }
@@ -207,11 +504,7 @@ function initBesson() {
   };
 
   if (burger && mobileMenu) {
-    burger.addEventListener('click', () => {
-      setMobileMenuState(!menuOpen);
-    });
-
-    // Закрываем меню по клику на пункт
+    burger.addEventListener('click', () => { setMobileMenuState(!menuOpen); });
     qsa('a', mobileMenu).forEach(a => {
       a.addEventListener('click', () => {
         if (!menuOpen) return;
@@ -223,7 +516,7 @@ function initBesson() {
   const updateNavTheme = () => {
     if (!nav || !themeSections.length) return;
     const navHeight = nav.offsetHeight || 0;
-    const markerY   = navHeight + 2;
+    const markerY = navHeight + 2;
 
     let theme = 'dark';
     for (const section of themeSections) {
@@ -237,22 +530,18 @@ function initBesson() {
 
     if (theme !== currentTheme) {
       currentTheme = theme;
-      const isLight = theme === 'light';
-      nav.classList.toggle('nav--on-light', isLight);
+      nav.classList.toggle('nav--on-light', theme === 'light');
     }
   };
 
   const handleNavScroll = () => {
     if (!nav) return;
     const currentY = window.scrollY || 0;
-    const diff     = currentY - lastScrollY;
+    const diff = currentY - lastScrollY;
 
     if (!menuOpen && Math.abs(diff) > SCROLL_DELTA) {
-      if (currentY > HIDE_START && diff > 0) {
-        nav.classList.add('nav--hidden');    // скролл вниз – прячем
-      } else if (diff < 0) {
-        nav.classList.remove('nav--hidden'); // скролл вверх – показываем
-      }
+      if (currentY > HIDE_START && diff > 0) nav.classList.add('nav--hidden');
+      else if (diff < 0) nav.classList.remove('nav--hidden');
       lastScrollY = currentY;
     } else if (menuOpen) {
       nav.classList.remove('nav--hidden');
@@ -275,82 +564,70 @@ function initBesson() {
 
   window.addEventListener('resize', updateNavTheme);
 
-  /* ===== 6. Вертикальная капсула "связаться" ===== */
-const contactPill  = qs('#contactPill');
-const aboutSection = qs('#about');
-const workSection  = qs('#work');
+  /* ===== 6. Contact pill ===== */
+  const contactPill = qs('#contactPill');
+  const aboutSection = qs('#about');
+  const workSection = qs('#work');
 
-if (contactPill && (aboutSection || workSection)) {
-  const setPillState = (visible, variant) => {
-    contactPill.classList.toggle('contact-pill--visible', visible);
-    contactPill.classList.toggle('contact-pill--on-about', visible && variant === 'about');
-    contactPill.classList.toggle('contact-pill--on-work',  visible && variant === 'work');
+  if (contactPill && (aboutSection || workSection)) {
+    const setPillState = (visible, variant) => {
+      contactPill.classList.toggle('contact-pill--visible', visible);
+      contactPill.classList.toggle('contact-pill--on-about', visible && variant === 'about');
+      contactPill.classList.toggle('contact-pill--on-work', visible && variant === 'work');
 
-    if (!visible) {
+      if (!visible) {
+        contactPill.classList.remove('contact-pill--open');
+        contactPill.setAttribute('aria-expanded', 'false');
+      }
+    };
+
+    const updatePillByScroll = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const centerY = vh / 2;
+      let variant = null;
+
+      if (aboutSection) {
+        const r = aboutSection.getBoundingClientRect();
+        if (r.top <= centerY && r.bottom >= centerY) variant = 'about';
+      }
+
+      if (!variant && workSection) {
+        const r = workSection.getBoundingClientRect();
+        if (r.top <= centerY && r.bottom >= centerY) variant = 'work';
+      }
+
+      if (variant) setPillState(true, variant);
+      else setPillState(false, null);
+    };
+
+    updatePillByScroll();
+    window.addEventListener('scroll', () => { requestAnimationFrame(updatePillByScroll); }, { passive: true });
+    window.addEventListener('resize', updatePillByScroll);
+
+    const toggleOpen = () => {
+      const open = !contactPill.classList.contains('contact-pill--open');
+      contactPill.classList.toggle('contact-pill--open', open);
+      contactPill.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+
+    contactPill.addEventListener('click', (e) => { e.stopPropagation(); toggleOpen(); });
+    contactPill.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleOpen();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!contactPill.classList.contains('contact-pill--open')) return;
+      if (e.target.closest('#contactPill')) return;
       contactPill.classList.remove('contact-pill--open');
       contactPill.setAttribute('aria-expanded', 'false');
-    }
-  };
+    });
+  }
 
-  // Определяем, над каким блоком находится центр экрана
-  const updatePillByScroll = () => {
-    const vh      = window.innerHeight || document.documentElement.clientHeight;
-    const centerY = vh / 2;
-    let variant   = null;
-
-    if (aboutSection) {
-      const r = aboutSection.getBoundingClientRect();
-      if (r.top <= centerY && r.bottom >= centerY) variant = 'about';
-    }
-
-    if (!variant && workSection) {
-      const r = workSection.getBoundingClientRect();
-      if (r.top <= centerY && r.bottom >= centerY) variant = 'work';
-    }
-
-    if (variant) {
-      setPillState(true, variant);
-    } else {
-      setPillState(false, null);
-    }
-  };
-
-  updatePillByScroll();
-  window.addEventListener('scroll', () => {
-    requestAnimationFrame(updatePillByScroll);
-  }, { passive: true });
-  window.addEventListener('resize', updatePillByScroll);
-
-  const toggleOpen = () => {
-    const open = !contactPill.classList.contains('contact-pill--open');
-    contactPill.classList.toggle('contact-pill--open', open);
-    contactPill.setAttribute('aria-expanded', open ? 'true' : 'false');
-  };
-
-  contactPill.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleOpen();
-  });
-
-  contactPill.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggleOpen();
-    }
-  });
-
-  // Клик вне капсулы — закрываем выпадающие иконки
-  document.addEventListener('click', (e) => {
-    if (!contactPill.classList.contains('contact-pill--open')) return;
-    if (e.target.closest('#contactPill')) return;
-    contactPill.classList.remove('contact-pill--open');
-    contactPill.setAttribute('aria-expanded', 'false');
-  });
-}
-
-
-  /* ===== 7. Premium cursor (desktop) ===== */
-  const dotCur  = qs('#cursorDot');
+  /* ===== 7. Premium cursor ===== */
+  const dotCur = qs('#cursorDot');
   const ringCur = qs('#cursorRing');
 
   if (isFinePointer && dotCur && ringCur) {
@@ -361,13 +638,13 @@ if (contactPill && (aboutSection || workSection)) {
     let tx = dx;
     let ty = dy;
 
-    const DOT_LERP  = 0.35;
+    const DOT_LERP = 0.35;
     const RING_LERP = 0.12;
 
     const move = e => {
       tx = e.clientX;
       ty = e.clientY;
-      dotCur.style.opacity  = '1';
+      dotCur.style.opacity = '1';
       ringCur.style.opacity = '1';
     };
 
@@ -379,7 +656,7 @@ if (contactPill && (aboutSection || workSection)) {
       rx = lerp(rx, tx, RING_LERP);
       ry = lerp(ry, ty, RING_LERP);
 
-      dotCur.style.transform  = `translate(${dx}px,${dy}px)`;
+      dotCur.style.transform = `translate(${dx}px,${dy}px)`;
       ringCur.style.transform = `translate(${rx}px,${ry}px)`;
 
       requestAnimationFrame(loop);
@@ -390,27 +667,23 @@ if (contactPill && (aboutSection || workSection)) {
 
     document.addEventListener('pointerover', e => {
       if (e.pointerType !== 'mouse') return;
-      if (e.target.closest(hoverSel)) {
-        ringCur.classList.add('cursor--hover');
-      }
+      if (e.target.closest(hoverSel)) ringCur.classList.add('cursor--hover');
     });
 
     document.addEventListener('pointerout', e => {
       if (e.pointerType !== 'mouse') return;
-      if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) {
-        ringCur.classList.remove('cursor--hover');
-      }
+      if (!e.relatedTarget || !e.relatedTarget.closest(hoverSel)) ringCur.classList.remove('cursor--hover');
     });
 
     window.addEventListener('mouseout', e => {
       if (!e.relatedTarget) {
-        dotCur.style.opacity  = '0';
+        dotCur.style.opacity = '0';
         ringCur.style.opacity = '0';
       }
     });
 
     window.addEventListener('mouseenter', () => {
-      dotCur.style.opacity  = '1';
+      dotCur.style.opacity = '1';
       ringCur.style.opacity = '1';
     });
 
@@ -420,7 +693,7 @@ if (contactPill && (aboutSection || workSection)) {
       btn.addEventListener('mousemove', e => {
         const r = btn.getBoundingClientRect();
         glow.style.setProperty('--x', ((e.clientX - r.left) / r.width * 100) + '%');
-        glow.style.setProperty('--y', ((e.clientY - r.top)  / r.height * 100) + '%');
+        glow.style.setProperty('--y', ((e.clientY - r.top) / r.height * 100) + '%');
       });
     });
   }
@@ -435,7 +708,7 @@ if (contactPill && (aboutSection || workSection)) {
     toggle();
   });
 
-  /* ===== 9. Lead form submit (Web3Forms AJAX) ===== */
+  /* ===== 9. Lead form ===== */
   const leadForm = qs('#leadForm');
   const statusEl = qs('#formStatus');
 
@@ -453,7 +726,7 @@ if (contactPill && (aboutSection || workSection)) {
 
       e.preventDefault();
 
-      const formData  = new FormData(leadForm);
+      const formData = new FormData(leadForm);
       const submitBtn = leadForm.querySelector('button[type="submit"]');
 
       statusEl.textContent = 'Отправляем...';
@@ -462,14 +735,8 @@ if (contactPill && (aboutSection || workSection)) {
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!res.ok) {
-          throw new Error('Bad response: ' + res.status);
-        }
+        const res = await fetch(endpoint, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('Bad response: ' + res.status);
 
         leadForm.reset();
         qsa('.field', leadForm).forEach(f => f.classList.remove('filled'));
@@ -493,13 +760,10 @@ if (contactPill && (aboutSection || workSection)) {
 }
 
 /* =========================================================
-   Boot
+Boot
 ========================================================= */
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initBesson);
 } else {
   initBesson();
-  
-   
-  
 }

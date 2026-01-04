@@ -1,300 +1,298 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Besson Agency</title>
-<meta name="color-scheme" content="dark light">
-<link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Besson Agency</title>
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-<!-- NAV -->
-<header class="nav" id="siteNav">
-<a href="#top" class="brand__mark" id="navLogo">BESSON</a>
+  <!-- NAV -->
+  <header class="nav" id="siteNav">
+    <a href="#top" class="brand__mark" id="navLogo">BESSON</a>
 
-<!-- Десктопное меню -->
-<nav class="nav__group" aria-label="Основное меню">
-<a class="link" href="#about">Об агентстве</a>
-<a class="link" href="#work">Проекты</a>
-<a class="link" href="#contact">Контакты</a>
-</nav>
+    <!-- Десктопное меню -->
+    <nav class="nav__group" aria-label="Основное меню">
+      <a class="link" href="#about">Об агентстве</a>
+      <a class="link" href="#work">Проекты</a>
+      <a class="link" href="#contact">Контакты</a>
+    </nav>
 
-<!-- Бургер (только мобилка) -->
-<button
-class="burger"
-type="button"
-aria-label="Открыть меню"
-aria-expanded="false"
-aria-controls="mobileMenu"
->
-<span class="burger__line"></span>
-<span class="burger__line"></span>
-</button>
+    <!-- Бургер (только мобилка) -->
+    <button
+      class="burger"
+      type="button"
+      aria-label="Открыть меню"
+      aria-expanded="false"
+      aria-controls="mobileMenu"
+    >
+      <span class="burger__line"></span>
+      <span class="burger__line"></span>
+    </button>
 
-<!-- Мобильное меню -->
-<nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
-<ul>
-<li><a href="#about">Об агентстве</a></li>
-<li><a href="#work">Проекты</a></li>
-<li><a href="#contact">Контакты</a></li>
-</ul>
-</nav>
-</header>
+    <!-- Мобильное меню -->
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="#about">Об агентстве</a></li>
+        <li><a href="#work">Проекты</a></li>
+        <li><a href="#contact">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<main>
-<!-- HERO (тёмный фон) -->
-<section class="hero" id="top" data-theme="dark">
-<div class="hero__content">
-<div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
-<div class="hero__slogan" id="slogan">
-<span>Не</span><span>спим</span><span>за</span><span>деньги</span>
-</div>
-</div>
+  <main>
+    <!-- HERO (тёмный фон) -->
+    <section class="hero" id="top" data-theme="dark">
+      <div class="hero__content">
+        <div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
+        <div class="hero__slogan" id="slogan">
+          <span>Не</span><span>спим</span><span>за</span><span>деньги</span>
+        </div>
+      </div>
 
-<!-- Индикатор скролла -->
-<div class="hero__scroll">
-<div class="scroll-indicator">
-<span class="scroll-indicator__mouse">
-<span class="scroll-indicator__wheel"></span>
-</span>
-</div>
-</div>
+      <!-- Индикатор скролла -->
+      <div class="hero__scroll">
+        <div class="scroll-indicator">
+          <span class="scroll-indicator__mouse">
+            <span class="scroll-indicator__wheel"></span>
+          </span>
+        </div>
+      </div>
 
-<!-- Белая панель, которая «вытягивается» вверх при скролле -->
-<div class="hero__reveal"></div>
-</section>
+      <!-- Белая панель, которая «вытягивается» вверх при скролле -->
+      <div class="hero__reveal"></div>
+    </section>
 
-<!-- INTERLUDE (светлый блок) -->
-<section class="interlude" data-theme="light">
-<h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
-</section>
+    <!-- INTERLUDE (светлый блок) -->
+    <section class="interlude" data-theme="light">
+      <h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
+    </section>
 
-<!-- ABOUT (светлый блок) -->
-<section class="stage" id="about" data-theme="light">
-<h2 class="stage__title">
-Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
-Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
-</h2>
+    <!-- ABOUT (светлый блок) -->
+    <section class="stage" id="about" data-theme="light">
+      <h2 class="stage__title">
+        Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
+        Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
+      </h2>
 
-<!-- Вертикальная капсула "связаться" -->
-<div
-class="contact-pill"
-id="contactPill"
-role="button"
-tabindex="0"
-aria-label="Связаться"
-aria-expanded="false"
->
-<div class="contact-pill__label">связаться</div>
-<div class="contact-pill__icons" aria-hidden="true">
-<!-- WhatsApp -->
-<a
-class="contact-pill__icon"
-href="https://api.whatsapp.com/send/?phone=77058880678&text&type=phone_number&app_absent=0"
-target="_blank"
-rel="noopener"
-aria-label="Написать в WhatsApp"
->
-<svg viewBox="0 0 32 32" aria-hidden="true">
-<path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z" fill="none" stroke="currentColor" stroke-width="1.6"/>
-<path d="M20.9 18.6c-.22-.11-1.32-.65-1.53-.72-.21-.07-.36-.11-.52.11s-.6.72-.73.87c-.13.15-.27.16-.5.05-.23-.11-.97-.36-1.84-1.12-.68-.61-1.14-1.36-1.28-1.59-.13-.23-.01-.35.1-.46.1-.1.23-.26.34-.39.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.39-.06-.11-.52-1.24-.72-1.7-.19-.46-.38-.4-.52-.41l-.44-.01c-.15 0-.39.06-.6.28-.21.23-.8.78-.8 1.9 0 1.12.82 2.2.94 2.35.12.15 1.62 2.47 4 3.46.56.24 1 .38 1.34.48.56.18 1.07.15 1.47.09.45-.07 1.32-.54 1.51-1.06.19-.52.19-.97.13-1.06-.06-.09-.2-.15-.41-.25z" fill="currentColor"/>
-</svg>
-</a>
+      <!-- Вертикальная капсула "связаться" -->
+      <div
+        class="contact-pill"
+        id="contactPill"
+        role="button"
+        tabindex="0"
+        aria-label="Связаться"
+        aria-expanded="false"
+      >
+        <div class="contact-pill__label">связаться</div>
+        <div class="contact-pill__icons" aria-hidden="true">
+          <!-- WhatsApp -->
+          <a
+            class="contact-pill__icon"
+            href="https://api.whatsapp.com/send/?phone=77058880678&text&type=phone_number&app_absent=0"
+            target="_blank"
+            rel="noopener"
+            aria-label="Написать в WhatsApp"
+          >
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M20.9 18.6c-.22-.11-1.32-.65-1.53-.72-.21-.07-.36-.11-.52.11s-.6.72-.73.87c-.13.15-.27.16-.5.05-.23-.11-.97-.36-1.84-1.12-.68-.61-1.14-1.36-1.28-1.59-.13-.23-.01-.35.1-.46.1-.1.23-.26.34-.39.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.39-.06-.11-.52-1.24-.72-1.7-.19-.46-.38-.4-.52-.41l-.44-.01c-.15 0-.39.06-.6.28-.21.23-.8.78-.8 1.9 0 1.12.82 2.2.94 2.35.12.15 1.62 2.47 4 3.46.56.24 1 .38 1.34.48.56.18 1.07.15 1.47.09.45-.07 1.32-.54 1.51-1.06.19-.52.19-.97.13-1.06-.06-.09-.2-.15-.41-.25z" fill="currentColor"/>
+            </svg>
+          </a>
 
-<!-- Telegram -->
-<a
-class="contact-pill__icon"
-href="https://t.me/yurymalcev"
-target="_blank"
-rel="noopener"
-aria-label="Написать в Telegram"
->
-<svg viewBox="0 0 32 32" aria-hidden="true">
-<path d="M27.6 4.8 4.3 13.6c-1.1.44-1.1 1.38-.2 1.68l5.9 1.94 2.3 7.12c.27.82.52 1.15 1.06 1.15.53 0 .77-.2 1.07-.75l2.57-4.2 6.03 4.44c1.1.6 1.9.29 2.17-1.02l3.93-18.46c.4-1.62-.62-2.35-1.77-1.88z" fill="none" stroke="currentColor" stroke-width="1.6"/>
-<path d="M13.2 23.4 14 18l9.4-9.15-11.9 7.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-</a>
-</div>
-</div>
-</section>
+          <!-- Telegram -->
+          <a
+            class="contact-pill__icon"
+            href="https://t.me/yurymalcev"
+            target="_blank"
+            rel="noopener"
+            aria-label="Написать в Telegram"
+          >
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <path d="M27.6 4.8 4.3 13.6c-1.1.44-1.1 1.38-.2 1.68l5.9 1.94 2.3 7.12c.27.82.52 1.15 1.06 1.15.53 0 .77-.2 1.07-.75l2.57-4.2 6.03 4.44c1.1.6 1.9.29 2.17-1.02l3.93-18.46c.4-1.62-.62-2.35-1.77-1.88z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+              <path d="M13.2 23.4 14 18l9.4-9.15-11.9 7.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
 
-<!-- GLOBE DOME -->
-<section class="globe-bridge" id="globeBridge" data-theme="light" aria-hidden="true">
-<div class="globe-dome" id="globeDome">
-<canvas id="globeCanvas"></canvas>
-<div class="globe-label" id="globeLabel" aria-live="polite"></div>
-</div>
-</section>
-<!-- /GLOBE DOME -->
+    <!-- GLOBE DOME -->
+    <section class="globe-bridge" id="globeBridge" data-theme="light" aria-hidden="true">
+      <div class="globe-dome" id="globeDome">
+        <canvas id="globeCanvas"></canvas>
+        <div class="globe-label" id="globeLabel" aria-live="polite"></div>
+      </div>
+    </section>
+    <!-- /GLOBE DOME -->
 
-<!-- WORK -->
-<section id="work" data-theme="dark">
-<div class="wall" id="wall">
+    <!-- WORK -->
+    <section id="work" data-theme="dark">
+      <div class="wall" id="wall">
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" width="1600" height="900" alt="Project 1">
+          <div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" width="1600" height="900" alt="Project 2">
+          <div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" width="1600" height="900" alt="Project 3">
+          <div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" width="1600" height="900" alt="Project 4">
+          <div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" width="1600" height="900" alt="Project 5">
+          <div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" width="1600" height="900" alt="Project 6">
+          <div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" width="1600" height="900" alt="Project 7">
+          <div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" width="1600" height="900" alt="Project 8">
+          <div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" width="1600" height="900" alt="Project 9">
+          <div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" width="1600" height="900" alt="Project 10">
+          <div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" width="1600" height="900" alt="Project 11">
+          <div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div>
+        </a>
+        <a class="tile" href="#">
+          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" width="1600" height="900" alt="Project 12">
+          <div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div>
+        </a>
+      </div>
+    </section>
 
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" width="1600" height="900" alt="Project 1">
-<div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" width="1600" height="900" alt="Project 2">
-<div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" width="1600" height="900" alt="Project 3">
-<div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" width="1600" height="900" alt="Project 4">
-<div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" width="1600" height="900" alt="Project 5">
-<div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" width="1600" height="900" alt="Project 6">
-<div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" width="1600" height="900" alt="Project 7">
-<div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" width="1600" height="900" alt="Project 8">
-<div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" width="1600" height="900" alt="Project 9">
-<div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" width="1600" height="900" alt="Project 10">
-<div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" width="1600" height="900" alt="Project 11">
-<div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div>
-</a>
-<a class="tile" href="#">
-<img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" width="1600" height="900" alt="Project 12">
-<div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div>
-</a>
+    <!-- CLIENTS -->
+    <section class="clients" id="clients" data-theme="dark">
+      <div class="clients__inner">
+        <p class="clients__eyebrow"></p>
 
-</div>
-</section>
+        <h2 class="clients__headline">
+          НЕ СПИМ ЗА ДЕНЬГИ ДЛЯ ЛУЧШИХ КОМПАНИЙ
+        </h2>
 
-<!-- CLIENTS -->
-<section class="clients" id="clients" data-theme="dark">
-<div class="clients__inner">
-<p class="clients__eyebrow"></p>
+        <div class="clients__grid">
+          <div class="clients__item">Nestlé</div>
+          <div class="clients__item">Beiersdorf</div>
+          <div class="clients__item">Lenovo</div>
+          <div class="clients__item">BAT</div>
+          <div class="clients__item">Phillip&nbsp;Morris</div>
+          <div class="clients__item">METRO</div>
 
-<h2 class="clients__headline">
-НЕ СПИМ ЗА ДЕНЬГИ ДЛЯ ЛУЧШИХ КОМПАНИЙ
-</h2>
+          <div class="clients__item">MEGA</div>
+          <div class="clients__item">Freedom&nbsp;Finance</div>
+          <div class="clients__item">Chery</div>
+          <div class="clients__item">Macro</div>
+          <div class="clients__item">Yandex</div>
+          <div class="clients__item">BI&nbsp;Group</div>
 
-<div class="clients__grid">
-<div class="clients__item">Nestlé</div>
-<div class="clients__item">Beiersdorf</div>
-<div class="clients__item">Lenovo</div>
-<div class="clients__item">BAT</div>
-<div class="clients__item">Phillip&nbsp;Morris</div>
-<div class="clients__item">METRO</div>
+          <div class="clients__item">NRG</div>
+          <div class="clients__item">UCELL</div>
+          <div class="clients__item">Megafon</div>
+          <div class="clients__item">Panasonic</div>
+          <div class="clients__item">Oriflame</div>
+          <div class="clients__item">Rahat</div>
+        </div>
+      </div>
+    </section>
 
-<div class="clients__item">MEGA</div>
-<div class="clients__item">Freedom&nbsp;Finance</div>
-<div class="clients__item">Chery</div>
-<div class="clients__item">Macro</div>
-<div class="clients__item">Yandex</div>
-<div class="clients__item">BI&nbsp;Group</div>
+    <!-- CONTACT -->
+    <section class="contact" id="contact" data-theme="dark">
+      <div class="contact__grid">
+        <h2 class="contact__lead">Оставьте заявку</h2>
+        <p class="contact__sub">
+          <span class="line">Укажите имя и номер телефона.</span>
+          <span class="line">Работаем 24/7.</span>
+        </p>
 
-<div class="clients__item">NRG</div>
-<div class="clients__item">UCELL</div>
-<div class="clients__item">Megafon</div>
-<div class="clients__item">Panasonic</div>
-<div class="clients__item">Oriflame</div>
-<div class="clients__item">Rahat</div>
-</div>
-</div>
-</section>
+        <form
+          class="form"
+          id="leadForm"
+          action="https://api.web3forms.com/submit"
+          method="POST"
+          novalidate
+        >
+          <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e">
+          <input type="hidden" name="subject" value="Новая заявка с сайта Besson Agency">
+          <input type="hidden" name="from_name" value="Besson Agency Website">
+          <input type="hidden" name="redirect" value="https://besson.asia/#contact">
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
 
-<!-- CONTACT -->
-<section class="contact" id="contact" data-theme="dark">
-<div class="contact__grid">
-<h2 class="contact__lead">Оставьте заявку</h2>
-<p class="contact__sub">
-<span class="line">Укажите имя и номер телефона.</span>
-<span class="line">Работаем 24/7.</span>
-</p>
+          <div class="row">
+            <div class="field">
+              <input class="input" id="name" name="name" placeholder=" " required>
+              <label class="label" for="name">Имя</label>
+            </div>
+            <div class="field">
+              <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
+                placeholder=" " required pattern="[\d\s\+\-\(\)]{6,}">
+              <label class="label" for="phone">Телефон</label>
+            </div>
+          </div>
 
-<form
-class="form"
-id="leadForm"
-action="https://api.web3forms.com/submit"
-method="POST"
-novalidate
->
-<input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e">
-<input type="hidden" name="subject" value="Новая заявка с сайта Besson Agency">
-<input type="hidden" name="from_name" value="Besson Agency Website">
-<input type="hidden" name="redirect" value="https://besson.asia/#contact">
-<input type="checkbox" name="botcheck" class="hidden" style="display:none;">
+          <div class="actions">
+            <button class="btn" type="submit">
+              <span class="glow"></span>
+              Отправить
+            </button>
+            <a class="icon-btn"
+              href="https://api.whatsapp.com/send/?phone=77058880678&text&type=phone_number&app_absent=0"
+              target="_blank" aria-label="WhatsApp">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z"/>
+              </svg>
+            </a>
+          </div>
 
-<div class="row">
-<div class="field">
-<input class="input" id="name" name="name" placeholder=" " required>
-<label class="label" for="name">Имя</label>
-</div>
-<div class="field">
-<input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
-placeholder=" " required pattern="[\d\s\+\-\(\)]{6,}">
-<label class="label" for="phone">Телефон</label>
-</div>
-</div>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
 
-<div class="actions">
-<button class="btn" type="submit">
-<span class="glow"></span>
-Отправить
-</button>
-<a class="icon-btn"
-href="https://api.whatsapp.com/send/?phone=77058880678&text&type=phone_number&app_absent=0"
-target="_blank" aria-label="WhatsApp">
-<svg viewBox="0 0 32 32" aria-hidden="true">
-<path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z"/>
-</svg>
-</a>
-</div>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">BESSON AGENCY</div>
+    <div class="footer-contact" style="margin-bottom:20px;line-height:1.8;">
+      <a href="mailto:hello@besson.asia"
+        style="display:flex;align-items:center;gap:10px;color:#f5f5f5;text-decoration:none;">
+        <svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18"
+          fill="none" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span style="font-weight:500;letter-spacing:.03em;">hello@besson.asia</span>
+      </a>
+    </div>
+    <p>© <span id="year"></span> Besson Agency</p>
+  </footer>
 
-<p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
-</form>
-</div>
-</section>
-</main>
+  <!-- PREMIUM CURSOR -->
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
-<!-- FOOTER -->
-<footer>
-<div class="footer-left">BESSON AGENCY</div>
-<div class="footer-contact" style="margin-bottom:20px;line-height:1.8;">
-<a href="mailto:hello@besson.asia"
-style="display:flex;align-items:center;gap:10px;color:#f5f5f5;text-decoration:none;">
-<svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18"
-fill="none" stroke="currentColor" stroke-width="1.6"
-stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-<rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
-<polyline points="22,6 12,13 2,6"/>
-</svg>
-<span style="font-weight:500;letter-spacing:.03em;">hello@besson.asia</span>
-</a>
-</div>
-<p>© <span id="year"></span> Besson Agency</p>
-</footer>
-
-<!-- PREMIUM CURSOR -->
-<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
-
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-<script defer src="script.js"></script>
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script defer src="script.js"></script>
 </body>
 </html>

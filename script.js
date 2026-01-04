@@ -38,7 +38,7 @@ function initGlobeStrip() {
   const CITIES = [
     { name: 'Алматы',  lat: 31.0, lon: 20.0 },
     { name: 'Москва',  lat: 60.0, lon: -5.0 },
-    { name: 'Ташкент', lat: 25.0, lon: -20.0 }
+    { name: 'Ташкент', lat: 25.0, lon: -10.0 }
   ];
 
   const renderer = new THREE.WebGLRenderer({
@@ -63,13 +63,12 @@ function initGlobeStrip() {
   const wireMat = new THREE.LineBasicMaterial({
     color: 0x000000,
     transparent: true,
-    opacity: 0.35 // ✅ было 0.15 — как ты просил
+    opacity: 0.35
   });
   const wire = new THREE.LineSegments(wireGeo, wireMat);
   wire.renderOrder = 1;
   group.add(wire);
 
-  // ✅ Купол: опускаем геометрию вниз, чтобы была "полусфера"
   group.position.y = -radius * 0.95;
 
   const posAttr = baseGeo.getAttribute('position');
@@ -216,8 +215,6 @@ function initGlobeStrip() {
     const fitHeightDist = (radius * fitH) / Math.tan(vFov / 2);
 
     camera.position.set(0, 1.15, Math.max(fitWidthDist, fitHeightDist) + zPad);
-
-    // ✅ камера смотрит в центр сцены (а купол — за счёт смещения group вниз)
     camera.lookAt(0, 0, 0);
 
     camera.updateProjectionMatrix();
@@ -286,46 +283,65 @@ function initGlobeStrip() {
 }
 
 /* =========================================================
-Globe: scroll "выезд из-за проектов" (FIXED DESKTOP)
+Globe: scroll "выезд" (премиально и выше)
 ========================================================= */
 function initGlobeDomeScroll(){
   const bridge = qs('#globeBridge');
   const dome = qs('#globeDome');
   if (!bridge || !dome) return;
 
+  const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp01 = (x) => Math.max(0, Math.min(1, x));
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
-  const apply = () => {
+  let current = null;
+  let target = null;
+  let raf = 0;
+
+  const compute = () => {
     const rect = bridge.getBoundingClientRect();
     const vh = window.innerHeight || document.documentElement.clientHeight || 0;
 
-    const start = vh * 0.65;
-    const end   = vh * 0.10;
-    const p = (start === end) ? 0 : clamp01((start - rect.top) / (start - end));
+    const start = vh * 0.72;
+    const end   = vh * 0.14;
+    const pRaw = (start === end) ? 0 : (start - rect.top) / (start - end);
+    const p = easeOutCubic(clamp01(pRaw));
 
     const isMobile = matchMedia('(max-width:768px)').matches;
 
-    // ✅ Главное исправление: на десктопе НЕ -152/-128 (это утапливало купол полностью)
-    const from = isMobile ? -86 : -100; // старт (ниже)
-    const to   = isMobile ? -102 : -10; // финал (выше)
+    /* ✅ подняли диапазоны ещё выше (и мобила тоже) */
+    const from = isMobile ? -22 : -18;  // старт (чуть ниже)
+    const to   = isMobile ?  -8 :  -4;  // финиш (выше)
 
-    const val = from + (to - from) * p;
-    dome.style.setProperty('--domeBottom', `${val}vh`);
+    target = from + (to - from) * p;
+    if (current === null) current = target;
   };
 
-  apply();
+  const paint = () => {
+    raf = 0;
+    if (target === null) return;
 
-  let raf = 0;
-  const onScroll = () => {
-    if (raf) return;
-    raf = requestAnimationFrame(() => {
-      raf = 0;
-      apply();
-    });
+    if (prefersReduced) {
+      dome.style.setProperty('--domeBottom', `${target}vh`);
+      return;
+    }
+
+    current = lerp(current, target, 0.14);
+    dome.style.setProperty('--domeBottom', `${current.toFixed(3)}vh`);
+
+    if (Math.abs(current - target) > 0.02) {
+      raf = requestAnimationFrame(paint);
+    }
   };
 
-  window.addEventListener('scroll', onScroll, { passive:true });
-  window.addEventListener('resize', apply);
+  const request = () => {
+    compute();
+    if (!raf) raf = requestAnimationFrame(paint);
+  };
+
+  request();
+  window.addEventListener('scroll', request, { passive:true });
+  window.addEventListener('resize', request);
 }
 
 /* =========================================================

@@ -35,15 +35,10 @@ function initGlobeStrip() {
 
   const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ✅ Правки по ТЗ:
-     - Ташкент ниже ~10% => lat уменьшаем
-     - Алматы левее ~15% => lon уменьшаем
-     - Остальные принципы (треугольник/разнос/анимация) сохраняем
-  */
   const CITIES = [
-    { name: 'Алматы',  lat: 31.0, lon: 20.0 },  // ✅ было lon 40 -> левее ~15%
-    { name: 'Москва',  lat: 60.0, lon: -5.0 }, // без изменений
-    { name: 'Ташкент', lat: 30.0, lon: -20.0 }  // ✅ было lat 38 -> ниже ~10%
+    { name: 'Алматы',  lat: 31.0, lon: 20.0 },
+    { name: 'Москва',  lat: 60.0, lon: -5.0 },
+    { name: 'Ташкент', lat: 25.0, lon: -20.0 }
   ];
 
   const renderer = new THREE.WebGLRenderer({
@@ -68,12 +63,13 @@ function initGlobeStrip() {
   const wireMat = new THREE.LineBasicMaterial({
     color: 0x000000,
     transparent: true,
-    opacity: 0.15
+    opacity: 0.35 // ✅ было 0.15 — как ты просил
   });
   const wire = new THREE.LineSegments(wireGeo, wireMat);
   wire.renderOrder = 1;
   group.add(wire);
 
+  // ✅ Купол: опускаем геометрию вниз, чтобы была "полусфера"
   group.position.y = -radius * 0.95;
 
   const posAttr = baseGeo.getAttribute('position');
@@ -186,7 +182,7 @@ function initGlobeStrip() {
     let y = (-wp.y * 0.5 + 0.5) * h;
 
     const name = cities[activeIndex].name;
-    const ox = (name === 'Ташкент') ? -18 : 18; // ✅ оставляем
+    const ox = (name === 'Ташкент') ? -18 : 18;
     const oy = -8;
 
     x += ox;
@@ -212,7 +208,6 @@ function initGlobeStrip() {
 
     const isMobile = matchMedia('(max-width:768px)').matches;
 
-    // ✅ камеру не ломаем: мобилка как была, десктоп стабильный
     const fitW = isMobile ? 1.08 : 0.92;
     const fitH = isMobile ? 0.98 : 0.86;
     const zPad = isMobile ? 0.35 : 0.18;
@@ -221,9 +216,11 @@ function initGlobeStrip() {
     const fitHeightDist = (radius * fitH) / Math.tan(vFov / 2);
 
     camera.position.set(0, 1.15, Math.max(fitWidthDist, fitHeightDist) + zPad);
-    camera.lookAt(0, group.position.y, 0);
-    camera.updateProjectionMatrix();
 
+    // ✅ камера смотрит в центр сцены (а купол — за счёт смещения group вниз)
+    camera.lookAt(0, 0, 0);
+
+    camera.updateProjectionMatrix();
     updateLabelPosition();
   };
 
@@ -288,9 +285,8 @@ function initGlobeStrip() {
   requestAnimationFrame(tick);
 }
 
-
 /* =========================================================
-Globe: scroll "выезд из-за проектов"
+Globe: scroll "выезд из-за проектов" (FIXED DESKTOP)
 ========================================================= */
 function initGlobeDomeScroll(){
   const bridge = qs('#globeBridge');
@@ -301,17 +297,17 @@ function initGlobeDomeScroll(){
 
   const apply = () => {
     const rect = bridge.getBoundingClientRect();
-    const vh = window.innerHeight;
+    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
 
-    const start = vh * 0.90;
-    const end = vh * 0.20;
-    const p = clamp01((start - rect.top) / (start - end));
+    const start = vh * 0.65;
+    const end   = vh * 0.10;
+    const p = (start === end) ? 0 : clamp01((start - rect.top) / (start - end));
 
     const isMobile = matchMedia('(max-width:768px)').matches;
 
-    // ✅ Мобилка — как была. Десктоп — ОПУСКАЕМ ниже (больше отрицательное значение)
-    const from = isMobile ? -56 : -124;
-    const to   = isMobile ? -42 : -98;
+    // ✅ Главное исправление: на десктопе НЕ -152/-128 (это утапливало купол полностью)
+    const from = isMobile ? -86 : -100; // старт (ниже)
+    const to   = isMobile ? -102 : -10; // финал (выше)
 
     const val = from + (to - from) * p;
     dome.style.setProperty('--domeBottom', `${val}vh`);
@@ -331,7 +327,6 @@ function initGlobeDomeScroll(){
   window.addEventListener('scroll', onScroll, { passive:true });
   window.addEventListener('resize', apply);
 }
-
 
 /* =========================================================
 Main init

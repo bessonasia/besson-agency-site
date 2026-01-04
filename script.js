@@ -575,67 +575,91 @@ function initBesson() {
 
   window.addEventListener('resize', updateNavTheme);
 
-  /* ===== 6. Contact pill ===== */
-  const contactPill = qs('#contactPill');
-  const aboutSection = qs('#about');
-  const workSection = qs('#work');
+  /* ===== 6. Contact pill (SAFE) ===== */
+const contactPill = qs('#contactPill');
 
-  if (contactPill && (aboutSection || workSection)) {
-    const setPillState = (visible, variant) => {
-      contactPill.classList.toggle('contact-pill--visible', visible);
-      contactPill.classList.toggle('contact-pill--on-about', visible && variant === 'about');
-      contactPill.classList.toggle('contact-pill--on-work', visible && variant === 'work');
+if (contactPill) {
+  const interlude = qs('.interlude');
+  const themeSectionsPill = qsa('section[data-theme]');
 
-      if (!visible) {
-        contactPill.classList.remove('contact-pill--open');
-        contactPill.setAttribute('aria-expanded', 'false');
+  let open = false;
+  let rafPill = 0;
+
+  const setOpen = (v) => {
+    open = v;
+    contactPill.classList.toggle('contact-pill--open', open);
+    contactPill.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+    const icons = contactPill.querySelector('.contact-pill__icons');
+    if (icons) icons.setAttribute('aria-hidden', open ? 'false' : 'true');
+  };
+
+  const getThemeAtMarker = (markerY) => {
+    let theme = 'light';
+    for (const s of themeSectionsPill) {
+      const r = s.getBoundingClientRect();
+      if (r.bottom <= 0) continue;
+      if (r.top <= markerY && r.bottom >= markerY) {
+        theme = (s.dataset.theme || 'light');
+        break;
       }
-    };
+    }
+    return theme;
+  };
 
-    const updatePillByScroll = () => {
-      const vh = window.innerHeight || document.documentElement.clientHeight;
-      const centerY = vh / 2;
-      let variant = null;
+  const shouldShow = () => {
+    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (interlude) {
+      const r = interlude.getBoundingClientRect();
+      return r.top <= vh * 0.65; // появляется начиная с Event/BTL
+    }
+    return (window.scrollY || 0) > vh * 0.9;
+  };
 
-      if (aboutSection) {
-        const r = aboutSection.getBoundingClientRect();
-        if (r.top <= centerY && r.bottom >= centerY) variant = 'about';
-      }
+  const update = () => {
+    rafPill = 0;
 
-      if (!variant && workSection) {
-        const r = workSection.getBoundingClientRect();
-        if (r.top <= centerY && r.bottom >= centerY) variant = 'work';
-      }
+    const visible = shouldShow();
+    contactPill.classList.toggle('contact-pill--visible', visible);
 
-      if (variant) setPillState(true, variant);
-      else setPillState(false, null);
-    };
+    if (!visible && open) setOpen(false);
 
-    updatePillByScroll();
-    window.addEventListener('scroll', () => { requestAnimationFrame(updatePillByScroll); }, { passive: true });
-    window.addEventListener('resize', updatePillByScroll);
+    const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+    const theme = getThemeAtMarker(vh * 0.5);
+    contactPill.classList.toggle('contact-pill--on-dark', theme === 'dark');
+  };
 
-    const toggleOpen = () => {
-      const open = !contactPill.classList.contains('contact-pill--open');
-      contactPill.classList.toggle('contact-pill--open', open);
-      contactPill.setAttribute('aria-expanded', open ? 'true' : 'false');
-    };
+  const requestUpdate = () => {
+    if (rafPill) return;
+    rafPill = requestAnimationFrame(update);
+  };
 
-    contactPill.addEventListener('click', (e) => { e.stopPropagation(); toggleOpen(); });
-    contactPill.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleOpen();
-      }
-    });
+  contactPill.addEventListener('click', (e) => {
+    if (e.target.closest('.contact-pill__icon')) return;
+    e.stopPropagation();
+    setOpen(!open);
+  });
 
-    document.addEventListener('click', (e) => {
-      if (!contactPill.classList.contains('contact-pill--open')) return;
-      if (e.target.closest('#contactPill')) return;
-      contactPill.classList.remove('contact-pill--open');
-      contactPill.setAttribute('aria-expanded', 'false');
-    });
-  }
+  contactPill.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(!open);
+    }
+    if (e.key === 'Escape') setOpen(false);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!open) return;
+    if (e.target.closest('#contactPill')) return;
+    setOpen(false);
+  });
+
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
+
+  requestUpdate();
+}
+
 
   /* ===== 7. Premium cursor ===== */
   const dotCur = qs('#cursorDot');

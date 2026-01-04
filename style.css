@@ -262,15 +262,13 @@ About
   padding:160px var(--pad);
   text-align:center;
 }
-
 .stage#about{
   background:#fff;
   color:#0a0a0a;
-  padding:20px var(--pad) 340px; /* ✅ было 360px — сблизили текст и сферу */
+  padding:20px var(--pad) 300px;
   text-align:center;
   scroll-margin-top:32vh;
 }
-
 .stage__title{
   max-width:52rem;
   margin:0 auto;
@@ -288,13 +286,14 @@ About
 }
 
 /* =========================================================
-Globe Dome between ABOUT and WORK
+Globe Dome between ABOUT and WORK  (FIXED + CLEAN)
 ========================================================= */
 .globe-bridge{
   position:relative;
   background:#fff;
   padding:0;
-  height:clamp(300px,50vh,620px);
+  height:clamp(220px,50vh,620px);
+  overflow:visible; /* ключ: не режем купол */
 }
 
 .globe-dome{
@@ -339,11 +338,23 @@ Globe Dome between ABOUT and WORK
   100%{ transform:translate(-50%,-165%) scale(1); }
 }
 
+/* mobile — как было */
 @media (max-width:768px){
   .globe-bridge{height:clamp(180px,30vh,340px);}
   .globe-dome{
     height:clamp(440px,86vh,820px);
-    bottom:var(--domeBottom, -56vh);
+    bottom:var(--domeBottom, -46vh);
+  }
+}
+
+/* DESKTOP — фикс: купол НЕ уезжает в космос, высота 1230px */
+@media (min-width:769px){
+  .globe-bridge{
+    height:clamp(470px,70vh,750px);
+  }
+  .globe-dome{
+    height:1230px;                 /* как ты просил */
+    bottom:var(--domeBottom, -30vh);/* старт видимый */
   }
 }
 
@@ -768,20 +779,4 @@ Reduced motion
 ========================================================= */
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important;}
-}
-
-/* ✅ FIX: купол на десктопе не “прячется” вниз */
-.globe-bridge{
-  overflow: visible; /* на всякий — чтобы ничего не подрезалось контейнером */
-}
-
-@media (min-width:769px){
-  .globe-bridge{
-    height: clamp(380px, 80vh, 620px); /* ✅ окно больше, купол читается */
-  }
-
-  .globe-dome{
-    height: clamp(1230px, 40vh, 200px); /* ✅ купол крупнее/виднее */
-    bottom: var(--domeBottom, -58vh);     /* ✅ дефолт ниже */
-  }
 }

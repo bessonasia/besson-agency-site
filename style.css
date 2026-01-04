@@ -262,13 +262,21 @@ About
   padding:160px var(--pad);
   text-align:center;
 }
+
 .stage#about{
   background:#fff;
   color:#0a0a0a;
-  padding:20px var(--pad) 300px;
+
+  /* ✅ сокращаем нижний "белый прямоугольник" */
+  padding:20px var(--pad) 170px;
+
   text-align:center;
   scroll-margin-top:32vh;
+
+  position:relative;
+  z-index:1; /* ✅ больше не перекрывает купол целиком */
 }
+
 .stage__title{
   max-width:52rem;
   margin:0 auto;
@@ -283,17 +291,21 @@ About
   font-size:clamp(1.02rem,1.5vw,1.26rem);
   line-height:1.8;
   letter-spacing:.01em;
+
+  position:relative;
+  z-index:4; /* ✅ текст над куполом */
 }
 
 /* =========================================================
-Globe Dome between ABOUT and WORK  (FIXED + CLEAN)
+Globe Dome between ABOUT and WORK
 ========================================================= */
 .globe-bridge{
   position:relative;
   background:#fff;
   padding:0;
   height:clamp(220px,50vh,620px);
-  overflow:visible; /* ключ: не режем купол */
+  overflow:visible;
+  z-index:2;
 }
 
 .globe-dome{
@@ -302,10 +314,14 @@ Globe Dome between ABOUT and WORK  (FIXED + CLEAN)
   transform:translateX(-50%);
   width:100vw;
   height:clamp(680px,118vh,1250px);
-  bottom:var(--domeBottom, -58vh);
-  background:#fff;
+
+  /* ✅ по умолчанию выше (достаём сферу вверх) */
+  bottom:var(--domeBottom, -12vh);
+
+  background:transparent; /* ✅ больше нет белой плашки */
   pointer-events:none;
-  z-index:1;
+
+  z-index:2; /* ✅ купол выше фона about, но ниже текста */
 }
 
 #globeCanvas{
@@ -330,6 +346,7 @@ Globe Dome between ABOUT and WORK  (FIXED + CLEAN)
   pointer-events:none;
   transform:translate(-50%,-140%);
   transition:opacity .2s ease, transform .2s ease;
+  z-index:3;
 }
 .globe-label--visible{opacity:1;transform:translate(-50%,-165%);}
 .globe-label--flash{animation:globeFlash .28s ease-out;}
@@ -338,23 +355,22 @@ Globe Dome between ABOUT and WORK  (FIXED + CLEAN)
   100%{ transform:translate(-50%,-165%) scale(1); }
 }
 
-/* mobile — как было */
+/* mobile */
 @media (max-width:768px){
   .globe-bridge{height:clamp(180px,30vh,340px);}
   .globe-dome{
     height:clamp(440px,86vh,820px);
-    bottom:var(--domeBottom, -46vh);
+    bottom:var(--domeBottom, -18vh); /* ✅ мобила поднята */
   }
 }
 
-/* DESKTOP — фикс: купол НЕ уезжает в космос, высота 1230px */
+/* desktop */
 @media (min-width:769px){
   .globe-bridge{
     height:clamp(470px,70vh,750px);
   }
   .globe-dome{
-    height:1230px;                 /* как ты просил */
-    bottom:var(--domeBottom, -30vh);/* старт видимый */
+    height:1100px;
   }
 }
 
@@ -769,7 +785,7 @@ Mobile polish
   }
 
   .stage#about{
-    padding:80px 16px 96px;
+    padding:80px 16px 120px; /* ✅ меньше прямоугольник + не мешает куполу */
     scroll-margin-top:32vh;
   }
 }

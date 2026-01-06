@@ -177,6 +177,256 @@
       </div>
     </section>
 
+<!-- VIDEO REVIEWS (B) -->
+<section class="reviews" id="reviews" data-theme="dark">
+  <div class="reviews__inner">
+
+    <header class="reviews__head" data-rv>
+      <p class="reviews__kicker">Видео отзывы</p>
+      <h2 class="reviews__title">Клиенты о нас </h2>
+      <p class="reviews__lead" id="rvLead">
+        Коротко. По делу. Без рекламной пены.
+      </p>
+    </header>
+
+    <button class="reviews__card" type="button" id="rvOpen" data-rv aria-label="Открыть видео-отзыв">
+      <div class="reviews__thumb" id="rvThumb" aria-hidden="true"></div>
+
+      <span class="reviews__play" aria-hidden="true">
+        <span class="reviews__playRing"></span>
+        <span class="reviews__playTri"></span>
+      </span>
+
+      <span class="reviews__caption" aria-hidden="true">
+        <span class="reviews__quote" id="rvQuote">“Сильная режиссура процесса: всё под контролем.”</span>
+        <span class="reviews__meta" id="rvMeta">Head of Trade — METRO</span>
+      </span>
+    </button>
+
+    <nav class="reviews__tabs" aria-label="Выбор отзыва" data-rv>
+      <button class="reviews__tab is-active" type="button" data-rv-tab="0"><span>01</span> Nestlé</button>
+      <button class="reviews__tab" type="button" data-rv-tab="1"><span>02</span> Beiersdorf</button>
+      <button class="reviews__tab" type="button" data-rv-tab="2"><span>03</span> METRO</button>
+    </nav>
+
+  </div>
+</section>
+
+<!-- REVIEWS MODAL -->
+<div class="reviews-modal" id="rvModal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="reviews-modal__bg" data-rv-close></div>
+
+  <div class="reviews-modal__panel" role="document">
+    <button class="reviews-modal__close" type="button" aria-label="Закрыть" data-rv-close></button>
+    <div class="reviews-modal__frame" id="rvFrame"></div>
+  </div>
+</div>
+<!-- /VIDEO REVIEWS (B) -->
+
+    <section class="team" id="team" aria-label="Команда Besson Agency">
+  <div class="team__inner">
+    <div class="team__head">
+      <div class="team__kicker">КОМАНДА</div>
+
+      <div class="team__headRow">
+        <h2 class="team__title">Люди, которые делают результат</h2>
+
+        <!-- Навигация (премиальные стрелки) -->
+        <div class="team__controls" aria-label="Навигация по карточкам команды">
+          <button class="team-nav-btn" type="button" data-team-prev aria-label="Предыдущий сотрудник">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <button class="team-nav-btn" type="button" data-team-next aria-label="Следующий сотрудник">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      
+
+    <!-- Полоса с карточками -->
+    <div class="team__railWrap">
+      <div class="team__rail" id="teamRail" tabindex="0" aria-label="Список сотрудников (горизонтальная прокрутка)">
+        <!-- Карточки. Для color-pop используй уже подготовленные изображения (селективный цвет) -->
+        <article class="team-card is-bw" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Юрий</div>
+            <div class="team-card__role">Основатель / Генеральный директор</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Москва</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Россия</span>
+            </div>
+          </div>
+        </article>
+
+<article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Севара</div>
+            <div class="team-card__role">Директор филиала</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Ташкент</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Узбекистан</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Людмила</div>
+            <div class="team-card__role">Управляющий директор</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Алматы</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Казахстан</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Лариса</div>
+            <div class="team-card__role">Главный бухгалтер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Алматы</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Казахстан</span>
+            </div>
+          </div>
+        </article>
+        
+
+        <article class="team-card is-bw" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Виолетта </div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Москва</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Россия</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="team-card is-bw" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Анастасия</div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Москва</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Россия</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Зарина</div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Алматы</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Казахстан</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Ольга</div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Астана</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Казахстан</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Камилла</div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Ташкент</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Узбекистан</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Наина</div>
+            <div class="team-card__role">Аккаунт менеджер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Самарканд</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Узбекистан</span>
+            </div>
+          </div>
+        </article>
+        
+        <article class="team-card is-colorpop" aria-label="Сотрудник">
+          <div class="team-card__media">
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
+          </div>
+          <div class="team-card__body">
+            <div class="team-card__name">Наиль</div>
+            <div class="team-card__role">Старший дизайнер</div>
+            <div class="team-card__meta">
+              <span class="team-card__place">Алматы</span>
+              <span class="team-card__dot" aria-hidden="true"></span>
+              <span class="team-card__country">Казахстан</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- “Колёсики” (премиальные точки) -->
+      <div class="team__dots" id="teamDots" aria-label="Пагинация по сотрудникам"></div>
+    </div>
+  </div>
+</section>
+
+
     <!-- CONTACT -->
     <section class="contact" id="contact" data-theme="dark">
       <div class="contact__grid">
@@ -294,7 +544,9 @@
 </div>
 <!-- /CONTACT PILL -->
 
-  
+ 
+
+
   <!-- PREMIUM CURSOR -->
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>

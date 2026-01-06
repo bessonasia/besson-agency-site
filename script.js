@@ -1,3 +1,8 @@
+// JS-flag: если скрипт загрузился — включаем анимации
+document.documentElement.classList.remove('no-js');
+document.documentElement.classList.add('js');
+
+
 const qs = (sel, root = document) => root.querySelector(sel);
 const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -343,6 +348,10 @@ function initGlobeDomeScroll(){
   window.addEventListener('scroll', request, { passive:true });
   window.addEventListener('resize', request);
 }
+
+  /* ===== 3.2 Work reveal ===== */
+  initWorkReveal();
+
 
 /* =========================================================
 Main init
@@ -795,10 +804,101 @@ if (contactPill) {
 }
 
 /* =========================================================
+Work: reveal tiles on scroll (IntersectionObserver + row stagger)
+========================================================= */
+function initWorkReveal(){
+  const wall = qs('#wall');
+  if (!wall) return;
+
+  const tiles = qsa('.tile', wall);
+  if (!tiles.length) return;
+
+  // 1) Ставим задержки "волной" по рядам (адаптивно)
+  const assignStagger = () => {
+    // Группируем по offsetTop (это "ряд" в текущей сетке)
+    const rows = new Map();
+
+    tiles.forEach(el => {
+      const top = el.offsetTop;
+      if (!rows.has(top)) rows.set(top, []);
+      rows.get(top).push(el);
+    });
+
+    // Сортируем ряды сверху вниз
+    const rowTops = Array.from(rows.keys()).sort((a,b) => a - b);
+
+    rowTops.forEach((top, rowIndex) => {
+      const rowEls = rows.get(top);
+
+      // Внутри ряда — слева направо
+      rowEls.sort((a,b) => a.offsetLeft - b.offsetLeft);
+
+      rowEls.forEach((el, colIndex) => {
+        // Премиальный тайминг: быстро, но ощущается как система
+        const delay = rowIndex * 110 + colIndex * 70; // ms
+        el.style.setProperty('--reveal-delay', `${delay}ms`);
+      });
+    });
+  };
+
+  assignStagger();
+
+  // На resize сетка меняется — пересчитываем задержки (лёгкий debounce)
+  let rAF = 0;
+  const onResize = () => {
+    if (rAF) return;
+    rAF = requestAnimationFrame(() => {
+      assignStagger();
+      rAF = 0;
+    });
+  };
+  window.addEventListener('resize', onResize, { passive:true });
+
+    // Если true — волна задержек будет каждый раз при повторном появлении
+  // Если false — stagger только при первом появлении, дальше без задержек (обычно выглядит дороже)
+  const REPEAT_STAGGER = false;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const el = entry.target;
+
+      // Вошла в кадр — включаем
+      if (entry.isIntersecting) {
+        // если уже показывали и не хотим повторных задержек — обнуляем delay
+        if (!REPEAT_STAGGER && el.dataset.seen === '1') {
+          el.style.setProperty('--reveal-delay', '0ms');
+        }
+
+        el.classList.add('is-in');
+        el.dataset.seen = '1';
+        return;
+      }
+
+      // Вышла из кадра полностью — сбрасываем, чтобы при возврате анимация сыграла заново
+      // (сработает уже когда элемент реально вне viewport, визуально не "мигает")
+      el.classList.remove('is-in');
+    });
+  }, {
+    root: null,
+    threshold: 0.18,
+    rootMargin: '0px 0px -12% 0px'
+  });
+
+  tiles.forEach(el => io.observe(el));
+
+
+  tiles.forEach(el => io.observe(el));
+}
+
+
+/* =========================================================
 Boot
 ========================================================= */
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initBesson);
 } else {
+  
+  
+  
   initBesson();
 }

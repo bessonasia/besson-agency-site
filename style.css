@@ -1077,3 +1077,788 @@ Reduced motion
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important;}
 }
+/* =========================================================
+CONTACT — Underlap from CLIENTS (Variant A) + repeatable motion
+========================================================= */
+
+/* Настройка глубины "из-за клиентов" */
+:root{
+  --contact-overlap: clamp(72px, 12vh, 140px);
+}
+
+/* Clients всегда сверху (чтобы Contact был "за ним") */
+.clients{
+  position:relative;
+  z-index:6;
+  /* тонкая глубина (почти невидимо, но даёт ощущение слоя) */
+  box-shadow: 0 48px 110px rgba(0,0,0,.55);
+}
+
+/* Contact уходит под Clients за счёт отрицательного отступа */
+.contact{
+  position:relative;
+  z-index:4;
+
+  /* подныриваем под Clients */
+  margin-top: calc(var(--contact-overlap) * -1);
+
+  /* компенсируем, чтобы контент не залез под Clients */
+  padding-top: calc(120px + var(--contact-overlap));
+
+  /* якорь #contact не должен прилипать под фикс-нав */
+  scroll-margin-top: 110px;
+}
+
+/* Мобилка: чуть меньше перекрытие */
+@media (max-width: 768px){
+  :root{ --contact-overlap: clamp(56px, 10vh, 110px); }
+  .contact{ padding-top: calc(96px + var(--contact-overlap)); }
+}
+
+/* ===== Reveal (repeatable) ===== */
+/* База: если JS не работает — всё видно */
+.contact__lead,
+.contact__sub{
+  opacity:1;
+  transform:none;
+  filter:none;
+}
+
+/* Заголовок + подзаголовок мягко входят */
+.js .contact__lead,
+.js .contact__sub{
+  opacity:0;
+  transform: translate3d(0, 10px, 0);
+  filter: blur(4px);
+  will-change: transform, opacity, filter;
+  transition:
+    opacity .75s cubic-bezier(.16,1,.3,1),
+    transform .95s cubic-bezier(.16,1,.3,1),
+    filter .95s cubic-bezier(.16,1,.3,1);
+}
+
+.js .contact.is-in .contact__lead{
+  opacity:1;
+  transform: translate3d(0,0,0);
+  filter: blur(0px);
+}
+.js .contact.is-in .contact__sub{
+  opacity:1;
+  transform: translate3d(0,0,0);
+  filter: blur(0px);
+  transition-delay: 70ms;
+}
+
+/* =========================================================
+VIDEO REVIEWS (B) — safe isolated block
+========================================================= */
+.reviews{
+  background:#050505;
+  color:#f5f5f5;
+
+  /* “выезд из-за клиентов” */
+  margin-top:-64px;
+  padding:120px var(--pad) 110px;
+
+  position:relative;
+  z-index:6;
+}
+
+.reviews__inner{
+  max-width:var(--grid);
+  margin:0 auto;
+
+  display:grid;
+  gap:18px;
+  align-items:start;
+}
+
+@media (min-width:980px){
+  .reviews__inner{
+    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-areas:
+      "head card"
+      "tabs card";
+    column-gap: clamp(26px, 4vw, 64px);
+    row-gap: 18px;
+    align-items:center;
+  }
+  .reviews__head{ grid-area: head; }
+  .reviews__card{ grid-area: card; }
+  .reviews__tabs{ grid-area: tabs; }
+}
+
+.reviews__kicker{
+  font-size:.78rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  opacity:.75;
+  margin:0 0 10px;
+}
+
+.reviews__title{
+  font-size:clamp(1.6rem, 3.4vw, 2.4rem);
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin:0 0 12px;
+}
+
+.reviews__lead{
+  color:#cfcfcf;
+  max-width:52ch;
+  line-height:1.75;
+  margin:0;
+}
+
+/* card */
+.reviews__card{
+  position:relative;
+  overflow:hidden;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#0b0b0b;
+
+  width:100%;
+  min-height: clamp(280px, 34vw, 420px);
+
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+
+  box-shadow: 0 18px 54px rgba(0,0,0,.55);
+  transition: transform .55s cubic-bezier(.19,1,.22,1), box-shadow .55s ease;
+}
+.reviews__card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 28px 80px rgba(0,0,0,.65);
+}
+
+.reviews__thumb{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(900px 520px at 30% 20%, rgba(255,255,255,.08), transparent 55%),
+    radial-gradient(700px 420px at 80% 70%, rgba(255,255,255,.06), transparent 60%),
+    linear-gradient(180deg, #0c0c0c, #070707);
+  transform: scale(1.04);
+}
+.reviews__card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(80% 70% at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,.60) 72%, rgba(0,0,0,.82) 100%);
+  pointer-events:none;
+}
+
+.reviews__play{
+  position:relative;
+  width:86px;
+  height:86px;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  z-index:2;
+}
+.reviews__playRing{
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  border:1px solid rgba(255,255,255,.58);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 14px 34px rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+}
+.reviews__playTri{
+  width:0;height:0;
+  border-left:14px solid rgba(255,255,255,.92);
+  border-top:9px solid transparent;
+  border-bottom:9px solid transparent;
+  transform: translateX(2px);
+}
+
+.reviews__caption{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:16px;
+  z-index:2;
+
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.30);
+  backdrop-filter: blur(8px);
+  border-radius:16px;
+  padding:14px 14px 12px;
+
+  text-align:left;
+}
+.reviews__quote{
+  display:block;
+  color:#e9e9e9;
+  line-height:1.55;
+  margin-bottom:8px;
+}
+.reviews__meta{
+  display:block;
+  color:#bdbdbd;
+  font-size:.78rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+/* tabs */
+.reviews__tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.reviews__tab{
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.22);
+  color:#e9e9e9;
+
+  padding:10px 12px;
+  border-radius:999px;
+
+  font-size:.82rem;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+
+  cursor:pointer;
+  transition: transform .35s cubic-bezier(.19,1,.22,1), background .35s ease, border-color .35s ease;
+}
+.reviews__tab:hover{ transform: translateY(-1px); }
+.reviews__tab span{ opacity:.72; margin-right:8px; }
+.reviews__tab.is-active{
+  background:#fff;
+  color:#000;
+  border-color:#fff;
+}
+
+/* =========================================================
+Repeatable reveal (SAFE): by default everything visible.
+JS adds .rv-ready to #reviews to enable animation.
+========================================================= */
+#reviews.rv-ready [data-rv]{
+  opacity:0;
+  transform: translateY(16px);
+  filter: blur(3px);
+  transition:
+    opacity .85s cubic-bezier(.19,1,.22,1),
+    transform .85s cubic-bezier(.19,1,.22,1),
+    filter .85s cubic-bezier(.19,1,.22,1);
+  will-change: opacity, transform, filter;
+}
+#reviews.rv-ready [data-rv].is-inview{
+  opacity:1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* =========================================================
+Modal — isolated and НЕ использует твой nav-lock
+========================================================= */
+body.reviews-lock{ overflow:hidden; }
+
+.reviews-modal{
+  position:fixed;
+  inset:0;
+  z-index:2200;
+  display:none;
+}
+.reviews-modal.is-open{ display:block; }
+
+.reviews-modal__bg{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  backdrop-filter: blur(8px);
+}
+
+.reviews-modal__panel{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(980px, calc(100vw - 28px));
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:#050505;
+  overflow:hidden;
+  box-shadow: 0 24px 90px rgba(0,0,0,.65);
+}
+
+.reviews-modal__frame{
+  aspect-ratio: 16/9;
+  width:100%;
+  background:#000;
+}
+.reviews-modal__frame iframe,
+.reviews-modal__frame video{
+  width:100%;
+  height:100%;
+  display:block;
+  border:0;
+}
+
+.reviews-modal__close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.35);
+  color:#fff;
+  cursor:pointer;
+  z-index:2;
+}
+.reviews-modal__close::before,
+.reviews-modal__close::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:18px;
+  height:2px;
+  background:currentColor;
+  transform-origin:center;
+}
+.reviews-modal__close::before{ transform:translate(-50%,-50%) rotate(45deg); }
+.reviews-modal__close::after{  transform:translate(-50%,-50%) rotate(-45deg); }
+
+@media (prefers-reduced-motion:reduce){
+  #reviews.rv-ready [data-rv]{ transition:none; filter:none; }
+  .reviews__card{ transition:none; }
+}
+
+
+/* =========================================================
+CONTACT — Variant A (REAL underlap behind Clients)
+========================================================= */
+:root{
+  --contact-overlap: clamp(90px, 13vh, 160px);
+}
+
+/* Clients сверху и закрывает то, что "под ним" */
+.clients{
+  position:relative;
+  z-index:6;
+
+  /* важно: чтобы маска не накрыла контент, добавляем снизу место */
+  padding-bottom: calc(90px + var(--contact-overlap));
+
+  /* лёгкая глубина */
+  box-shadow: 0 48px 110px rgba(0,0,0,.55);
+}
+
+/* Маска снизу (именно она создаёт "из-за блока") */
+.clients::after{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  bottom:0;
+  height: var(--contact-overlap);
+  background:#050505;          /* фон Clients */
+  pointer-events:none;
+  z-index:2;
+}
+
+/* Contact реально подныривает под Clients */
+.contact{
+  position:relative;
+  z-index:4;
+  margin-top: calc(var(--contact-overlap) * -1);
+
+  /* НЕ добавляем overlap в padding-top — иначе ничего "из-за" не будет */
+  padding-top: 120px;
+
+  scroll-margin-top: 110px;
+}
+
+/* мобилка */
+@media (max-width: 768px){
+  :root{ --contact-overlap: clamp(72px, 12vh, 130px); }
+  .contact{ padding-top: 96px; }
+}
+/* ===== Форма: выезд "из-за Clients" (повторяемо) ===== */
+.js .contact .form{
+  --form-enter: calc(var(--contact-overlap) * -0.55); /* старт за маской (выше) */
+  --form-float: 0px;                                  /* микродвижение по скроллу (JS) */
+
+  opacity:0;
+  transform: translate3d(0, calc(var(--form-enter) + var(--form-float)), 0) scale(.99);
+  filter: blur(10px);
+
+  will-change: transform, opacity, filter;
+
+  transition:
+    opacity .85s cubic-bezier(.16,1,.3,1),
+    transform 1.15s cubic-bezier(.16,1,.3,1),
+    filter 1.15s cubic-bezier(.16,1,.3,1);
+}
+
+.js .contact.is-in .form{
+  opacity:1;
+  transform: translate3d(0, var(--form-float), 0) scale(1);
+  filter: blur(0px);
+}
+
+/* мобилка — легче */
+@media (max-width: 768px){
+  .js .contact .form{
+    filter: blur(7px);
+    transition-duration: .78s, 1.02s, 1.02s;
+  }
+  
+}
+:root{
+  --stack-overlap: clamp(48px, 7vw, 140px);  /* насколько отзывы “залезают” под клиентов */
+  --rv-shift: clamp(70px, 9vw, 170px);       /* сила выезда */
+}
+
+/* КЛИЕНТЫ — верхний слой, с “юбкой” снизу */
+.clients{
+  position: relative;
+  z-index: 5;
+  background: var(--bg, #050505);
+  padding-bottom: var(--stack-overlap);
+}
+
+/* ВИДЕО-ОТЗЫВЫ — начинаются под клиентами */
+.video-reviews{
+  position: relative;
+  z-index: 1;
+  background: var(--bg, #050505);
+  margin-top: calc(-1 * var(--stack-overlap));
+  padding-top: var(--stack-overlap);
+}
+
+/* Анимируем не всю секцию, а внутренний контейнер */
+.video-reviews__inner{
+  transform: translate3d(0, var(--rv-shift), 0);
+  opacity: 0;
+  filter: blur(10px);
+  transition:
+    transform 1.1s cubic-bezier(.22,.61,.36,1),
+    opacity  1.1s cubic-bezier(.22,.61,.36,1),
+    filter   1.1s cubic-bezier(.22,.61,.36,1);
+  will-change: transform, opacity, filter;
+}
+
+.video-reviews.is-inview .video-reviews__inner{
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* На мобиле делаем перекрытие мягче (или вообще можно выключить, если захочешь) */
+@media (max-width: 820px){
+  :root{
+    --stack-overlap: 28px;
+    --rv-shift: 90px;
+  }
+}
+/* =========================
+   TEAM (premium carousel)
+========================= */
+.team{
+  position: relative;
+  padding: clamp(56px, 7vw, 96px) 0;
+}
+
+.team__inner{
+  width: min(1180px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.team__kicker{
+  font-size: 12px;
+  letter-spacing: .28em;
+  opacity: .72;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.team__headRow{
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.team__title{
+  margin: 0;
+  font-size: clamp(28px, 4.2vw, 52px);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  line-height: 1.05;
+}
+
+.team__sub{
+  margin: 12px 0 0;
+  max-width: 760px;
+  opacity: .70;
+  line-height: 1.6;
+}
+
+.team__controls{
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Кнопки навигации — премиальные круги */
+.team-nav-btn{
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.28);
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  color: rgba(255,255,255,.92);
+  transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
+}
+
+.team-nav-btn svg{
+  width: 20px;
+  height: 20px;
+}
+
+.team-nav-btn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.42);
+  background: rgba(0,0,0,.46);
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+}
+
+.team-nav-btn:active{
+  transform: translateY(0);
+}
+
+.team__railWrap{
+  position: relative;
+  margin-top: 28px;
+}
+
+/* “Виньетка” по краям, чтобы выглядело дороже */
+.team__railWrap::before,
+.team__railWrap::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:44px;
+  width: 64px;
+  pointer-events:none;
+  z-index: 2;
+}
+.team__railWrap::before{
+  left: -6px;
+  background: linear-gradient(90deg, rgba(0,0,0,.85), rgba(0,0,0,0));
+}
+.team__railWrap::after{
+  right: -6px;
+  background: linear-gradient(270deg, rgba(0,0,0,.85), rgba(0,0,0,0));
+}
+
+.team__rail{
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 6px 18px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.team__rail::-webkit-scrollbar{ display:none; }
+
+/* Карточка */
+.team-card{
+  scroll-snap-align: start;
+  flex: 0 0 clamp(250px, 28vw, 320px);
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(120% 120% at 20% 10%, rgba(255,255,255,.08), rgba(255,255,255,0) 55%),
+    rgba(255,255,255,.03);
+  box-shadow: 0 30px 80px rgba(0,0,0,.55);
+  overflow: hidden;
+  position: relative;
+  transform: translateZ(0);
+  transition: transform .45s cubic-bezier(.22,.61,.36,1), border-color .45s cubic-bezier(.22,.61,.36,1);
+}
+
+/* Постоянная “живая” микродинамика карточек */
+@keyframes teamFloat{
+  0%   { transform: translateY(0) }
+  50%  { transform: translateY(-6px) }
+  100% { transform: translateY(0) }
+}
+.team-card{
+  animation: teamFloat 7.5s ease-in-out infinite;
+}
+.team-card:nth-child(2n){ animation-duration: 8.6s; animation-delay: -1.8s; }
+.team-card:nth-child(3n){ animation-duration: 9.3s; animation-delay: -3.1s; }
+
+.team-card::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: 24px;
+  background: radial-gradient(70% 60% at 30% 0%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
+  opacity: .55;
+  pointer-events:none;
+  mix-blend-mode: screen;
+}
+
+.team-card:hover{
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,.22);
+}
+
+.team-card__media{
+  aspect-ratio: 4 / 5;
+  background: rgba(255,255,255,.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.team-card__media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+  transform: scale(1.02);
+  filter: grayscale(1) contrast(1.08) brightness(.92);
+}
+
+/* Если фото уже подготовлено “ч/б + красный акцент” — фильтр не трогаем */
+.team-card.is-colorpop .team-card__media img{
+  filter: none;
+}
+
+/* Текст */
+.team-card__body{
+  padding: 16px 16px 18px;
+}
+
+.team-card__name{
+  font-size: 14px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  opacity: .95;
+}
+
+.team-card__role{
+  margin-top: 8px;
+  font-size: 16px;
+  letter-spacing: .02em;
+  opacity: .86;
+}
+
+.team-card__meta{
+  margin-top: 12px;
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  font-size: 13px;
+  opacity: .72;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.team-card__dot{
+  width: 4px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.45);
+}
+
+/* “Колёсики” */
+.team__dots{
+  display:flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.team-dot{
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.08);
+  cursor: pointer;
+  padding: 0;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+}
+
+.team-dot.is-active{
+  background: rgba(255,255,255,.85);
+  border-color: rgba(255,255,255,.85);
+  transform: scale(1.25);
+}
+
+/* Мобилка: стрелки можно оставить, но если захочешь — можно скрыть */
+@media (max-width: 680px){
+  .team__headRow{
+    align-items: flex-start;
+  }
+  .team-nav-btn{
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* Уважение к prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  .team-card{ animation: none; }
+  .team__rail{ scroll-behavior: auto; }
+}
+
+/* =========================
+   TEAM — reveal on scroll (repeat)
+========================= */
+
+/* Базовое состояние (скрыто) */
+.team .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+  transition:
+    transform 1.05s cubic-bezier(.22,.61,.36,1),
+    opacity 1.05s cubic-bezier(.22,.61,.36,1),
+    filter 1.05s cubic-bezier(.22,.61,.36,1);
+  will-change: transform, opacity, filter;
+}
+
+/* Видимое состояние */
+.team .reveal.is-inview {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* Ступеньки (если задано из JS) */
+.team .reveal.is-inview {
+  transition-delay: var(--td, 0s);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .team .reveal,
+  .team .reveal.is-inview{
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+}

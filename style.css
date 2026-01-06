@@ -749,17 +749,36 @@ Contact Pill (PREMIUM) — ONLY THIS BLOCK
 
 /* mobile */
 @media (max-width:768px){
-  .contact-pill{right:12px;width:34px;height:120px;}
-  .contact-pill--open{width:220px;height:56px;}
-  .contact-pill__icon{width:48px;height:48px;}
-  .contact-pill__icon svg{width:24px;height:24px;}
+  /* чуть меньше закрытая капсула */
+  .contact-pill{
+    right:12px;
+    width:32px;
+    height:112px;
+  }
+
+  /* ✅ открытая капсула: ширина адаптивная, чтобы текст всегда влезал
+     и при этом НЕ было белых полей/горизонтального скролла */
+  .contact-pill--open{
+    width:min(240px, calc(100vw - 24px));
+    height:56px;
+  }
+
+  /* ✅ чтобы надпись не переносилась/не обрезалась странно */
+  .contact-pill__label{
+    white-space:nowrap;
+  }
+
+  /* иконки НЕ трогаем (как ты просил) */
+  .contact-pill__icon{
+    width:48px;
+    height:48px;
+  }
+  .contact-pill__icon svg{
+    width:24px;
+    height:24px;
+  }
 }
 
-@media (prefers-reduced-motion:reduce){
-  .contact-pill,
-  .contact-pill__icons,
-  .contact-pill__icon{transition:none !important;}
-}
 
 
 /* =========================================================

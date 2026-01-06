@@ -892,6 +892,69 @@ function initWorkReveal(){
 
 
 /* =========================================================
+Clients: repeatable reveal on scroll (section-based)
+========================================================= */
+function initClientsReveal(){
+  const section = qs('#clients');
+  if (!section) return;
+
+  const items = qsa('.clients__item', section);
+  if (!items.length) return;
+
+  // Волна по рядам (адаптивно, т.к. сетка меняется)
+  const assignStagger = () => {
+    const rows = new Map();
+
+    items.forEach(el => {
+      const top = el.offsetTop;
+      if (!rows.has(top)) rows.set(top, []);
+      rows.get(top).push(el);
+    });
+
+    const rowTops = Array.from(rows.keys()).sort((a,b) => a - b);
+
+    rowTops.forEach((top, rowIndex) => {
+      const rowEls = rows.get(top);
+      rowEls.sort((a,b) => a.offsetLeft - b.offsetLeft);
+
+      rowEls.forEach((el, colIndex) => {
+        const delay = rowIndex * 110 + colIndex * 70; // ms
+        el.style.setProperty('--c-delay', `${delay}ms`);
+      });
+    });
+  };
+
+  assignStagger();
+
+  let raf = 0;
+  const onResize = () => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      assignStagger();
+      raf = 0;
+    });
+  };
+  window.addEventListener('resize', onResize, { passive:true });
+
+  // Повторяемая анимация: вошли -> is-in, вышли -> убрали is-in
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      section.classList.toggle('is-in', entry.isIntersecting);
+    });
+  }, {
+    root: null,
+    threshold: 0.18,
+    rootMargin: '0px 0px -22% 0px'
+  });
+
+  io.observe(section);
+}
+
+  /* ===== Clients reveal ===== */
+  initClientsReveal();
+
+
+/* =========================================================
 Boot
 ========================================================= */
 if (document.readyState === 'loading') {

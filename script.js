@@ -1453,164 +1453,241 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 })();
 
 /* =========================
-   OFFICES: Leaflet map + accordion
+   OFFICES: MapLibre map + premium interactions (no Leaflet)
 ========================= */
-(function(){
-  const wrap = document.getElementById('officesMapWrap');
-  const mapEl = document.getElementById('officeMap');
-  const metaTitle = document.getElementById('officeMetaTitle');
-  const metaLink = document.getElementById('officeMetaLink');
-  const metaTel = document.getElementById('officeMetaTel');
-  const buttons = Array.from(document.querySelectorAll('.offices .office'));
-
-  if (!wrap || !mapEl || !buttons.length) return;
-
-  const offices = {
+(function () {
+  const OFFICES = {
     kz: {
-      title: 'Алматы — Мынбаева 53',
-      addr: 'Казахстан, Алматы, Мынбаева 53',
-      tel: '+7 (705) 888-06-78',
-      telHref: 'tel:+77058880678',
-      // 2GIS directions: lon/lat -> Leaflet needs lat/lng
-      lat: 43.238138,
-      lng: 76.902369,
-      mapsUrl: 'https://yandex.com/maps/?text=' + encodeURIComponent('Казахстан, Алматы, Мынбаева 53')
+      city: "Алматы",
+      label: "Казахстан · Мынбаева 53",
+      phoneDigits: "77058880678",
+      lat: 43.237583,
+      lng: 76.902445,
+      zoom: 16,
     },
     uz: {
-      title: 'Ташкент — Шахрисабзская 8/1',
-      addr: 'Узбекистан, Ташкент, Шахрисабзская 8/1',
-      tel: '+998 (90) 998-88-17',
-      telHref: 'tel:+998909988817',
-      // ориентир по Yandex (Shahrisabz Drive, 8). Если нужно — потом подвинем на 8/1.
-      lat: 41.303124,
-      lng: 69.283249,
-      mapsUrl: 'https://yandex.com/maps/?text=' + encodeURIComponent('Узбекистан, Ташкент, Шахрисабзская 8/1')
+      city: "Ташкент",
+      label: "Узбекистан · Шахрисабзская 8/1",
+      phoneDigits: "998909988817",
+      lat: 41.297142,
+      lng: 69.271274,
+      zoom: 16,
     },
     ru: {
-      title: 'Москва — Переведеновский пер., 13 стр. 18',
-      addr: 'Россия, Москва, Переведеновский пер., 13 стр. 18',
-      tel: '+7 (985) 017-88-17',
-      telHref: 'tel:+79850178817',
-      lat: 55.781051,
-      lng: 37.689067,
-      mapsUrl: 'https://yandex.com/maps/?text=' + encodeURIComponent('Россия, Москва, Переведеновский пер., 13 стр. 18')
-    }
+      city: "Москва",
+      label: "Россия · Переведеновский пер., 13 стр. 18",
+      phoneDigits: "79850178817",
+      lat: 55.7809559,
+      lng: 37.6893926,
+      zoom: 16,
+    },
   };
 
-  function loadLeaflet(){
-    if (window.L) return Promise.resolve();
+  // Стиль с улицами/подписями (Dark Matter)
+  const STYLE_URL = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
+  function onReady(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+      fn();
+    }
+  }
+
+  function loadScript(src) {
     return new Promise((resolve, reject) => {
-      // CSS
-      if (!document.getElementById('leaflet-css')) {
-        const link = document.createElement('link');
-        link.id = 'leaflet-css';
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        link.crossOrigin = '';
-        document.head.appendChild(link);
-      }
-
-      // JS
-      const s = document.createElement('script');
-      s.id = 'leaflet-js';
-      s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      s.crossOrigin = '';
-      s.onload = () => resolve();
-      s.onerror = () => reject(new Error('Leaflet failed to load'));
+      const s = document.createElement("script");
+      s.src = src;
+      s.defer = true;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error("JS failed: " + src));
       document.head.appendChild(s);
     });
   }
 
-  function markerIcon(){
-    // маленький “премиальный” маркер (кольцо + центр)
-    const svg = `
-      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="13" cy="13" r="10" stroke="rgba(255,255,255,.85)" stroke-width="1.2"/>
-        <circle cx="13" cy="13" r="3.2" fill="rgba(255,255,255,.85)"/>
-      </svg>
-    `.trim();
-
-    return L.divIcon({
-      className: 'office-pin',
-      html: svg,
-      iconSize: [26, 26],
-      iconAnchor: [13, 13]
+  function loadCss(href) {
+    return new Promise((resolve, reject) => {
+      const l = document.createElement("link");
+      l.rel = "stylesheet";
+      l.href = href;
+      l.onload = resolve;
+      l.onerror = () => reject(new Error("CSS failed: " + href));
+      document.head.appendChild(l);
     });
   }
 
-  let map, pins = {};
+  async function loadMapLibre() {
+    if (window.maplibregl) return;
 
-  function setActive(key){
-    const o = offices[key];
-    if (!o) return;
+    // 1) jsDelivr (чаще стабильнее)
+    const css1 = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css";
+    const js1  = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js";
 
-    buttons.forEach(b => {
-      const isOn = b.dataset.office === key;
-      b.classList.toggle('is-active', isOn);
-      b.setAttribute('aria-expanded', isOn ? 'true' : 'false');
-    });
+    // 2) unpkg fallback
+    const css2 = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
+    const js2  = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
 
-    metaTitle.textContent = o.title;
-    metaLink.href = o.mapsUrl;
-    metaTel.textContent = o.tel;
-    metaTel.href = o.telHref;
-
-    wrap.classList.add('is-open');
-
-    if (map) {
-      map.flyTo([o.lat, o.lng], 16, { duration: 0.65 });
-
-      // подсветка выбранного пина (легко, без цирка)
-      Object.keys(pins).forEach(k => {
-        const el = pins[k].getElement && pins[k].getElement();
-        if (!el) return;
-        el.style.opacity = (k === key) ? '1' : '.55';
-        el.style.transform = (k === key) ? 'scale(1.02)' : 'scale(1)';
-        el.style.transition = 'opacity .2s ease, transform .2s ease';
-      });
+    try {
+      await loadCss(css1);
+      await loadScript(js1);
+    } catch (e1) {
+      // пробуем второй CDN
+      await loadCss(css2).catch(() => {});
+      await loadScript(js2);
     }
   }
 
-  loadLeaflet()
-    .then(() => {
-      // init map
-      map = L.map(mapEl, {
-        zoomControl: true,
-        scrollWheelZoom: false,
-        dragging: true,
-        tap: true
-      });
+  function makePinEl(active) {
+    const el = document.createElement("div");
+    el.className = active ? "offices-pin is-active" : "offices-pin";
+    return el;
+  }
 
-      // tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap'
-      }).addTo(map);
+  function killBlur(mapWrap, mapEl) {
+    // если блюр задан без !important — инлайн его перебьёт
+    if (mapWrap) {
+      mapWrap.style.filter = "none";
+      mapWrap.style.backdropFilter = "none";
+      mapWrap.style.webkitBackdropFilter = "none";
+    }
+    if (mapEl) {
+      mapEl.style.filter = "none";
+      mapEl.style.backdropFilter = "none";
+      mapEl.style.webkitBackdropFilter = "none";
+    }
 
-      const icon = markerIcon();
+    // если блюр сделан отдельной плашкой/оверлеем — удаляем
+    const overlays = [];
+    if (mapWrap) overlays.push(
+      ...mapWrap.querySelectorAll(
+        ".offices__blur, .offices__veil, .offices__glass, .offices__overlay, .map-blur, .map-veil"
+      )
+    );
+    overlays.forEach((n) => n.remove());
+  }
 
-      // markers
-      Object.keys(offices).forEach(k => {
-        const o = offices[k];
-        pins[k] = L.marker([o.lat, o.lng], { icon }).addTo(map).on('click', () => setActive(k));
-      });
+  onReady(async function () {
+    const section = document.getElementById("offices");
+    if (!section) return;
 
-      // start
-      setActive('kz');
+    const mapWrap = document.getElementById("officesMapWrap");
+    const mapEl = document.getElementById("officesMap");
+    const hintCity = document.getElementById("officesHintCity");
+    const hintAddr = document.getElementById("officesHintAddr");
 
-      // UX: когда пользователь впервые трогает карту — включаем зум колесом только над картой
-      mapEl.addEventListener('mouseenter', () => map.scrollWheelZoom.enable());
-      mapEl.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
-    })
-    .catch(() => {
-      // если Leaflet не загрузился — просто оставим мета и ссылки
-      wrap.classList.add('is-open');
+    if (!mapWrap || !mapEl) return;
+
+    // Контейнер должен быть открыт и иметь высоту
+    mapWrap.classList.add("is-open");
+
+    // Сразу пытаемся прибить блюр (на случай, если он не из карты, а из вашего "стекла")
+    killBlur(mapWrap, mapEl);
+
+    try {
+      await loadMapLibre();
+    } catch (e) {
+      console.warn(e);
+      return;
+    }
+
+    // Чистим контейнер на случай повторной инициализации
+    mapEl.innerHTML = "";
+
+    const map = new maplibregl.Map({
+      container: mapEl,
+      style: STYLE_URL,
+      center: [OFFICES.kz.lng, OFFICES.kz.lat],
+      zoom: OFFICES.kz.zoom || 15,
+      attributionControl: false, // сделаем свою атрибуцию без иконок
+      interactive: true,
+      dragRotate: false,
+      pitchWithRotate: false,
+      touchPitch: false,
+      cooperativeGestures: true, // чтобы не бесить скроллом страницы
     });
 
-  // events
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => setActive(btn.dataset.office));
+    // Атрибуция компактная, текстовая
+    map.addControl(
+      new maplibregl.AttributionControl({
+        compact: true,
+        customAttribution: "© OpenStreetMap © CARTO",
+      })
+    );
+
+    // Зум-кнопки вверх вправо (не перекрываемся с вашей капсулой/логотипами)
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+
+    const markers = {};
+    Object.keys(OFFICES).forEach((key) => {
+      const o = OFFICES[key];
+      const el = makePinEl(false);
+      markers[key] = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([o.lng, o.lat])
+        .addTo(map);
+    });
+
+    function setPinActive(key) {
+      Object.keys(markers).forEach((k) => {
+        const m = markers[k];
+        const el = m.getElement();
+        if (!el) return;
+        el.classList.toggle("is-active", k === key);
+      });
+    }
+
+    function setActive(key, animate = true) {
+      const o = OFFICES[key];
+      if (!o) return;
+
+      section.querySelectorAll(".office").forEach((el) => {
+        el.classList.toggle("is-active", el.dataset.office === key);
+      });
+
+      if (hintCity) hintCity.textContent = o.city;
+      if (hintAddr) hintAddr.textContent = o.label;
+
+      setPinActive(key);
+
+      const opts = {
+        center: [o.lng, o.lat],
+        zoom: o.zoom || 15,
+        duration: 900,
+        essential: true,
+      };
+
+      if (animate) map.flyTo(opts);
+      else map.jumpTo({ center: opts.center, zoom: opts.zoom });
+
+      // на всякий — ещё раз гасим блюр (иногда он навешивается после рендера)
+      killBlur(mapWrap, mapEl);
+      const c = map.getCanvas && map.getCanvas();
+      if (c) c.style.filter = "none";
+
+      // resize после раскрытия/переключения
+      requestAnimationFrame(() => map.resize());
+      setTimeout(() => map.resize(), 350);
+    }
+
+    // Не мешаем кликам по ссылкам (tel/tg)
+    section.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (a) return;
+
+      const card = e.target.closest(".office");
+      if (!card) return;
+
+      mapWrap.classList.add("is-open");
+      setActive(card.dataset.office, true);
+    });
+
+    // Когда карта загрузилась — сразу нормальный ресайз и первый фокус
+    map.once("load", () => {
+      map.resize();
+      setActive("kz", false);
+    });
+
+    // Страховка: если блок раскрывается анимацией — ещё один resize
+    setTimeout(() => map.resize(), 600);
   });
 })();
 

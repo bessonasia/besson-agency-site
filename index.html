@@ -144,7 +144,7 @@
     </section>
 
     <!-- CLIENTS -->
-    <section class="clients" id="clients" data-theme="dark">
+    <section class="clients" id="clients" data-theme="light">
       <div class="clients__inner">
         <p class="clients__eyebrow"></p>
 
@@ -178,7 +178,7 @@
     </section>
 
 <!-- VIDEO REVIEWS (B) -->
-<section class="reviews" id="reviews" data-theme="dark">
+<section class="reviews" id="reviews" data-theme="light">
   <div class="reviews__inner">
 
     <header class="reviews__head" data-rv>
@@ -425,6 +425,63 @@
     </div>
   </div>
 </section>
+
+      
+      <!-- OFFICES -->
+<section class="offices" id="offices" data-theme="dark">
+  <div class="offices__inner">
+    <header class="offices__head">
+      <p class="offices__kicker">Офисы</p>
+      <h2 class="offices__title">Мы на месте в трёх странах</h2>
+      <p class="offices__lead">Выберите локацию — карта раскрывается и фокусируется на офисе.</p>
+    </header>
+
+    <div class="offices__layout">
+      <div class="offices__list" aria-label="Локации офисов">
+        <button class="office is-active" type="button" data-office="kz" aria-expanded="true">
+          <span class="office__top">
+            <span class="office__city">Алматы</span>
+            <span class="office__country">Казахстан</span>
+          </span>
+          <span class="office__addr">Мынбаева 53</span>
+          <span class="office__phone">+7 (705) 888-06-78</span>
+        </button>
+
+        <button class="office" type="button" data-office="uz" aria-expanded="false">
+          <span class="office__top">
+            <span class="office__city">Ташкент</span>
+            <span class="office__country">Узбекистан</span>
+          </span>
+          <span class="office__addr">Шахрисабзская 8/1</span>
+          <span class="office__phone">+998 (90) 998-88-17</span>
+        </button>
+
+        <button class="office" type="button" data-office="ru" aria-expanded="false">
+          <span class="office__top">
+            <span class="office__city">Москва</span>
+            <span class="office__country">Россия</span>
+          </span>
+          <span class="office__addr">Переведеновский пер., 13 стр. 18</span>
+          <span class="office__phone">+7 (985) 017-88-17</span>
+        </button>
+      </div>
+
+      <div class="offices__mapWrap is-open" id="officesMapWrap">
+        <div class="offices__map" id="officeMap" aria-label="Карта офисов"></div>
+
+        <div class="offices__meta" aria-live="polite">
+          <div class="offices__metaTitle" id="officeMetaTitle">Алматы — Мынбаева 53</div>
+          <div class="offices__metaRow">
+            <a class="offices__metaLink" id="officeMetaLink" href="#" target="_blank" rel="noopener">Открыть в картах</a>
+            <span class="offices__metaSep"></span>
+            <a class="offices__metaTel" id="officeMetaTel" href="tel:+77058880678">+7 (705) 888-06-78</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /OFFICES -->
 
 
     <!-- CONTACT -->

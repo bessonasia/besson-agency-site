@@ -1862,3 +1862,309 @@ CONTACT — Variant A (REAL underlap behind Clients)
     transition: none !important;
   }
 }
+/* =========================================
+   LIGHT SHEET: clients + reviews одним цветом
+   (глобус/другие секции не трогаем)
+========================================= */
+
+#clients[data-theme="light"],
+#reviews[data-theme="light"]{
+  background: #f6f4f1 !important;     /* единый премиальный off-white */
+  background-image: none !important;
+  box-shadow: none !important;
+  color: #0b0b0b !important;
+
+  margin: 0 !important;              /* чтобы не светился body */
+  position: relative;
+  z-index: 5;
+  isolation: isolate;
+}
+
+/* убираем любые “переходы” и оверлеи, которые рисуют полосу */
+#clients[data-theme="light"]::before,
+#clients[data-theme="light"]::after,
+#reviews[data-theme="light"]::before,
+#reviews[data-theme="light"]::after,
+#clients[data-theme="light"] .clients__inner::before,
+#clients[data-theme="light"] .clients__inner::after,
+#reviews[data-theme="light"] .reviews__inner::before,
+#reviews[data-theme="light"] .reviews__inner::after{
+  content: none !important;
+}
+
+/* контент поверх всего (на случай, если что-то “накрывает”) */
+#clients[data-theme="light"] .clients__inner,
+#reviews[data-theme="light"] .reviews__inner{
+  position: relative;
+  z-index: 6;
+}
+/* ====== TEAM mobile: smooth swipe + centered cards ====== */
+@media (max-width: 768px){
+  /* класс .team-snap мы повесим через JS на правильный контейнер */
+  #team .team-snap{
+    display: flex !important;
+    gap: 14px;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+
+    /* чтобы крайние карточки тоже вставали по центру */
+    padding-inline: calc((100vw - min(78vw, 360px)) / 2);
+    scroll-padding-inline: calc((100vw - min(78vw, 360px)) / 2);
+
+    /* если твоя текущая карусель двигается transform'ом — глушим на мобилке */
+    transform: none !important;
+  }
+
+  #team .team-snap::-webkit-scrollbar{ display: none; }
+  #team .team-snap{ scrollbar-width: none; }
+
+  #team .team-card{
+    flex: 0 0 min(78vw, 360px);
+    scroll-snap-align: center;
+  }
+}
+/* === TEAM x CONTACT: нормальная пагинация + воздух между секциями === */
+
+/* 1) Чётко отделяем Team от формы */
+#team { padding-bottom: clamp(64px, 8vw, 120px) !important; }
+#contact { padding-top: clamp(64px, 8vw, 120px) !important; }
+
+/* 2) Колёсики (dots) — НЕ absolute, всегда под карточками */
+#team .team__dots,
+#teamDots.team__dots {
+  position: relative !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 18px;
+  margin-bottom: 0;
+  padding-bottom: 18px; /* чтобы точки не прилипали к следующей секции */
+  z-index: 3;
+}
+/* =========================
+   OFFICES (accordion + map)
+========================= */
+.offices{
+  position: relative;
+  background: #050505;
+  color: rgba(255,255,255,.92);
+  padding-block: clamp(56px, 7vw, 96px);
+  border-top: 1px solid rgba(255,255,255,.10);
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+
+.offices__inner{
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.offices__head{ margin-bottom: clamp(18px, 3vw, 28px); }
+.offices__kicker{
+  margin: 0 0 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  font-size: 12px;
+  color: rgba(255,255,255,.55);
+}
+.offices__title{
+  margin: 0 0 10px;
+  font-size: clamp(26px, 4vw, 44px);
+  line-height: 1.05;
+  letter-spacing: .02em;
+}
+.offices__lead{
+  margin: 0;
+  max-width: 60ch;
+  color: rgba(255,255,255,.62);
+}
+
+.offices__layout{
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: clamp(14px, 2.2vw, 22px);
+  align-items: start;
+  margin-top: clamp(18px, 3vw, 26px);
+}
+
+.offices__list{
+  display: grid;
+  gap: 12px;
+}
+
+.office{
+  appearance: none;
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.04);
+  border-radius: 18px;
+  padding: 16px 16px 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.office::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background: radial-gradient(600px 200px at 20% 0%, rgba(255,255,255,.10), transparent 60%);
+  opacity: 0;
+  transition: opacity .18s ease;
+  pointer-events:none;
+}
+
+.office:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.06);
+}
+.office:hover::before{ opacity: 1; }
+
+.office.is-active{
+  border-color: rgba(255,255,255,.36);
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 18px 40px rgba(0,0,0,.35);
+}
+
+.office__top{
+  display:flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+.office__city{
+  font-size: 16px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.office__country{
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.55);
+}
+.office__addr{
+  display:block;
+  color: rgba(255,255,255,.78);
+  margin-bottom: 8px;
+}
+.office__phone{
+  display:block;
+  color: rgba(255,255,255,.55);
+  font-size: 13px;
+}
+
+.offices__mapWrap{
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.03);
+  border-radius: 22px;
+  overflow: hidden;
+  position: relative;
+
+  /* “раскрытие” */
+  max-height: 0;
+  transition: max-height .45s cubic-bezier(.2,.8,.2,1), border-color .2s ease;
+}
+.offices__mapWrap.is-open{
+  max-height: 720px;
+  border-color: rgba(255,255,255,.20);
+}
+
+.offices__map{
+  height: clamp(280px, 44vh, 420px);
+  width: 100%;
+  position: relative;
+}
+
+/* тонкая “премиальная” зернистость поверх карты */
+.offices__map::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(600px 220px at 30% 0%, rgba(255,255,255,.10), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.35));
+  pointer-events:none;
+  mix-blend-mode: soft-light;
+}
+
+/* нижняя мета-панель */
+.offices__meta{
+  padding: 14px 16px 16px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(10px);
+}
+.offices__metaTitle{
+  font-size: 13px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.80);
+  margin-bottom: 10px;
+}
+.offices__metaRow{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.offices__metaLink,
+.offices__metaTel{
+  color: rgba(255,255,255,.70);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,.22);
+  padding-bottom: 2px;
+  transition: color .18s ease, border-color .18s ease;
+}
+.offices__metaLink:hover,
+.offices__metaTel:hover{
+  color: rgba(255,255,255,.92);
+  border-color: rgba(255,255,255,.45);
+}
+.offices__metaSep{
+  width: 28px;
+  height: 1px;
+  background: rgba(255,255,255,.18);
+}
+
+/* Leaflet: минимальный UI + “black & white” ощущение */
+#officeMap .leaflet-control-container{ filter: grayscale(1); opacity: .85; }
+#officeMap .leaflet-bar a{
+  background: rgba(0,0,0,.55);
+  color: rgba(255,255,255,.85);
+  border: 1px solid rgba(255,255,255,.20);
+}
+#officeMap .leaflet-bar a:hover{ background: rgba(0,0,0,.75); }
+#officeMap .leaflet-control-attribution{
+  background: transparent;
+  color: rgba(255,255,255,.45);
+}
+
+/* делаем тайлы “дизайнерски-ч/б” */
+#officeMap .leaflet-tile{
+  filter: grayscale(1) invert(1) contrast(.95) brightness(.86);
+}
+
+/* адаптив */
+@media (max-width: 860px){
+  .offices__layout{ grid-template-columns: 1fr; }
+  .offices__map{ height: 320px; }
+}

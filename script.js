@@ -2104,11 +2104,13 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     const el = socials[i];
 
     // “горит пару секунд”
-    const dur = 1200 + Math.floor(Math.random() * 1600); // 1200..2800
+    const dur = 1600 + Math.floor(Math.random() * 2200); // было 1200..2800, станет 1600..3800
+
     pulse(el, dur);
 
     // “быстро и рандомно, не синхронно”
-    const nextIn = 220 + Math.floor(Math.random() * 720); // 220..940
+    const nextIn = 700 + Math.floor(Math.random() * 1400); // было 220..940, станет 700..2100
+
     timer = setTimeout(loop, nextIn);
   };
 

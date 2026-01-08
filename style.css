@@ -600,10 +600,8 @@ Clients — reveal animation (repeatable, premium)
   }
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
 /* =========================================================
-Clients — reveal animation (smooth, NO lines)
+Clients — reveal animation (smooth, NO lines) — FIXED
 Включается только при .js на <html>
 ========================================================= */
 
@@ -619,14 +617,11 @@ Clients — reveal animation (smooth, NO lines)
   opacity:0;
   transform:translate3d(0,10px,0) scale(.995);
   filter:blur(4px);
-
   will-change:transform, opacity, filter;
-
   transition:
     opacity .85s cubic-bezier(.16,1,.3,1),
     transform 1.05s cubic-bezier(.16,1,.3,1),
     filter 1.05s cubic-bezier(.16,1,.3,1);
-
   transition-delay:var(--c-delay, 0ms);
 }
 
@@ -656,7 +651,6 @@ Clients — reveal animation (smooth, NO lines)
   }
 }
 
-}
 
 
 /* =========================================================
@@ -2253,4 +2247,185 @@ CONTACT — Variant A (REAL underlap behind Clients)
 #officesMap .offices-map__attr a:hover {
   color: rgba(255, 255, 255, 0.9);
   border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+/* =========================
+   OFFICES: section reveal only (NO overlay on map)
+   paste at end of style.css
+========================= */
+
+/* если предыдущий патч уже добавил оверлей — убираем */
+#offices .offices-net { display: none !important; }
+
+#offices {
+  --off-p: 0; /* -1..1 */
+  --off-ease: cubic-bezier(.2,.9,.2,1);
+}
+
+/* включаем анимации только когда JS добавит .is-anim */
+#offices.is-anim .offices__head,
+#offices.is-anim .offices__list,
+#offices.is-anim .offices__layout,
+#offices.is-anim #officesMapWrap {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity .55s var(--off-ease),
+    transform .70s var(--off-ease);
+  will-change: transform, opacity;
+}
+
+/* карта — мягче, без clip-path, без оверлеев */
+#offices.is-anim #officesMapWrap {
+  transform: translateY(14px);
+  transition:
+    opacity .60s var(--off-ease),
+    transform .85s var(--off-ease);
+}
+
+/* вход */
+#offices.is-anim.is-inview .offices__head,
+#offices.is-anim.is-inview .offices__list,
+#offices.is-anim.is-inview .offices__layout {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* карта: добавляем очень лёгкий параллакс, только когда секция видна */
+#offices.is-anim.is-inview #officesMapWrap {
+  opacity: 1;
+  transform: translateY(calc(var(--off-p) * -8px));
+}
+
+/* выход при прокрутке назад */
+#offices.is-anim.is-out .offices__head,
+#offices.is-anim.is-out .offices__list,
+#offices.is-anim.is-out .offices__layout,
+#offices.is-anim.is-out #officesMapWrap {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* карточки офисов — лёгкий stagger */
+#offices.is-anim .office {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity .45s var(--off-ease),
+    transform .65s var(--off-ease);
+  transition-delay: calc(var(--i, 0) * 70ms);
+  will-change: transform, opacity;
+}
+
+#offices.is-anim.is-inview .office {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* уважение reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #offices.is-anim .offices__head,
+  #offices.is-anim .offices__list,
+  #offices.is-anim .offices__layout,
+  #offices.is-anim #officesMapWrap,
+  #offices.is-anim .office {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+/* =========================
+   TEAM — mobile swipe + page scroll fix (SAFE)
+   paste at end of style.css
+========================= */
+@media (max-width: 900px) {
+  :root {
+    --teamCardW: min(78vw, 360px);
+    --teamSidePad: calc((100vw - var(--teamCardW)) / 2);
+  }
+
+  /* 1) Главный фикс: НЕ блокируем вертикальный скролл */
+  #team .team__rail,
+  #team .team__track,
+  #team .team__scroller,
+  #team .team__cards,
+  #team .team__list,
+  #team .team-card {
+    touch-action: pan-x pan-y !important;
+  }
+
+  /* 2) Контейнер со свайпом (покрываем разные возможные классы) */
+  #team .team__rail,
+  #team .team__track,
+  #team .team__scroller,
+  #team .team__cards,
+  #team .team__list {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+
+    /* Лёгкий snap вместо “липкого” */
+    scroll-snap-type: x proximity !important;
+
+    /* Центровка карточек */
+    padding-inline: var(--teamSidePad) !important;
+    scroll-padding-inline: var(--teamSidePad) !important;
+
+    /* чтобы не было “борьбы” со свайпом */
+    scroll-behavior: auto !important;
+
+    /* не даём странице дёргаться по X */
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+  }
+
+  /* 3) Карточки — центрируются и не “залипают” */
+  #team .team-card {
+    scroll-snap-align: center !important;
+    scroll-snap-stop: normal !important; /* если было always */
+    flex: 0 0 var(--teamCardW) !important;
+    min-width: var(--teamCardW) !important;
+  }
+}
+/* =========================
+   OFFICES → CONTACT spacing + mobile map collapse
+   paste at end of style.css
+========================= */
+
+/* 1) Отлепляем форму от офисов (и на мобилке и на десктопе — безопасно) */
+#offices{
+  padding-bottom: clamp(56px, 7vw, 120px) !important;
+}
+
+/* 2) Мобилка: карта скрыта, открывается только по клику */
+@media (max-width: 900px){
+
+  /* карта по умолчанию "схлопнута" */
+  #officesMapWrap{
+    max-height: 0 !important;
+    opacity: 0 !important;
+    transform: translateY(10px) !important;
+    pointer-events: none !important;
+    overflow: hidden !important;
+
+    margin-top: 0 !important;
+    transition:
+      max-height 420ms ease,
+      opacity 260ms ease,
+      transform 420ms ease,
+      margin-top 420ms ease !important;
+  }
+
+  /* открытое состояние */
+  #officesMapWrap.is-open{
+    max-height: clamp(320px, 56vh, 560px) !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    margin-top: 16px !important;
+  }
+
+  /* фикс высоты карты (чтобы Leaflet имел нормальный контейнер) */
+  #officesMap{
+    height: clamp(320px, 56vh, 560px) !important;
+  }
 }

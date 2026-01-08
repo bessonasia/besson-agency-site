@@ -1386,7 +1386,7 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }
 })();
 
-// ===== TEAM mobile swipe: snap card to center =====
+// ===== TEAM mobile swipe: snap card to center (NO scrollIntoView) =====
 (() => {
   const team = document.getElementById('team');
   if (!team) return;
@@ -1396,11 +1396,15 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   let scroller = null;
   let onScroll = null;
 
+  let teamInView = false;
+  let userInteracted = false;
+
   function teardown() {
     if (scroller && onScroll) scroller.removeEventListener('scroll', onScroll);
     if (scroller) scroller.classList.remove('team-snap');
     scroller = null;
     onScroll = null;
+    userInteracted = false;
   }
 
   function setup() {
@@ -1410,7 +1414,7 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     const cards = Array.from(team.querySelectorAll('.team-card'));
     if (cards.length < 2) return;
 
-    // Ищем общий контейнер для всех карточек (обычно track/list/ul)
+    // Ищем общий контейнер всех карточек
     let p = cards[0].parentElement;
     while (p && p !== team) {
       if (p.querySelectorAll('.team-card').length === cards.length) break;
@@ -1421,8 +1425,21 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 
     scroller.classList.add('team-snap');
 
+    // Флаг "пользователь трогал"
+    const markUser = () => { userInteracted = true; };
+    scroller.addEventListener('touchstart', markUser, { passive: true });
+    scroller.addEventListener('mousedown', markUser, { passive: true });
+    scroller.addEventListener('pointerdown', markUser, { passive: true });
+
     let t = null;
+
     const snapToNearest = () => {
+      // 1) Не снапать, пока секция команды не в зоне видимости
+      if (!teamInView) return;
+
+      // 2) Не снапать от программных scrollLeft на старте (только после касания/drag)
+      if (!userInteracted) return;
+
       const r = scroller.getBoundingClientRect();
       const centerX = r.left + r.width / 2;
 
@@ -1436,7 +1453,16 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
         if (d < bestDist) { bestDist = d; best = card; }
       });
 
-      if (best) best.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      if (!best) return;
+
+      // Горизонтальный снап без вертикального скролла страницы
+      const targetLeft =
+        best.offsetLeft - (scroller.clientWidth - best.clientWidth) / 2;
+
+      scroller.scrollTo({
+        left: Math.max(0, targetLeft),
+        behavior: 'smooth'
+      });
     };
 
     onScroll = () => {
@@ -1445,6 +1471,25 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     };
 
     scroller.addEventListener('scroll', onScroll, { passive: true });
+
+    // Отслеживаем видимость секции (чтобы не “улетать” на неё)
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const e = entries[0];
+          teamInView = !!(e && e.isIntersecting);
+        },
+        { threshold: 0.12 }
+      );
+      io.observe(team);
+    } else {
+      // fallback: считаем "не в кадре" пока пользователь не долистал
+      teamInView = false;
+      window.addEventListener('scroll', () => {
+        const rr = team.getBoundingClientRect();
+        teamInView = rr.top < (window.innerHeight * 0.9) && rr.bottom > 0;
+      }, { passive: true });
+    }
   }
 
   setup();
@@ -1452,8 +1497,9 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   window.addEventListener('orientationchange', () => setTimeout(setup, 150));
 })();
 
+
 /* =========================
-   OFFICES: MapLibre map + premium interactions (no Leaflet)
+   OFFICES: MapLibre map + premium interactions + auto-tour (no Leaflet)
 ========================= */
 (function () {
   const OFFICES = {
@@ -1483,8 +1529,12 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     },
   };
 
-  // Стиль с улицами/подписями (Dark Matter)
+  // CARTO Dark Matter GL Style (с улицами/подписями)
   const STYLE_URL = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+
+  // Настройки “постоянной анимации”
+  const TOUR_INTERVAL_MS = 8000;      // шаг тура
+  const PAUSE_AFTER_INTERACT_MS = 20000; // пауза после действий пользователя
 
   function onReady(fn) {
     if (document.readyState === "loading") {
@@ -1519,11 +1569,9 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   async function loadMapLibre() {
     if (window.maplibregl) return;
 
-    // 1) jsDelivr (чаще стабильнее)
     const css1 = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css";
     const js1  = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js";
 
-    // 2) unpkg fallback
     const css2 = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
     const js2  = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
 
@@ -1531,7 +1579,6 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       await loadCss(css1);
       await loadScript(js1);
     } catch (e1) {
-      // пробуем второй CDN
       await loadCss(css2).catch(() => {});
       await loadScript(js2);
     }
@@ -1544,7 +1591,6 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }
 
   function killBlur(mapWrap, mapEl) {
-    // если блюр задан без !important — инлайн его перебьёт
     if (mapWrap) {
       mapWrap.style.filter = "none";
       mapWrap.style.backdropFilter = "none";
@@ -1555,14 +1601,14 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       mapEl.style.backdropFilter = "none";
       mapEl.style.webkitBackdropFilter = "none";
     }
-
-    // если блюр сделан отдельной плашкой/оверлеем — удаляем
     const overlays = [];
-    if (mapWrap) overlays.push(
-      ...mapWrap.querySelectorAll(
-        ".offices__blur, .offices__veil, .offices__glass, .offices__overlay, .map-blur, .map-veil"
-      )
-    );
+    if (mapWrap) {
+      overlays.push(
+        ...mapWrap.querySelectorAll(
+          ".offices__blur, .offices__veil, .offices__glass, .offices__overlay, .map-blur, .map-veil"
+        )
+      );
+    }
     overlays.forEach((n) => n.remove());
   }
 
@@ -1577,10 +1623,8 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 
     if (!mapWrap || !mapEl) return;
 
-    // Контейнер должен быть открыт и иметь высоту
+    // контейнер открыт
     mapWrap.classList.add("is-open");
-
-    // Сразу пытаемся прибить блюр (на случай, если он не из карты, а из вашего "стекла")
     killBlur(mapWrap, mapEl);
 
     try {
@@ -1590,23 +1634,36 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       return;
     }
 
-    // Чистим контейнер на случай повторной инициализации
+    // защита от повторной инициализации
     mapEl.innerHTML = "";
+
+    const reduceMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const keys = Object.keys(OFFICES);
+    let activeKey = "kz";
+
+    // Автотур: таймеры + состояния
+    let inView = true;
+    let tourTimer = null;
+    let resumeTimer = null;
+    let tourIndex = Math.max(0, keys.indexOf(activeKey));
+    let userPaused = false;
 
     const map = new maplibregl.Map({
       container: mapEl,
       style: STYLE_URL,
-      center: [OFFICES.kz.lng, OFFICES.kz.lat],
-      zoom: OFFICES.kz.zoom || 15,
-      attributionControl: false, // сделаем свою атрибуцию без иконок
+      center: [OFFICES[activeKey].lng, OFFICES[activeKey].lat],
+      zoom: OFFICES[activeKey].zoom || 15,
+      attributionControl: false,
       interactive: true,
       dragRotate: false,
       pitchWithRotate: false,
       touchPitch: false,
-      cooperativeGestures: true, // чтобы не бесить скроллом страницы
+      cooperativeGestures: true,
     });
 
-    // Атрибуция компактная, текстовая
+    // Атрибуция без “иконок/флагов”
     map.addControl(
       new maplibregl.AttributionControl({
         compact: true,
@@ -1614,11 +1671,11 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       })
     );
 
-    // Зум-кнопки вверх вправо (не перекрываемся с вашей капсулой/логотипами)
+    // Зум вверх-вправо — не пересекаемся с капсулой “связаться”
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
     const markers = {};
-    Object.keys(OFFICES).forEach((key) => {
+    keys.forEach((key) => {
       const o = OFFICES[key];
       const el = makePinEl(false);
       markers[key] = new maplibregl.Marker({ element: el, anchor: "center" })
@@ -1627,17 +1684,29 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     });
 
     function setPinActive(key) {
-      Object.keys(markers).forEach((k) => {
+      keys.forEach((k) => {
         const m = markers[k];
-        const el = m.getElement();
+        const el = m && m.getElement ? m.getElement() : null;
         if (!el) return;
         el.classList.toggle("is-active", k === key);
       });
     }
 
-    function setActive(key, animate = true) {
+    function bumpHint() {
+      section.classList.remove("is-hint-swap");
+      // принудительный reflow, чтобы анимация всегда стартовала
+      void section.offsetWidth;
+      section.classList.add("is-hint-swap");
+      clearTimeout(bumpHint._t);
+      bumpHint._t = setTimeout(() => section.classList.remove("is-hint-swap"), 450);
+    }
+
+    function setActive(key, animate = true, fromTour = false) {
       const o = OFFICES[key];
       if (!o) return;
+
+      activeKey = key;
+      tourIndex = Math.max(0, keys.indexOf(key));
 
       section.querySelectorAll(".office").forEach((el) => {
         el.classList.toggle("is-active", el.dataset.office === key);
@@ -1647,28 +1716,63 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       if (hintAddr) hintAddr.textContent = o.label;
 
       setPinActive(key);
+      bumpHint();
 
-      const opts = {
-        center: [o.lng, o.lat],
-        zoom: o.zoom || 15,
-        duration: 900,
-        essential: true,
-      };
+      const center = [o.lng, o.lat];
+      const zoom = o.zoom || 15;
 
-      if (animate) map.flyTo(opts);
-      else map.jumpTo({ center: opts.center, zoom: opts.zoom });
+      if (!animate || reduceMotion) {
+        map.jumpTo({ center, zoom });
+      } else {
+        map.flyTo({
+          center,
+          zoom,
+          duration: fromTour ? 1100 : 900,
+          essential: true,
+        });
+      }
 
-      // на всякий — ещё раз гасим блюр (иногда он навешивается после рендера)
       killBlur(mapWrap, mapEl);
       const c = map.getCanvas && map.getCanvas();
       if (c) c.style.filter = "none";
 
-      // resize после раскрытия/переключения
       requestAnimationFrame(() => map.resize());
       setTimeout(() => map.resize(), 350);
     }
 
-    // Не мешаем кликам по ссылкам (tel/tg)
+    function stopTour() {
+      if (tourTimer) {
+        clearInterval(tourTimer);
+        tourTimer = null;
+      }
+    }
+
+    function startTour() {
+      if (reduceMotion) return;
+      if (!inView) return;
+      if (document.hidden) return;
+      if (userPaused) return;
+      if (tourTimer) return;
+
+      tourTimer = setInterval(() => {
+        const nextIndex = (tourIndex + 1) % keys.length;
+        const nextKey = keys[nextIndex];
+        setActive(nextKey, true, true);
+      }, TOUR_INTERVAL_MS);
+    }
+
+    function pauseTour(ms = PAUSE_AFTER_INTERACT_MS) {
+      userPaused = true;
+      stopTour();
+      if (resumeTimer) clearTimeout(resumeTimer);
+
+      resumeTimer = setTimeout(() => {
+        userPaused = false;
+        startTour();
+      }, ms);
+    }
+
+    // клик по карточке — ручной выбор, тур ставим на паузу
     section.addEventListener("click", (e) => {
       const a = e.target.closest("a");
       if (a) return;
@@ -1677,18 +1781,275 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       if (!card) return;
 
       mapWrap.classList.add("is-open");
-      setActive(card.dataset.office, true);
+      pauseTour();
+      setActive(card.dataset.office, true, false);
     });
 
-    // Когда карта загрузилась — сразу нормальный ресайз и первый фокус
+    // любые взаимодействия с картой = пауза тура
+    const pauseEvents = [
+      "dragstart",
+      "zoomstart",
+      "rotatestart",
+      "pitchstart",
+      "movestart",
+    ];
+    pauseEvents.forEach((evt) => map.on(evt, () => pauseTour()));
+
+    // на тач/колесо — тоже пауза
+    mapEl.addEventListener("touchstart", () => pauseTour(), { passive: true });
+    mapEl.addEventListener("wheel", () => pauseTour(), { passive: true });
+
+    // только когда блок реально виден
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          const ent = entries[0];
+          inView = !!(ent && ent.isIntersecting && ent.intersectionRatio > 0.2);
+          if (!inView) stopTour();
+          else startTour();
+        },
+        { threshold: [0, 0.2, 0.6, 1] }
+      );
+      io.observe(section);
+    }
+
+    // вкладка/страница скрыта — останавливаем
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) stopTour();
+      else startTour();
+    });
+
+    // init
     map.once("load", () => {
       map.resize();
-      setActive("kz", false);
+      setActive("kz", false, false);
+      // лёгкая пауза перед стартом — выглядит как “вдумчиво”
+      setTimeout(() => startTour(), 1200);
     });
 
-    // Страховка: если блок раскрывается анимацией — ещё один resize
     setTimeout(() => map.resize(), 600);
+    
+    
   });
+})();
+
+/* =========================
+   OFFICES: section animation only (NO map overlays, NO map logic changes)
+   paste at end of script.js (after map code)
+========================= */
+(function () {
+  function onReady(fn) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", fn, { once: true });
+    } else {
+      fn();
+    }
+  }
+
+  onReady(function () {
+    const section = document.getElementById("offices");
+    if (!section) return;
+
+    // включаем анимационный режим (CSS завязан на это)
+    section.classList.add("is-anim");
+
+    // если старый патч уже внедрил оверлей — удаляем из DOM
+    const oldNet = section.querySelector(".offices-net");
+    if (oldNet) oldNet.remove();
+
+    // индексы для stagger-анимации карточек офисов
+    const cards = Array.from(section.querySelectorAll(".office"));
+    cards.forEach((el, i) => el.style.setProperty("--i", String(i)));
+
+    const reduceMotion =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduceMotion) {
+      section.classList.add("is-inview");
+      section.classList.remove("is-out");
+      return;
+    }
+
+    // reveal/out (в обе стороны)
+    let inView = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        const now = !!(e && e.isIntersecting && e.intersectionRatio > 0.22);
+
+        if (now && !inView) {
+          inView = true;
+          section.classList.add("is-inview");
+          section.classList.remove("is-out");
+        } else if (!now && inView) {
+          inView = false;
+          section.classList.remove("is-inview");
+          section.classList.add("is-out");
+        }
+      },
+      { threshold: [0, 0.22, 0.6], rootMargin: "0px 0px -10% 0px" }
+    );
+    io.observe(section);
+
+    // очень мягкий параллакс (не трогаем карту, только CSS-переменную секции)
+    let raf = 0;
+    function updateParallax() {
+      raf = 0;
+      const r = section.getBoundingClientRect();
+      const vh = Math.max(
+        1,
+        window.innerHeight || document.documentElement.clientHeight
+      );
+      const center = r.top + r.height * 0.5;
+      const p = (vh * 0.5 - center) / (vh * 0.5);
+      const clamped = Math.max(-1, Math.min(1, p));
+      section.style.setProperty("--off-p", clamped.toFixed(3));
+    }
+
+    function onScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame(updateParallax);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    updateParallax();
+  });
+})();
+
+/* =========================
+   Fix: mobile opens not from top (scroll restore / #team / bfcache)
+========================= */
+(function () {
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  if (!isMobile) return;
+
+  // запретить браузеру "восстанавливать" скролл
+  try {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  } catch (_) {}
+
+  const startedAt = performance.now();
+  let fixed = false;
+
+  const stripTeamHash = () => {
+    if (location.hash === "#team" || location.hash === "#teamRail") {
+      history.replaceState(null, document.title, location.pathname + location.search);
+    }
+  };
+
+  const forceTop = () => {
+    stripTeamHash();
+
+    // если пользователь реально открыл ссылку с якорем (#about и т.п.) — не мешаем
+    if (location.hash) return;
+
+    const top = () => window.scrollTo(0, 0);
+    top();
+    requestAnimationFrame(top);
+    setTimeout(top, 60);
+    setTimeout(top, 250);
+  };
+
+  // ранняя попытка
+  forceTop();
+
+  // если мобилка всё равно "подкинет" вниз через restore/layout — ловим в первые ~1.2с
+  const watch = () => {
+    if (fixed) return;
+    if (performance.now() - startedAt > 1200) return;
+
+    // считаем улётом только реально большой прыжок (чтобы не мешать юзерскому скроллу)
+    const bigJump = (window.scrollY || 0) > (window.innerHeight * 0.6);
+    if (!location.hash && bigJump) {
+      fixed = true;
+      forceTop();
+      return;
+    }
+    requestAnimationFrame(watch);
+  };
+  requestAnimationFrame(watch);
+
+  // iOS часто восстанавливает позицию через pageshow (bfcache)
+  window.addEventListener("pageshow", forceTop);
+  window.addEventListener("load", forceTop, { once: true });
+})();
+
+
+/* =========================
+   OFFICES mobile behavior:
+   - map hidden by default
+   - open map on office tap
+   - close map when scrolled above section
+   paste at end of script.js
+========================= */
+(function () {
+  const mql = window.matchMedia("(max-width: 900px)");
+
+  function initMobileOfficesMapUX() {
+    if (!mql.matches) return;
+
+    const section = document.getElementById("offices");
+    const mapWrap = document.getElementById("officesMapWrap");
+    if (!section || !mapWrap) return;
+
+    // старт: карта скрыта
+    mapWrap.classList.remove("is-open");
+
+    // вычисляем верх секции (для автозакрытия при уходе выше)
+    let sectionTop = 0;
+    const recalcTop = () => {
+      sectionTop = section.getBoundingClientRect().top + window.scrollY;
+    };
+    recalcTop();
+    window.addEventListener("resize", recalcTop, { passive: true });
+
+    // открываем карту по клику на карточку офиса
+    section.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (a) return; // не мешаем tel/tg ссылкам
+
+      const card = e.target.closest(".office");
+      if (!card) return;
+
+      mapWrap.classList.add("is-open");
+
+      // даём Leaflet шанс пересчитать размеры (не ломая твой flyTo)
+      requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
+      setTimeout(() => window.dispatchEvent(new Event("resize")), 350);
+    });
+
+    // закрываем карту, если пользователь прокрутил страницу выше секции офисов
+    window.addEventListener(
+      "scroll",
+      () => {
+        // "выше" = верх страницы + небольшой зазор меньше верхней точки секции
+        if (window.scrollY + 20 < sectionTop) {
+          if (mapWrap.classList.contains("is-open")) {
+            mapWrap.classList.remove("is-open");
+          }
+        }
+      },
+      { passive: true }
+    );
+  }
+
+  // старт
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initMobileOfficesMapUX, { once: true });
+  } else {
+    initMobileOfficesMapUX();
+  }
+
+  // если меняется ширина (поворот/ресайз)
+  if (mql.addEventListener) {
+    mql.addEventListener("change", () => {
+      // при уходе в мобилку/возврате — просто переинициализируем логику
+      // (без вмешательства в саму карту)
+      initMobileOfficesMapUX();
+    });
+  }
 })();
 
 

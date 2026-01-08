@@ -2052,6 +2052,103 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }
 })();
 
+/* =========================
+   FOOTER socials: random loop (starts when #contact reached)
+   paste at end of script.js
+========================= */
+(() => {
+  const socials = Array.from(document.querySelectorAll("footer .footer-socials .social"));
+  if (!socials.length) return;
+
+  const contactSection =
+    document.getElementById("contact") ||
+    (document.getElementById("leadForm") ? document.getElementById("leadForm").closest("section") : null);
+
+  let enabled = false;
+  let timer = 0;
+  let last = -1;
+
+  const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduce) return;
+
+  const stop = () => {
+    enabled = false;
+    clearTimeout(timer);
+    timer = 0;
+    socials.forEach(el => el.classList.remove("is-pulse"));
+  };
+
+  const pickIndex = () => {
+    if (socials.length === 1) return 0;
+    let i = Math.floor(Math.random() * socials.length);
+    if (i === last) i = (i + 1) % socials.length;
+    last = i;
+    return i;
+  };
+
+  const pulse = (el, dur) => {
+    el.style.setProperty("--pulse-dur", `${dur}ms`);
+    // перезапуск анимации без "залипания"
+    el.classList.remove("is-pulse");
+    void el.offsetWidth;
+    el.classList.add("is-pulse");
+
+    // снять класс чуть позже, чем длительность (чтобы не было морганий)
+    setTimeout(() => el.classList.remove("is-pulse"), dur + 40);
+  };
+
+  const loop = () => {
+    if (!enabled) return;
+
+    const i = pickIndex();
+    const el = socials[i];
+
+    // “горит пару секунд”
+    const dur = 1200 + Math.floor(Math.random() * 1600); // 1200..2800
+    pulse(el, dur);
+
+    // “быстро и рандомно, не синхронно”
+    const nextIn = 220 + Math.floor(Math.random() * 720); // 220..940
+    timer = setTimeout(loop, nextIn);
+  };
+
+  const start = () => {
+    if (enabled) return;
+    enabled = true;
+    loop();
+  };
+
+  // Запуск строго когда дошли до формы
+  if ("IntersectionObserver" in window && contactSection) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        const inView = !!(e && e.isIntersecting && e.intersectionRatio > 0.22);
+
+        if (inView) start();
+        else stop();
+      },
+      {
+        threshold: [0, 0.22, 0.6, 1],
+        rootMargin: "0px 0px -12% 0px",
+      }
+    );
+
+    io.observe(contactSection);
+  } else {
+    // fallback: включим после первой прокрутки к низу (на старых браузерах)
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      const vh = window.innerHeight || 0;
+      if (y > vh * 0.9) {
+        start();
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+})();
+
 
 /* =========================================================
 Boot

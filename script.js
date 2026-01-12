@@ -2151,39 +2151,45 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }
 })();
 
-/* ===== LeadForm: optional NDA/TZ upload -> PS.KZ -> Web3Forms ===== */
+/* ===== LeadForm: single-submit + optional NDA/TZ upload ===== */
 (() => {
   const form = document.getElementById('leadForm');
   if (!form) return;
 
+  // Важно: ловим submit в CAPTURE и рубим остальные обработчики (если они есть)
+  let locked = false;
+
   const fileInput = document.getElementById('leadFile');
   const fileText  = document.getElementById('leadFileText');
   const upStatus  = document.getElementById('leadUploadStatus');
+  const formStatus = document.getElementById('formStatus');
 
   const docIdField   = document.getElementById('docIdField');
   const docNameField = document.getElementById('docNameField');
   const docSizeField = document.getElementById('docSizeField');
   const docErrorField= document.getElementById('docErrorField');
+  const docUrlField  = document.getElementById('docUrlField'); // добавим в HTML ниже
+
+  const submitBtn = form.querySelector('button[type="submit"]');
 
   const MAX_MB = 50;
   const MAX_BYTES = MAX_MB * 1024 * 1024;
   const allowedExt = new Set(['pdf','doc','docx','ppt','pptx','xls','xlsx','zip']);
 
-  let allowSubmitWithoutFile = false;
-  let isProgrammaticSubmit = false;
-
-  const setStatus = (t) => { if (upStatus) upStatus.textContent = t || ''; };
-
-  const humanSize = (bytes) => {
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(mb >= 10 ? 0 : 1)} MB`;
-  };
+  const setUp = (t='') => { if (upStatus) upStatus.textContent = t; };
+  const setForm = (t='') => { if (formStatus) formStatus.textContent = t; };
 
   const resetDocFields = () => {
     if (docIdField) docIdField.value = '';
     if (docNameField) docNameField.value = '';
     if (docSizeField) docSizeField.value = '';
     if (docErrorField) docErrorField.value = '';
+    if (docUrlField) docUrlField.value = '';
+  };
+
+  const humanSize = (bytes) => {
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(mb >= 10 ? 0 : 1)} MB`;
   };
 
   const validateFile = (file) => {
@@ -2197,12 +2203,12 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   if (fileInput && fileText) {
     fileInput.addEventListener('change', () => {
       resetDocFields();
-      allowSubmitWithoutFile = false;
+      setForm('');
 
       const file = fileInput.files?.[0];
       if (!file) {
         fileText.textContent = 'Файл не выбран';
-        setStatus('');
+        setUp('');
         return;
       }
 
@@ -2210,91 +2216,114 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
       if (err) {
         fileInput.value = '';
         fileText.textContent = 'Файл не выбран';
-        setStatus(err);
+        setUp(err);
         return;
       }
 
       fileText.textContent = `${file.name} — ${humanSize(file.size)}`;
-      setStatus('Документ будет отправлен вместе с заявкой.');
+      setUp('Документ будет отправлен вместе с заявкой.');
     });
   }
 
-  form.addEventListener('submit', async (e) => {
-    if (isProgrammaticSubmit) return;
+  async function sendToWeb3Forms() {
+    // Отправляем ровно один раз через fetch (никаких form.submit)
+    const fd = new FormData(form); // соберёт все поля формы (файл не включится, т.к. у input нет name)
+    const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: fd });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data?.success === false) {
+      throw new Error(data?.message || 'Web3Forms: ошибка отправки');
+    }
+  }
 
-    const name  = form.querySelector('#name')?.value?.trim() || '';
-    const phone = form.querySelector('#phone')?.value?.trim() || '';
-    const email = form.querySelector('#email')?.value?.trim() || '';
+  async function onSubmit(e) {
+    // Режем дубли и чужие обработчики
+    e.preventDefault();
+    e.stopImmediatePropagation();
 
-    // Если контактные поля пустые — не загружаем файл зря
+    if (locked) return;
+    locked = true;
+    if (submitBtn) submitBtn.disabled = true;
+
+    setForm('');
+    const name  = document.getElementById('name')?.value?.trim() || '';
+    const phone = document.getElementById('phone')?.value?.trim() || '';
+    const email = document.getElementById('email')?.value?.trim() || '';
+
     if (!name || !phone || !email) {
-      e.preventDefault();
-      setStatus('Заполните имя, телефон и почту.');
+      setForm('Заполните имя, телефон и почту.');
+      locked = false;
+      if (submitBtn) submitBtn.disabled = false;
       return;
     }
 
     const file = fileInput?.files?.[0];
 
-    // Без файла — отправляем как обычно (Web3Forms)
-    if (!file) {
-      resetDocFields();
-      return;
-    }
-
-    // Если ранее загрузка упала — второй клик отправляет без вложения
-    if (allowSubmitWithoutFile) {
-      e.preventDefault();
-      resetDocFields();
-      if (docErrorField) docErrorField.value = 'UPLOAD_FAILED_USER_SENT_WITHOUT_FILE';
-      setStatus('Отправили запрос без вложения.');
-      isProgrammaticSubmit = true;
-      form.submit();
-      return;
-    }
-
-    // Пытаемся загрузить файл, затем отправляем лид
-    e.preventDefault();
-
-    const err = validateFile(file);
-    if (err) {
-      setStatus(err);
-      return;
-    }
-
-    setStatus('Загружаем документ…');
-
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('lead_name', name);
-      fd.append('lead_phone', phone);
-      fd.append('lead_email', email);
-
-      const res = await fetch('/api/upload-doc.php', { method: 'POST', body: fd });
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok || !data.ok) {
-        setStatus((data?.error || 'Не удалось загрузить документ.') + ' Нажмите "Отправить" ещё раз — уйдёт без вложения.');
-        if (docErrorField) docErrorField.value = data?.code || 'UPLOAD_FAILED';
-        allowSubmitWithoutFile = true;
+      // 1) Если файла нет — просто шлём в Web3Forms
+      if (!file) {
+        resetDocFields();
+        await sendToWeb3Forms();
+        setForm('Заявка отправлена.');
+        form.reset();
+        if (fileText) fileText.textContent = 'Файл не выбран';
+        setUp('');
         return;
       }
 
-      if (docIdField) docIdField.value = data.doc_id || '';
-      if (docNameField) docNameField.value = data.doc_name || file.name;
-      if (docSizeField) docSizeField.value = String(data.doc_size || file.size);
+      // 2) Если файл есть — сначала грузим на сервер
+      const err = validateFile(file);
+      if (err) {
+        setUp(err);
+        return;
+      }
 
-      setStatus('Документ прикреплён. Отправляем заявку…');
+      setUp('Загружаем документ…');
 
-      isProgrammaticSubmit = true;
-      form.submit();
+      const up = new FormData();
+      up.append('file', file);
+      up.append('lead_name', name);
+      up.append('lead_phone', phone);
+      up.append('lead_email', email);
 
-    } catch {
-      setStatus('Сервер недоступен. Нажмите "Отправить" ещё раз — уйдёт без вложения.');
-      if (docErrorField) docErrorField.value = 'UPLOAD_EXCEPTION';
-      allowSubmitWithoutFile = true;
+      const upRes = await fetch('/api/upload-doc.php', { method: 'POST', body: up });
+      const upData = await upRes.json().catch(() => ({}));
+
+      if (!upRes.ok || !upData.ok) {
+        // Не теряем лид: отправляем без файла
+        if (docErrorField) docErrorField.value = upData?.code || 'UPLOAD_FAILED';
+        setUp((upData?.error || 'Не удалось загрузить документ.') + ' Отправили заявку без вложения.');
+        resetDocFields();
+        await sendToWeb3Forms();
+        setForm('Заявка отправлена.');
+        return;
+      }
+
+      // 3) Записываем в скрытые поля (уйдут в Web3Forms)
+      if (docIdField) docIdField.value = upData.doc_id || '';
+      if (docNameField) docNameField.value = upData.doc_name || file.name;
+      if (docSizeField) docSizeField.value = String(upData.doc_size || file.size);
+      if (docUrlField) docUrlField.value = upData.doc_url || '';
+
+      setUp('Документ прикреплён. Отправляем заявку…');
+
+      // 4) Отправляем в Web3Forms ОДИН раз
+      await sendToWeb3Forms();
+
+      setForm('Заявка отправлена.');
+      form.reset();
+      if (fileText) fileText.textContent = 'Файл не выбран';
+      setUp('');
+
+    } catch (err) {
+      setForm('Ошибка отправки. Проверь соединение и повтори.');
+    } finally {
+      locked = false;
+      if (submitBtn) submitBtn.disabled = false;
     }
-  });
+  }
+
+  // Capture = true
+  form.addEventListener('submit', onSubmit, true);
 })();
 
 

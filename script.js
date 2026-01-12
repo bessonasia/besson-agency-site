@@ -2327,6 +2327,28 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 })();
 
 
+// File card micro-animations (safe, no submit duplication)
+(() => {
+  const card = document.getElementById('docCard');
+  const input = document.getElementById('docFile') || card?.querySelector('input[type="file"]');
+  if (!card || !input) return;
+
+  const pulse = () => {
+    card.classList.remove('pulse');
+    // reflow to restart animation
+    void card.offsetWidth;
+    card.classList.add('pulse');
+    setTimeout(() => card.classList.remove('pulse'), 1000);
+  };
+
+  input.addEventListener('change', () => {
+    const has = !!(input.files && input.files.length);
+    card.classList.toggle('has-file', has);
+    if (has) pulse();
+  });
+})();
+
+
 /* =========================================================
 Boot
 ========================================================= */

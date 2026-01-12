@@ -518,7 +518,7 @@
       <div class="contact__grid">
         <h2 class="contact__lead">Оставьте заявку</h2>
         <p class="contact__sub">
-          <span class="line">Укажите имя и номер телефона.</span>
+          
           <span class="line">Работаем 24/7.</span>
         </p>
 
@@ -535,6 +535,36 @@
           <input type="hidden" name="redirect" value="https://besson.asia/#contact">
           <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
 
+          <!-- Связка загруженного документа с лидом (уйдет в Web3Forms) -->
+<input type="hidden" name="doc_id" id="docIdField" value="">
+<input type="hidden" name="doc_name" id="docNameField" value="">
+<input type="hidden" name="doc_size" id="docSizeField" value="">
+<input type="hidden" name="doc_error" id="docErrorField" value="">
+
+<!-- NDA-first: документы (необязательно) -->
+<div class="docs" aria-labelledby="docsTitle">
+  <div class="docs__head">
+    <h3 class="docs__title" id="docsTitle">Тендерные документы</h3>
+    <p class="docs__hint">
+      Вы можете прикрепить NDA или техническое задание (не обязательно). Это ускорит согласование и расчёт.
+      Форматы: PDF / DOCX / PPTX / XLSX / ZIP. До 50 МБ.
+    </p>
+  </div>
+
+  <label class="docs__upload" for="leadFile">
+    <!-- Важно: name НЕ ставим, чтобы Web3Forms не пытался принять файл -->
+    <input id="leadFile" class="docs__file" type="file"
+      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip">
+    <span class="docs__ui">
+      <span class="docs__btn">Выбрать файл</span>
+      <span class="docs__text" id="leadFileText">Файл не выбран</span>
+    </span>
+  </label>
+
+  <p class="docs__status" id="leadUploadStatus" role="status" aria-live="polite"></p>
+</div>
+
+          
           <div class="row">
             <div class="field">
               <input class="input" id="name" name="name" placeholder=" " required>
@@ -547,6 +577,14 @@
             </div>
           </div>
 
+          <div class="row row--single">
+  <div class="field">
+    <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder=" " required>
+    <label class="label" for="email">Почта</label>
+  </div>
+</div>
+
+          
           <div class="actions">
             <button class="btn" type="submit">
               <span class="glow"></span>
@@ -584,6 +622,7 @@
         <span style="font-weight:500;letter-spacing:.03em;">hello@besson.asia</span>
       </a>
     </div>
+    
     <!-- SOCIALS -->
     <div class="footer-socials" aria-label="Social links">
       <a class="social" href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">

@@ -2151,6 +2151,152 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }
 })();
 
+/* ===== LeadForm: optional NDA/TZ upload -> PS.KZ -> Web3Forms ===== */
+(() => {
+  const form = document.getElementById('leadForm');
+  if (!form) return;
+
+  const fileInput = document.getElementById('leadFile');
+  const fileText  = document.getElementById('leadFileText');
+  const upStatus  = document.getElementById('leadUploadStatus');
+
+  const docIdField   = document.getElementById('docIdField');
+  const docNameField = document.getElementById('docNameField');
+  const docSizeField = document.getElementById('docSizeField');
+  const docErrorField= document.getElementById('docErrorField');
+
+  const MAX_MB = 50;
+  const MAX_BYTES = MAX_MB * 1024 * 1024;
+  const allowedExt = new Set(['pdf','doc','docx','ppt','pptx','xls','xlsx','zip']);
+
+  let allowSubmitWithoutFile = false;
+  let isProgrammaticSubmit = false;
+
+  const setStatus = (t) => { if (upStatus) upStatus.textContent = t || ''; };
+
+  const humanSize = (bytes) => {
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(mb >= 10 ? 0 : 1)} MB`;
+  };
+
+  const resetDocFields = () => {
+    if (docIdField) docIdField.value = '';
+    if (docNameField) docNameField.value = '';
+    if (docSizeField) docSizeField.value = '';
+    if (docErrorField) docErrorField.value = '';
+  };
+
+  const validateFile = (file) => {
+    const name = (file?.name || '').trim();
+    const ext = name.split('.').pop().toLowerCase();
+    if (!allowedExt.has(ext)) return 'Формат не поддерживается. Разрешено: PDF/DOCX/PPTX/XLSX/ZIP.';
+    if (file.size > MAX_BYTES) return `Файл больше ${MAX_MB} MB. Сожмите или отправьте без вложения.`;
+    return '';
+  };
+
+  if (fileInput && fileText) {
+    fileInput.addEventListener('change', () => {
+      resetDocFields();
+      allowSubmitWithoutFile = false;
+
+      const file = fileInput.files?.[0];
+      if (!file) {
+        fileText.textContent = 'Файл не выбран';
+        setStatus('');
+        return;
+      }
+
+      const err = validateFile(file);
+      if (err) {
+        fileInput.value = '';
+        fileText.textContent = 'Файл не выбран';
+        setStatus(err);
+        return;
+      }
+
+      fileText.textContent = `${file.name} — ${humanSize(file.size)}`;
+      setStatus('Документ будет отправлен вместе с заявкой.');
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    if (isProgrammaticSubmit) return;
+
+    const name  = form.querySelector('#name')?.value?.trim() || '';
+    const phone = form.querySelector('#phone')?.value?.trim() || '';
+    const email = form.querySelector('#email')?.value?.trim() || '';
+
+    // Если контактные поля пустые — не загружаем файл зря
+    if (!name || !phone || !email) {
+      e.preventDefault();
+      setStatus('Заполните имя, телефон и почту.');
+      return;
+    }
+
+    const file = fileInput?.files?.[0];
+
+    // Без файла — отправляем как обычно (Web3Forms)
+    if (!file) {
+      resetDocFields();
+      return;
+    }
+
+    // Если ранее загрузка упала — второй клик отправляет без вложения
+    if (allowSubmitWithoutFile) {
+      e.preventDefault();
+      resetDocFields();
+      if (docErrorField) docErrorField.value = 'UPLOAD_FAILED_USER_SENT_WITHOUT_FILE';
+      setStatus('Отправили запрос без вложения.');
+      isProgrammaticSubmit = true;
+      form.submit();
+      return;
+    }
+
+    // Пытаемся загрузить файл, затем отправляем лид
+    e.preventDefault();
+
+    const err = validateFile(file);
+    if (err) {
+      setStatus(err);
+      return;
+    }
+
+    setStatus('Загружаем документ…');
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('lead_name', name);
+      fd.append('lead_phone', phone);
+      fd.append('lead_email', email);
+
+      const res = await fetch('/api/upload-doc.php', { method: 'POST', body: fd });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        setStatus((data?.error || 'Не удалось загрузить документ.') + ' Нажмите "Отправить" ещё раз — уйдёт без вложения.');
+        if (docErrorField) docErrorField.value = data?.code || 'UPLOAD_FAILED';
+        allowSubmitWithoutFile = true;
+        return;
+      }
+
+      if (docIdField) docIdField.value = data.doc_id || '';
+      if (docNameField) docNameField.value = data.doc_name || file.name;
+      if (docSizeField) docSizeField.value = String(data.doc_size || file.size);
+
+      setStatus('Документ прикреплён. Отправляем заявку…');
+
+      isProgrammaticSubmit = true;
+      form.submit();
+
+    } catch {
+      setStatus('Сервер недоступен. Нажмите "Отправить" ещё раз — уйдёт без вложения.');
+      if (docErrorField) docErrorField.value = 'UPLOAD_EXCEPTION';
+      allowSubmitWithoutFile = true;
+    }
+  });
+})();
+
 
 /* =========================================================
 Boot

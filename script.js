@@ -2348,6 +2348,111 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   });
 })();
 
+/* =========================================
+   HOWPATH — Museum rail sync (minimal)
+========================================= */
+(() => {
+  const root = document.querySelector(".howpath");
+  if (!root) return;
+
+  const railNo = root.querySelector("#howRailNo");
+  const railName = root.querySelector("#howRailName");
+  const items = Array.from(root.querySelectorAll(".howpath__item"));
+
+  if (!railNo || !railName || !items.length) return;
+
+  const setActive = (el) => {
+    items.forEach(x => x.classList.toggle("is-active", x === el));
+    railNo.textContent = el.dataset.no || "01";
+    railName.textContent = el.dataset.name || "";
+  };
+
+  // Hover/focus = “подсветка экспоната”
+  items.forEach(el => {
+    el.addEventListener("mouseenter", () => setActive(el));
+    el.addEventListener("focus", () => setActive(el));
+    el.addEventListener("click", () => setActive(el));
+  });
+
+  // Scroll sync (choose most visible item)
+  const io = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter(e => e.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
+    if (visible?.target) setActive(visible.target);
+  }, {
+    threshold: [0.35, 0.55, 0.75],
+    rootMargin: "-10% 0px -55% 0px"
+  });
+
+  items.forEach(el => io.observe(el));
+})();
+
+/* HOW WE WORK — always replay on scroll up/down */
+(() => {
+  const section = document.querySelector('.howpath, section#how');
+  if (!section) return;
+
+  const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+  if (prefersReduced) {
+    section.classList.add('is-in');
+    return;
+  }
+
+  // Выбираем элементы для анимации без правок HTML
+  const candidates = section.querySelectorAll(
+    '.howpath__head, .howpath__title, .howpath__meta, header, h2, ' +
+    '.howpath__item, .howpath__step, .howpath__row, li'
+  );
+
+  const targets = candidates.length
+    ? Array.from(new Set(candidates))
+    : Array.from(section.querySelectorAll(':scope > *'));
+
+  // Навешиваем класс + задержки
+  targets.forEach((el, i) => {
+    el.classList.add('how-reveal');
+    el.style.setProperty('--d', `${Math.min(i * 70, 420)}ms`);
+  });
+
+  const resetOut = () => {
+    section.classList.add('is-reset');
+    section.classList.remove('is-in');
+
+    // снимаем is-reset через 2 кадра — чтобы сброс был мгновенный
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => section.classList.remove('is-reset'));
+    });
+  };
+
+  const setIn = () => {
+    // на входе: сначала убедимся что нет reset,
+    // затем в следующий кадр включаем is-in (гарантия проигрывания анимации)
+    section.classList.remove('is-reset');
+    section.classList.remove('is-in');
+    requestAnimationFrame(() => section.classList.add('is-in'));
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) setIn();
+      else resetOut();
+    }
+  }, {
+    threshold: 0.18,
+    rootMargin: '0px 0px -12% 0px'
+  });
+
+  io.observe(section);
+
+  // если секция уже в кадре при загрузке
+  const r = section.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  if (r.top < vh * 0.88 && r.bottom > vh * 0.12) setIn();
+  else resetOut();
+})();
+
 
 /* =========================================================
 Boot

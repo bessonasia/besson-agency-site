@@ -2632,6 +2632,153 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }, { once:true });
 })();
 
+/* =========================
+   WORK TILES — GLOW CONTROL (NO LIBS)
+   Desktop: hover + pointer-follow
+   Mobile: in-view + scroll-driven angle
+   Scope: #work .tile
+========================= */
+(() => {
+  const tiles = Array.from(document.querySelectorAll("#work .tile"));
+  if (!tiles.length) return;
+
+  const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduceMotion) return;
+
+  const mqDesktop = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const mqMobile  = window.matchMedia("(hover: none), (pointer: coarse)");
+
+  const state = new Map();
+  const clamp01 = (v) => Math.max(0, Math.min(1, v));
+  const normAngle = (a) => ((a % 360) + 360) % 360;
+  const shortestDelta = (from, to) => {
+    const a = normAngle(to) - normAngle(from);
+    return ((a + 540) % 360) - 180; // [-180..180]
+  };
+
+  function ensure(el){
+    if (state.has(el)) return state.get(el);
+    const s = { active: 0, current: 0, target: 0, raf: 0, inView: false, hovering: false };
+    state.set(el, s);
+    // set initial values to avoid NaN jumps
+    el.style.setProperty("--ge-angle", "0");
+    el.style.setProperty("--ge-active", "0");
+    return s;
+  }
+
+  function angleFromPointToCenter(el, x, y){
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width * 0.5;
+    const cy = r.top  + r.height * 0.5;
+    return (Math.atan2(y - cy, x - cx) * 180) / Math.PI + 90;
+  }
+
+  function start(el){
+    const s = ensure(el);
+    if (s.raf) return;
+
+    const tick = () => {
+      // smooth angle
+      const d = shortestDelta(s.current, s.target);
+      s.current = normAngle(s.current + d * 0.14);
+
+      // smooth active (read current from CSS var, write eased)
+      const curA = parseFloat(el.style.getPropertyValue("--ge-active") || "0");
+      const nextA = clamp01(curA + (s.active - curA) * 0.18);
+
+      el.style.setProperty("--ge-angle", s.current.toFixed(3));
+      el.style.setProperty("--ge-active", nextA.toFixed(3));
+
+      const still = Math.abs(d) > 0.02 || Math.abs(s.active - nextA) > 0.01;
+      if (still) s.raf = requestAnimationFrame(tick);
+      else {
+        el.style.setProperty("--ge-angle", normAngle(s.target).toFixed(3));
+        el.style.setProperty("--ge-active", clamp01(s.active).toFixed(3));
+        s.raf = 0;
+      }
+    };
+
+    s.raf = requestAnimationFrame(tick);
+  }
+
+  function setActive(el, on){
+    const s = ensure(el);
+    s.active = on ? 1 : 0;
+    start(el);
+  }
+
+  function setAngle(el, angle){
+    const s = ensure(el);
+    s.target = normAngle(angle);
+    start(el);
+  }
+
+  /* -------------------------
+     DESKTOP: hover + pointer
+  --------------------------*/
+  function initDesktop(){
+    tiles.forEach((el) => {
+      el.addEventListener("mouseenter", () => {
+        const s = ensure(el);
+        s.hovering = true;
+        setActive(el, true);
+      });
+
+      el.addEventListener("mouseleave", () => {
+        const s = ensure(el);
+        s.hovering = false;
+        setActive(el, false);
+      });
+
+      el.addEventListener("pointermove", (e) => {
+        const s = ensure(el);
+        if (!s.hovering) return;
+        setAngle(el, angleFromPointToCenter(el, e.clientX, e.clientY));
+      });
+    });
+  }
+
+  /* -------------------------
+     MOBILE: in-view + scroll
+  --------------------------*/
+  function initMobile(){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const el = entry.target;
+        const s = ensure(el);
+        s.inView = entry.isIntersecting && entry.intersectionRatio > 0.18;
+        setActive(el, s.inView);
+      });
+    }, { threshold: [0, 0.18, 0.35, 0.6] });
+
+    tiles.forEach((el) => io.observe(el));
+
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const vx = window.innerWidth * 0.5;
+      const vy = window.innerHeight * 0.5;
+
+      tiles.forEach((el) => {
+        const s = ensure(el);
+        if (!s.inView) return;
+        setAngle(el, angleFromPointToCenter(el, vx, vy));
+      });
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+  }
+
+  if (mqDesktop.matches) initDesktop();
+  if (mqMobile.matches) initMobile();
+})();
 
 
 /* =========================================================

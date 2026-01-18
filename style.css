@@ -2931,3 +2931,33 @@ footer .social.is-pulse .social__path{
     transition: none !important;
   }
 }
+/* =========================
+   NEBULA SHADER — HERO BACKGROUND
+   Safe layering: does NOT override hero__content positioning
+========================= */
+
+.hero{
+  position: relative;
+  isolation: isolate; /* keeps negative z-index inside hero (premium + safe) */
+}
+
+.nebula-bg{
+  position: absolute;
+  inset: 0;
+  z-index: -1;          /* behind everything in hero without touching hero__content */
+  pointer-events: none;
+  overflow: hidden;
+
+  background: #050505;
+  opacity: .9;
+}
+
+.nebula-bg canvas{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .nebula-bg{ display:none; }
+}

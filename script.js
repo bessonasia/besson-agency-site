@@ -2453,6 +2453,186 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   else resetOut();
 })();
 
+/* =========================
+   NEBULA SHADER (isolated THREE instance)
+   Mount: #nebulaBg inside #top.hero
+   Requires: three.min.js loaded -> window.THREE
+========================= */
+(() => {
+  const mount = document.getElementById("nebulaBg");
+  if (!mount) return;
+
+  // protect from double init
+  if (mount.dataset.nebulaInit === "1") return;
+  mount.dataset.nebulaInit = "1";
+
+  // respect reduced motion
+  const rm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (rm) return;
+
+  const THREE = window.THREE;
+  if (!THREE) {
+    console.warn("[Nebula] THREE not found. Load three.min.js before script.js");
+    return;
+  }
+
+  const vertexShader = `
+    varying vec2 vUv;
+    void main(){
+      vUv = uv;
+      gl_Position = vec4(position, 1.0);
+    }
+  `;
+
+  // IMPORTANT: UV centered (fixes “shader went left”)
+  const fragmentShader = `
+    precision highp float;
+
+    uniform vec2  iResolution;
+    uniform float iTime;
+    uniform vec2  iMouse;
+    uniform bool  hasActiveReminders;
+    uniform bool  hasUpcomingReminders;
+    uniform bool  disableCenterDimming;
+
+    varying vec2 vUv;
+
+    #define t iTime
+    mat2 m(float a){ float c=cos(a), s=sin(a); return mat2(c,-s,s,c); }
+
+    float map(vec3 p){
+      p.xz *= m(t*0.4);
+      p.xy *= m(t*0.3);
+      vec3 q = p*2. + t;
+      return length(p + vec3(sin(t*0.7))) * log(length(p)+1.0)
+           + sin(q.x + sin(q.z + sin(q.y))) * 0.5 - 1.0;
+    }
+
+    void mainImage(out vec4 O, in vec2 fragCoord){
+      // centered coords (no left bias)
+      vec2 uv = (fragCoord - 0.5 * iResolution.xy) / min(iResolution.x, iResolution.y);
+
+      vec3 col = vec3(0.0);
+      float d = 2.5;
+
+      for(int i=0;i<=5;i++){
+        vec3 p = vec3(0,0,5.) + normalize(vec3(uv, -1.)) * d;
+        float rz = map(p);
+        float f  = clamp((rz - map(p + 0.1)) * 0.5, -0.1, 1.0);
+
+        vec3 base = hasActiveReminders
+          ? vec3(0.05,0.2,0.5) + vec3(4.0,2.0,5.0)*f
+          : hasUpcomingReminders
+          ? vec3(0.05,0.3,0.1) + vec3(2.0,5.0,1.0)*f
+          : vec3(0.1,0.3,0.4) + vec3(5.0,2.5,3.0)*f;
+
+        col = col * base + smoothstep(2.5, 0.0, rz) * 0.7 * base;
+        d += min(rz, 1.0);
+      }
+
+      // center dimming
+      float dist   = distance(fragCoord, iResolution*0.5);
+      float radius = min(iResolution.x, iResolution.y) * 0.5;
+      float dim    = disableCenterDimming ? 1.0 : smoothstep(radius*0.3, radius*0.5, dist);
+
+      O = vec4(col, 1.0);
+      if(!disableCenterDimming){
+        O.rgb = mix(O.rgb * 0.3, O.rgb, dim);
+      }
+    }
+
+    void main(){
+      mainImage(gl_FragColor, vUv * iResolution);
+    }
+  `;
+
+  const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: false,
+    powerPreference: "high-performance"
+  });
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  renderer.setPixelRatio(dpr);
+  renderer.setClearColor(0x050505, 1);
+  mount.appendChild(renderer.domElement);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  const clock  = new THREE.Clock();
+
+  const uniforms = {
+    iTime:                { value: 0 },
+    iResolution:          { value: new THREE.Vector2(1, 1) },
+    iMouse:               { value: new THREE.Vector2(0, 0) },
+    hasActiveReminders:   { value: false },
+    hasUpcomingReminders: { value: false },
+    disableCenterDimming: { value: false },
+  };
+
+  function syncFromDataset(){
+    const palette = (mount.dataset.palette || "default").toLowerCase();
+    uniforms.hasActiveReminders.value   = palette === "active";
+    uniforms.hasUpcomingReminders.value = palette === "upcoming";
+
+    const centerDimOn = (mount.dataset.centerDim || "1") !== "0";
+    uniforms.disableCenterDimming.value = !centerDimOn;
+  }
+  syncFromDataset();
+
+  const mo = new MutationObserver(syncFromDataset);
+  mo.observe(mount, { attributes: true, attributeFilter: ["data-palette","data-center-dim"] });
+
+  const material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2), material);
+  scene.add(mesh);
+
+  function onResize(){
+    const w = mount.clientWidth  || window.innerWidth;
+    const h = mount.clientHeight || window.innerHeight;
+
+    renderer.setSize(w, h, false);
+    uniforms.iResolution.value.set(w * dpr, h * dpr);
+  }
+
+  function onMouseMove(e){
+    const r = mount.getBoundingClientRect();
+    const x = (e.clientX - r.left) * dpr;
+    const y = (r.height - (e.clientY - r.top)) * dpr;
+    uniforms.iMouse.value.set(x, y);
+  }
+
+  window.addEventListener("resize", onResize, { passive:true });
+  window.addEventListener("mousemove", onMouseMove, { passive:true });
+  onResize();
+
+  let raf = 0;
+  const tick = () => {
+    uniforms.iTime.value = clock.getElapsedTime();
+    renderer.render(scene, camera);
+    raf = requestAnimationFrame(tick);
+  };
+  raf = requestAnimationFrame(tick);
+
+  // cleanup
+  window.addEventListener("beforeunload", () => {
+    cancelAnimationFrame(raf);
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("mousemove", onMouseMove);
+    mo.disconnect();
+
+    scene.remove(mesh);
+    mesh.geometry.dispose();
+    material.dispose();
+    renderer.dispose();
+
+    if (renderer.domElement && renderer.domElement.parentNode === mount) {
+      mount.removeChild(renderer.domElement);
+    }
+  }, { once:true });
+})();
+
+
 
 /* =========================================================
 Boot

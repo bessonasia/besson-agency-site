@@ -3360,3 +3360,110 @@ footer{padding:48px var(--pad);color:#bdbdbd;text-align:center;}
 
 /* Блокируем скролл при открытом мобильном меню */
 body.nav-lock{overflow:hidden;}
+:root{
+  --sp-black:#050505;
+  --sp-white:#ffffff;
+  --sp-hairW:rgba(255,255,255,.16);
+  --sp-hairW2:rgba(255,255,255,.30);
+
+  /* Fine-tune offsets */
+  --cta-left: 56px; /* было 18px; +~38px (примерно 1 см) */
+}
+
+/* Floating CTA — bottom-left, premium minimal */
+.cta-float-left{
+  -webkit-tap-highlight-color: transparent;
+  appearance:none;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+
+  position:fixed;
+  left: var(--cta-left);
+  bottom:calc(18px + env(safe-area-inset-bottom));
+  z-index:9998;
+
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+
+  padding:10px 2px;
+  user-select:none;
+  will-change: transform, opacity;
+
+  /* Motion driven by CSS vars from JS */
+  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+  opacity: 1;
+  transition: opacity .28s ease, transform .28s ease;
+}
+
+.cta-float-left__orb{
+  width:54px;
+  height:54px;
+  border-radius:999px;
+  border:1px solid var(--sp-hairW);
+  background: rgba(255,255,255,.03);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+
+  box-shadow: 0 12px 34px rgba(0,0,0,.35);
+  transition: background .45s ease, border-color .45s ease, box-shadow .45s ease;
+}
+
+.cta-float-left__arrow{
+  stroke: var(--sp-white);
+  transition: stroke .45s ease, transform .45s ease;
+}
+
+.cta-float-left__label{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+  font-size:11px;
+  font-weight:600;              /* было 800 — сделали тоньше */
+  text-transform:uppercase;
+  letter-spacing:.24em;         /* чуть больше “воздуха” */
+  color: rgba(255,255,255,.82); /* было .92 — легче/дороже */
+  white-space:nowrap;
+  padding-right:2px;
+}
+
+/* Near/hover */
+.cta-float-left.is-near .cta-float-left__orb{
+  border-color: var(--sp-hairW2);
+}
+.cta-float-left:hover .cta-float-left__orb{
+  background: rgba(255,255,255,.92);
+  border-color: rgba(255,255,255,.38);
+}
+.cta-float-left:hover .cta-float-left__arrow{
+  stroke: var(--sp-black);
+  transform: translate3d(1px,-1px,0);
+}
+
+.cta-float-left:focus-visible{
+  outline:none;
+}
+.cta-float-left:focus-visible .cta-float-left__orb{
+  box-shadow: 0 0 0 3px rgba(255,255,255,.18), 0 12px 34px rgba(0,0,0,.45);
+  border-color: rgba(255,255,255,.38);
+}
+
+/* Hide on scroll down */
+.cta-float-left.is-hidden{
+  pointer-events:none;
+  opacity:0;
+  transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + 14px), 0) scale(.98);
+}
+
+/* Mobile — keep only orb */
+@media (max-width: 720px){
+  :root{
+    --cta-left: 52px; /* было 14px; тоже +~38px */
+  }
+
+  .cta-float-left{
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    gap:10px;
+  }
+  .cta-float-left__label{ display:none; }
+}

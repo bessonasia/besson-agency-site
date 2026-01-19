@@ -2780,6 +2780,226 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   if (mqMobile.matches) initMobile();
 })();
 
+/* =========================================================
+   CLIENTS — Infinite Logo Marquee (rAF, perfectly smooth, moves RIGHT)
+   Full replacement block. Paste at the very end of script.js
+========================================================= */
+(() => {
+  const root = document.querySelector("#clients.clients--marquee .logo-marquee");
+  if (!root) return;
+
+  const prefersReduced =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (prefersReduced) return;
+
+  const viewport = root.querySelector(".logo-marquee__viewport");
+  const track = root.querySelector(".logo-marquee__track");
+  const baseSet = root.querySelector(".logo-marquee__set");
+  if (!viewport || !track || !baseSet) return;
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  let distance = 0;     // px: width of one logo set
+  let offset = 0;       // px: 0..distance (moves right)
+  let speed = 80;       // px/sec: current speed
+  let targetSpeed = 80; // px/sec
+  let rafId = 0;
+  let lastT = 0;
+
+  // ---- helpers ----
+  const waitForImages = async (container) => {
+    const imgs = Array.from(container.querySelectorAll("img"));
+    if (!imgs.length) return;
+
+    await Promise.all(
+      imgs.map((img) => {
+        if (img.decode) return img.decode().catch(() => {});
+        if (img.complete) return Promise.resolve();
+        return new Promise((res) => img.addEventListener("load", () => res(), { once: true }));
+      })
+    );
+  };
+
+  const clearClones = () => {
+    Array.from(track.querySelectorAll(".logo-marquee__set"))
+      .slice(1)
+      .forEach((n) => n.remove());
+  };
+
+  const cloneSet = () => {
+    const c = baseSet.cloneNode(true);
+    c.setAttribute("aria-hidden", "true");
+    return c;
+  };
+
+  const buildLoop = () => {
+    clearClones();
+
+    // минимум 2 набора, чтобы был контент “слева” при движении вправо
+    track.appendChild(cloneSet());
+
+    // добавим ещё, если экран широкий (на всякий)
+    let guard = 0;
+    while (track.scrollWidth < viewport.clientWidth * 2.2 && guard < 10) {
+      track.appendChild(cloneSet());
+      guard++;
+    }
+  };
+
+  const measure = () => {
+    const rect = baseSet.getBoundingClientRect();
+    distance = Math.max(320, Math.round(rect.width));
+    offset = distance ? (offset % distance) : 0;
+  };
+
+  const applyTransform = () => {
+    // ВАЖНО: стартуем с -distance и двигаем к 0 => логотипы “едут вправо”
+    // seamless: когда offset сбрасывается, картинка та же, потому что следующий set идентичен
+    const x = (-distance + offset);
+    track.style.transform = `translate3d(${x}px, 0, 0)`;
+  };
+
+  const readSpeeds = () => {
+    const base = clamp(parseFloat(root.dataset.speed || "80"), 10, 400);        // px/sec
+    const hover = clamp(parseFloat(root.dataset.speedHover || "25"), 10, 400); // px/sec
+    targetSpeed = base;
+    speed = base;
+    root._marqueeBaseSpeed = base;
+    root._marqueeHoverSpeed = hover;
+  };
+
+  // ---- animation ----
+  const tick = (t) => {
+    if (!lastT) lastT = t;
+    const dt = Math.min(0.05, (t - lastT) / 1000);
+    lastT = t;
+
+    // плавное изменение скорости
+    const k = 10;
+    speed += (targetSpeed - speed) * (1 - Math.exp(-k * dt));
+
+    if (distance > 0) {
+      // RIGHT: offset растёт, transform становится менее отрицательным => трек едет вправо
+      offset += speed * dt;
+      if (offset >= distance) offset -= distance;
+      applyTransform();
+    }
+
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const start = () => {
+    stop();
+    lastT = 0;
+    rafId = requestAnimationFrame(tick);
+  };
+
+  const stop = () => {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = 0;
+  };
+
+  // ---- hover slowdown ----
+  const onEnter = () => {
+    targetSpeed = root._marqueeHoverSpeed ?? targetSpeed;
+  };
+  const onLeave = () => {
+    targetSpeed = root._marqueeBaseSpeed ?? targetSpeed;
+  };
+
+  // ---- init / resize ----
+  const init = async () => {
+    readSpeeds();
+    await waitForImages(baseSet);
+    buildLoop();
+    measure();
+    applyTransform();
+    start();
+  };
+
+  const onResize = () => {
+    stop();
+    buildLoop();
+    measure();
+    applyTransform();
+    start();
+  };
+
+  root.addEventListener("mouseenter", onEnter);
+  root.addEventListener("mouseleave", onLeave);
+
+  let resizeRaf = 0;
+  window.addEventListener(
+    "resize",
+    () => {
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(onResize);
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stop();
+    else start();
+  });
+
+  init();
+})();
+
+/* =========================
+   LANG SWITCH — UI only (no i18n yet)
+   paste at END of script.js
+========================= */
+(function () {
+  const STORAGE_KEY = "besson_lang";
+
+  // label -> html lang (KZ label, but html lang should be 'kk')
+  const htmlLangMap = { ru: "ru", en: "en", uz: "uz", kz: "kk" };
+
+  function setActiveLang(code) {
+    const groups = [
+      document.getElementById("langSwitch"),
+      document.getElementById("langSwitchMobile"),
+    ].filter(Boolean);
+
+    groups.forEach((root) => {
+      const btns = Array.from(root.querySelectorAll(".lang__btn"));
+      btns.forEach((b) => {
+        const isActive = b.dataset.lang === code;
+        b.classList.toggle("is-active", isActive);
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+    });
+
+    // purely semantic for now
+    document.documentElement.setAttribute("data-lang", code);
+    document.documentElement.setAttribute("lang", htmlLangMap[code] || code);
+    try { localStorage.setItem(STORAGE_KEY, code); } catch (e) {}
+  }
+
+  function bind(root) {
+    if (!root) return;
+    root.addEventListener("click", (e) => {
+      const btn = e.target.closest(".lang__btn");
+      if (!btn) return;
+      const code = btn.dataset.lang;
+      if (!code) return;
+      setActiveLang(code);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const saved = (() => {
+      try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
+    })();
+
+    bind(document.getElementById("langSwitch"));
+    bind(document.getElementById("langSwitchMobile"));
+
+    setActiveLang(saved || "ru");
+  });
+})();
+
 
 /* =========================================================
 Boot

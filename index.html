@@ -19,7 +19,19 @@
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
       <a class="link" href="#contact">Контакты</a>
+      
+      <!-- LANG SWITCH (desktop) -->
+<div class="lang" id="langSwitch" aria-label="Язык сайта">
+  <button class="lang__btn" type="button" data-lang="ru" aria-pressed="true">RU</button>
+  <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+  <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+  <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+</div>
+      
     </nav>
+    
+    
+
 
     <!-- Бургер (только мобилка) -->
     <button
@@ -32,6 +44,8 @@
       <span class="burger__line"></span>
       <span class="burger__line"></span>
     </button>
+    
+    
 
     <!-- Мобильное меню -->
     <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
@@ -39,7 +53,18 @@
         <li><a href="#about">Об агентстве</a></li>
         <li><a href="#work">Проекты</a></li>
         <li><a href="#contact">Контакты</a></li>
+        <!-- LANG SWITCH (mobile) -->
+<div class="lang lang--mobile" id="langSwitchMobile" aria-label="Язык сайта">
+  <button class="lang__btn" type="button" data-lang="ru" aria-pressed="true">RU</button>
+  <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+  <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+  <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+</div>
+
+        
       </ul>
+      
+      
     </nav>
   </header>
 
@@ -151,39 +176,33 @@
       </div>
     </section>
 
-    <!-- CLIENTS -->
-    <section class="clients" id="clients" data-theme="light">
-      <div class="clients__inner">
-        <p class="clients__eyebrow"></p>
+    <!-- CLIENTS — Infinite Logo Cloud (Single Lane, Dark) -->
+<section class="clients clients--marquee" id="clients" data-theme="dark" aria-labelledby="clientsTitle">
+  <div class="clients__inner">
+    <header class="clients__head">
+      <h2 class="clients__headline" id="clientsTitle">Компании, которые нам доверяют</h2>
+    </header>
 
-        <h2 class="clients__headline">
-          НЕ СПИМ ЗА ДЕНЬГИ ДЛЯ ЛУЧШИХ КОМПАНИЙ
-        </h2>
-
-        <div class="clients__grid">
-          <div class="clients__item">Nestlé</div>
-          <div class="clients__item">Beiersdorf</div>
-          <div class="clients__item">Lenovo</div>
-          <div class="clients__item">BAT</div>
-          <div class="clients__item">Phillip&nbsp;Morris</div>
-          <div class="clients__item">METRO</div>
-
-          <div class="clients__item">MEGA</div>
-          <div class="clients__item">Freedom&nbsp;Finance</div>
-          <div class="clients__item">Chery</div>
-          <div class="clients__item">Macro</div>
-          <div class="clients__item">Yandex</div>
-          <div class="clients__item">BI&nbsp;Group</div>
-
-          <div class="clients__item">NRG</div>
-          <div class="clients__item">UCELL</div>
-          <div class="clients__item">Megafon</div>
-          <div class="clients__item">Panasonic</div>
-          <div class="clients__item">Oriflame</div>
-          <div class="clients__item">Rahat</div>
+    <div class="logo-marquee" data-speed="18" data-speed-hover="25" aria-label="Логотипы клиентов">
+      <div class="logo-marquee__viewport">
+        <div class="logo-marquee__track">
+          <div class="logo-marquee__set">
+            <!-- ВСТАВЬ СЮДА СВОИ ЛОГОТИПЫ (12–24 шт). Лучше SVG, можно IMG. -->
+            <img class="logo-marquee__logo" src="assets/logos/nestle.svg" alt="Nestlé" loading="lazy" />
+            <img class="logo-marquee__logo" src="assets/logos/pepsico.svg" alt="PepsiCo" loading="lazy" />
+            <img class="logo-marquee__logo" src="assets/logos/astrazeneca.svg" alt="AstraZeneca" loading="lazy" />
+            <img class="logo-marquee__logo" src="assets/logos/avito.svg" alt="Avito" loading="lazy" />
+            <img class="logo-marquee__logo" src="assets/logos/technomart.svg" alt="Technomart" loading="lazy" />
+            <img class="logo-marquee__logo" src="assets/logos/centrumair.svg" alt="Centrum Air" loading="lazy" />
+            <!-- /логотипы -->
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+
+  </div>
+</section>
+
 
 <!-- VIDEO REVIEWS (B) -->
 <section class="reviews" id="reviews" data-theme="light">

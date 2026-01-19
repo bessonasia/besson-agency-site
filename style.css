@@ -1,29 +1,276 @@
+
+/* =========================
+   NEBULA SHADER — HERO BACKGROUND
+   Safe layering: does NOT override hero__content positioning
+========================= */
+
+.hero{
+  position: relative;
+  isolation: isolate; /* keeps negative z-index inside hero (premium + safe) */
+}
+
+.nebula-bg{
+  position: absolute;
+  inset: 0;
+  z-index: -1;          /* behind everything in hero without touching hero__content */
+  pointer-events: none;
+  overflow: hidden;
+
+  background: #050505;
+  opacity: .9;
+}
+
+.nebula-bg canvas{
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .nebula-bg{ display:none; }
+}
+
+
 /* =========================================================
-Reset & base
+Premium cursor (desktop only)
 ========================================================= */
-*{box-sizing:border-box;margin:0}
-html,body{height:100%;scroll-behavior:smooth}
-html{
-  -webkit-text-size-adjust:100%;
-  text-size-adjust:100%;
-  -webkit-tap-highlight-color:transparent;
+@media (hover:hover) and (pointer:fine){
+  html,body{cursor:none !important;}
+  *,
+  a,
+  button,
+  [role="button"],
+  label,
+  input,
+  textarea,
+  select,
+  summary{
+    cursor:none !important;
+    caret-color:transparent;
+  }
+
+  .cursor-dot,
+  .cursor-ring{
+    position:fixed;
+    top:0;left:0;
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    z-index:2147483647;
+    transition:opacity .25s ease;
+    mix-blend-mode:difference;
+  }
+  .cursor-dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:#fff;
+    opacity:0;
+  }
+  .cursor-ring{
+    width:36px;height:36px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.7);
+    opacity:0;
+    transition:transform .28s cubic-bezier(.16,1,.3,1),
+               border-color .2s,
+               opacity .2s;
+  }
+  .cursor-ring.cursor--hover{
+    transform:translate(-50%,-50%) scale(1.4);
+    border-color:#fff;
+  }
 }
-:root{
-  --bg:#0a0a0a;
-  --fg:#f5f5f5;
-  --muted:#bdbdbd;
-  --pad:clamp(16px,2.4vw,32px);
-  --grid:max(68rem,74vw);
+
+
+/* =========================================================
+Contact Pill (PREMIUM) — ONLY THIS BLOCK
+========================================================= */
+.contact-pill{
+  --pill-x: 84px;
+
+  position:fixed;
+  right:16px;
+  top:50%;
+  transform:translate3d(var(--pill-x), -50%, 0);
+  opacity:0;
+  pointer-events:none;
+
+  width:36px;
+  height:132px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.92);
+
+  background:linear-gradient(180deg,#151515,#000);
+  color:#f5f5f5;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  z-index:1300; /* поверх сферы/куполa */
+  box-shadow:
+    0 10px 26px rgba(0,0,0,.28),
+    0 6px 18px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.12);
+
+  transition:
+    transform .38s cubic-bezier(.19,1,.22,1),
+    opacity .28s ease,
+    background .28s ease,
+    color .28s ease,
+    border-color .28s ease,
+    box-shadow .28s ease,
+    width .38s cubic-bezier(.19,1,.22,1),
+    height .38s cubic-bezier(.19,1,.22,1);
+  will-change: transform, width, height;
 }
-body{
-  font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--fg);
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+
+.contact-pill--visible{
+  --pill-x: 0px;
+  opacity:1;
+  pointer-events:auto;
 }
-a{color:inherit;text-decoration:none}
+
+.contact-pill__label{
+  font-size:.74rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:500;
+  line-height:1;
+  user-select:none;
+  white-space:nowrap;
+  transform:rotate(-90deg);
+  transform-origin:center;
+}
+
+/* на тёмном фоне — белая версия + подсветка */
+.contact-pill--on-dark{
+  background:linear-gradient(180deg,#ffffff,#e9e9e9);
+  color:#111;
+  border-color:rgba(255,255,255,.85);
+  box-shadow:
+    0 10px 26px rgba(0,0,0,.35),
+    0 0 0 1px rgba(255,255,255,.7),
+    0 0 28px rgba(255,255,255,.22),
+    inset 0 1px 0 rgba(255,255,255,.96);
+}
+
+.contact-pill:hover{
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.32),
+    inset 0 1px 0 rgba(255,255,255,.16);
+}
+.contact-pill--on-dark:hover{
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.38),
+    0 0 0 1px rgba(255,255,255,.75),
+    0 0 36px rgba(255,255,255,.26),
+    inset 0 1px 0 rgba(255,255,255,.98);
+}
+
+/* open -> horizontal */
+.contact-pill--open{
+  width:236px;
+  height:58px;
+  justify-content:flex-start;
+  padding:10px 14px;
+}
+.contact-pill--open .contact-pill__label{
+  transform:rotate(0deg);
+  font-size:.78rem;
+}
+
+/* icons inside */
+.contact-pill__icons{
+  position:absolute;
+  top:50%;
+  right:12px;
+  transform:translateY(-50%) translateX(10px);
+  opacity:0;
+  pointer-events:none;
+
+  display:flex;
+  gap:8px;
+
+  transition:
+    opacity .22s ease,
+    transform .28s cubic-bezier(.19,1,.22,1);
+}
+.contact-pill--open .contact-pill__icons{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(-50%) translateX(0);
+}
+
+/* bigger icons */
+.contact-pill__icon{
+  width:52px;
+  height:52px;
+  border-radius:999px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:1px solid rgba(0,0,0,.9);
+  background:#0b0b0b;
+  color:#f5f5f5;
+
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.22),
+    inset 0 1px 0 rgba(255,255,255,.12);
+
+  transition:
+    transform .22s ease,
+    background .22s ease,
+    color .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease;
+}
+.contact-pill__icon svg{width:26px;height:26px;}
+.contact-pill__icon:hover{transform:translateY(-2px);}
+
+/* icons on white pill */
+.contact-pill--on-dark .contact-pill__icon{
+  background:#fff;
+  color:#111;
+  border-color:rgba(0,0,0,.12);
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.24),
+    inset 0 1px 0 rgba(255,255,255,.98);
+}
+
+/* mobile */
+@media (max-width:768px){
+  /* чуть меньше закрытая капсула */
+  .contact-pill{
+    right:12px;
+    width:32px;
+    height:112px;
+  }
+
+  /* ✅ открытая капсула: ширина адаптивная, чтобы текст всегда влезал
+     и при этом НЕ было белых полей/горизонтального скролла */
+  .contact-pill--open{
+    width:min(240px, calc(100vw - 24px));
+    height:56px;
+  }
+
+  /* ✅ чтобы надпись не переносилась/не обрезалась странно */
+  .contact-pill__label{
+    white-space:nowrap;
+  }
+
+  /* иконки НЕ трогаем (как ты просил) */
+  .contact-pill__icon{
+    width:48px;
+    height:48px;
+  }
+  .contact-pill__icon svg{
+    width:24px;
+    height:24px;
+  }
+}
+
 
 /* =========================================================
 Nav + burger
@@ -137,121 +384,66 @@ Nav + burger
   .mobile-menu{display:none !important;}
 }
 
-/* =========================================================
-Hero
-========================================================= */
-.hero{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  position:relative;
-  overflow:hidden;
-}
-.hero__content{text-align:center;padding:120px var(--pad) 80px;}
-.hero__name{
-  font-size:clamp(2rem,6vw,4rem);
-  font-weight:800;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  margin-bottom:16px;
-}
-#logoText span{display:inline-block;transition:transform .22s ease-out,text-shadow .3s ease-out;}
-#logoText span[data-space="true"]{pointer-events:none;}
+/* =========================
+   LANG SWITCH — Departament-like (no separators)
+   paste at END of style.css
+========================= */
 
-.hero__slogan{
-  margin-top:24px;
-  font-size:clamp(1.1rem,2.4vw,1.6rem);
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  opacity:0;
-  transform:translateY(8px) scale(.98);
-  animation:heroSloganIntro 1.2s ease forwards .4s;
+.lang{
   display:flex;
+  align-items:center;
+  gap:12px;                 /* без разделителей — просто воздух */
+  margin-left:10px;         /* отделяем от последнего пункта меню */
+}
+
+.lang__btn{
+  background:none;
+  border:0;
+  padding:6px 2px;          /* кликабельность, но визуально “текст” */
+  color:inherit;
+  cursor:pointer;
+
+  font-size:.78rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:500;
+
+  opacity:.58;
+  transition: opacity .18s ease, transform .18s ease, text-shadow .18s ease;
+}
+
+.lang__btn:hover{
+  opacity:.9;
+  transform: translateY(-1px);
+}
+
+.lang__btn.is-active{
+  opacity:1;
+  text-shadow: 0 0 10px rgba(255,255,255,.18);
+}
+
+/* На светлых секциях nav уже становится чёрным через .nav--on-light,
+   мы просто подстраиваем свечение, чтобы не было “грязи”. */
+.nav.nav--on-light .lang__btn.is-active{
+  text-shadow: none;
+}
+
+/* Mobile placement */
+.lang--mobile{
   justify-content:center;
-  flex-wrap:wrap;
-  gap:.6em;
-  cursor:default;
-}
-.hero__slogan span{
-  display:inline-block;
-  transition:color .4s,text-shadow .4s;
-  animation:subtleGlow 6s ease-in-out infinite alternate;
-}
-.hero__slogan span:hover{
-  color:#fff;
-  text-shadow:0 0 10px rgba(255,255,255,.45),
-             0 0 20px rgba(255,255,255,.25),
-             0 0 30px rgba(255,255,255,.15);
+  margin-top:18px;
+  padding-top:18px;
+  opacity:.95;
 }
 
-/* Индикатор скролла */
-.hero__scroll{
-  position:absolute;
-  left:50%;
-  bottom:40px;
-  transform:translateX(-50%);
-  opacity:0;
-  animation:indicatorFadeIn 1.2s ease forwards .9s;
-  pointer-events:none;
-}
-.scroll-indicator__mouse{
-  width:22px;
-  height:36px;
-  border-radius:14px;
-  border:1.5px solid rgba(255,255,255,.7);
-  display:flex;
-  align-items:flex-start;
-  justify-content:center;
-  padding-top:7px;
-  box-shadow:0 0 10px rgba(0,0,0,.6);
-}
-.scroll-indicator__wheel{
-  width:3px;
-  height:7px;
-  border-radius:999px;
-  background:rgba(255,255,255,.9);
-  animation:scrollWheel 1.5s ease-in-out infinite;
+/* Mobile: чуть крупнее, чтобы пальцем удобно */
+@media (max-width:768px){
+  .lang__btn{
+    font-size:.82rem;
+    padding:8px 4px;
+  }
 }
 
-/* Белая панель */
-.hero__reveal{
-  position:absolute;
-  left:0;bottom:0;
-  width:100%;
-  height:40vh;
-  background:#ffffff;
-  transform:translateY(40vh);
-  pointer-events:none;
-}
-
-/* Animations */
-@keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1);}}
-@keyframes subtleGlow{
-  0%,100%{text-shadow:none}
-  50%{text-shadow:0 0 6px rgba(255,255,255,.15)}
-}
-@keyframes indicatorFadeIn{to{opacity:1;}}
-@keyframes scrollWheel{
-  0%{transform:translateY(0);opacity:1;}
-  60%{transform:translateY(8px);opacity:0.2;}
-  100%{transform:translateY(0);opacity:0;}
-}
-
-/* =========================================================
-Interlude
-========================================================= */
-.interlude{
-  background:#fff;
-  color:#0a0a0a;
-  text-align:center;
-  padding:140px var(--pad) 80px;
-}
-.hero__title{
-  font-size:clamp(3rem,9.6vw,7rem);
-  line-height:.9;
-  font-weight:800;
-  letter-spacing:-.02em;
-}
 
 /* =========================================================
 About
@@ -376,6 +568,154 @@ Globe Dome between ABOUT and WORK
 
 /* Проекты выше купола */
 #work{position:relative;z-index:5;}
+
+
+
+
+/* =========================================================
+Reset & base
+========================================================= */
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;scroll-behavior:smooth}
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+  -webkit-tap-highlight-color:transparent;
+}
+:root{
+  --bg:#0a0a0a;
+  --fg:#f5f5f5;
+  --muted:#bdbdbd;
+  --pad:clamp(16px,2.4vw,32px);
+  --grid:max(68rem,74vw);
+}
+body{
+  font-family:'Inter','Helvetica Neue','Segoe UI','Roboto',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--fg);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit;text-decoration:none}
+
+
+/* =========================================================
+Hero
+========================================================= */
+.hero{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+}
+.hero__content{text-align:center;padding:120px var(--pad) 80px;}
+.hero__name{
+  font-size:clamp(2rem,6vw,4rem);
+  font-weight:800;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  margin-bottom:16px;
+}
+#logoText span{display:inline-block;transition:transform .22s ease-out,text-shadow .3s ease-out;}
+#logoText span[data-space="true"]{pointer-events:none;}
+
+.hero__slogan{
+  margin-top:24px;
+  font-size:clamp(1.1rem,2.4vw,1.6rem);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  opacity:0;
+  transform:translateY(8px) scale(.98);
+  animation:heroSloganIntro 1.2s ease forwards .4s;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:.6em;
+  cursor:default;
+}
+.hero__slogan span{
+  display:inline-block;
+  transition:color .4s,text-shadow .4s;
+  animation:subtleGlow 6s ease-in-out infinite alternate;
+}
+.hero__slogan span:hover{
+  color:#fff;
+  text-shadow:0 0 10px rgba(255,255,255,.45),
+             0 0 20px rgba(255,255,255,.25),
+             0 0 30px rgba(255,255,255,.15);
+}
+
+/* Индикатор скролла */
+.hero__scroll{
+  position:absolute;
+  left:50%;
+  bottom:40px;
+  transform:translateX(-50%);
+  opacity:0;
+  animation:indicatorFadeIn 1.2s ease forwards .9s;
+  pointer-events:none;
+}
+.scroll-indicator__mouse{
+  width:22px;
+  height:36px;
+  border-radius:14px;
+  border:1.5px solid rgba(255,255,255,.7);
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding-top:7px;
+  box-shadow:0 0 10px rgba(0,0,0,.6);
+}
+.scroll-indicator__wheel{
+  width:3px;
+  height:7px;
+  border-radius:999px;
+  background:rgba(255,255,255,.9);
+  animation:scrollWheel 1.5s ease-in-out infinite;
+}
+
+/* Белая панель */
+.hero__reveal{
+  position:absolute;
+  left:0;bottom:0;
+  width:100%;
+  height:40vh;
+  background:#ffffff;
+  transform:translateY(40vh);
+  pointer-events:none;
+}
+
+/* Animations */
+@keyframes heroSloganIntro{to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes subtleGlow{
+  0%,100%{text-shadow:none}
+  50%{text-shadow:0 0 6px rgba(255,255,255,.15)}
+}
+@keyframes indicatorFadeIn{to{opacity:1;}}
+@keyframes scrollWheel{
+  0%{transform:translateY(0);opacity:1;}
+  60%{transform:translateY(8px);opacity:0.2;}
+  100%{transform:translateY(0);opacity:0;}
+}
+
+/* =========================================================
+Interlude
+========================================================= */
+.interlude{
+  background:#fff;
+  color:#0a0a0a;
+  text-align:center;
+  padding:140px var(--pad) 80px;
+}
+.hero__title{
+  font-size:clamp(3rem,9.6vw,7rem);
+  line-height:.9;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+
 
 /* =========================================================
 Work — reveal animation (SAFE)
@@ -653,394 +993,12 @@ Clients — reveal animation (smooth, NO lines) — FIXED
 
 
 
-/* =========================================================
-Contact
-========================================================= */
-.contact{padding:120px var(--pad);text-align:center;}
-.contact__grid{
-  max-width:var(--grid);
-  margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:28px;
-}
-.contact__lead{
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  font-size:clamp(1.4rem,3.6vw,2.2rem);
-}
-.contact__sub{color:var(--muted);margin-top:10px;max-width:52ch;}
-
-/* Форма */
-.form{
-  background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:18px;
-  padding:32px;
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-  max-width:460px;
-  width:100%;
-}
-.row{display:block;}
-.field{position:relative;margin-bottom:18px;}
-.input{
-  width:100%;
-  padding:18px 16px 14px;
-  border-radius:14px;
-  border:1px solid #1b1b1b;
-  background:#0f0f0f;
-  color:#fff;
-  font-size:.96rem;
-  outline:none;
-  -webkit-appearance:none;
-  transition:border-color .25s,box-shadow .25s,background .25s,transform .18s;
-}
-.input::placeholder{color:transparent;}
-.input:focus{
-  border-color:#fff;
-  box-shadow:0 0 0 2px rgba(255,255,255,.12);
-  background:#111111;
-  transform:translateY(-1px);
-}
-.label{
-  position:absolute;
-  left:18px;
-  top:18px;
-  padding:2px 6px;
-  border-radius:8px;
-  font-size:.82rem;
-  color:#a9a9a9;
-  background:rgba(255,255,255,.02);
-  transform-origin:left center;
-  transition:top .18s ease, transform .18s ease, opacity .18s ease, color .18s ease;
-}
-.field.filled .label,
-.input:focus + .label{
-  top:4px;
-  transform:scale(.88);
-  opacity:.95;
-  color:#ffffff;
-}
-.form__status{
-  min-height:20px;
-  font-size:.9rem;
-  color:var(--muted);
-  margin-top:18px;
-  transition:opacity .3s;
-}
-.form__status--success{color:#9be7c4;}
-.form__status--error{color:#ff8a80;}
-.actions{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:14px;
-  margin-top:24px;
-  flex-wrap:wrap;
-}
-.btn{
-  position:relative;
-  padding:16px 22px;
-  border-radius:999px;
-  border:1px solid #fff;
-  background:#fff;
-  color:#000;
-  font-weight:700;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:transform .25s,box-shadow .25s;
-  isolation:isolate;
-}
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1);}
-.btn .glow{
-  position:absolute;
-  inset:-2px;
-  border-radius:inherit;
-  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);
-  opacity:0;
-  transition:opacity .25s;
-  filter:blur(14px);
-}
-.btn:hover .glow{opacity:1;}
-.icon-btn{
-  width:44px;height:44px;
-  border:1px solid #1b1b1b;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#0f0f0f;
-  color:#fff;
-  transition:background .25s,border-color .25s,transform .2s;
-}
-.icon-btn:hover{
-  background:#fff;
-  color:#000;
-  border-color:#fff;
-  transform:translateY(-2px);
-}
-.icon-btn svg{width:20px;height:20px;fill:currentColor;}
-
-/* =========================================================
-Contact Pill (PREMIUM) — ONLY THIS BLOCK
-========================================================= */
-.contact-pill{
-  --pill-x: 84px;
-
-  position:fixed;
-  right:16px;
-  top:50%;
-  transform:translate3d(var(--pill-x), -50%, 0);
-  opacity:0;
-  pointer-events:none;
-
-  width:36px;
-  height:132px;
-  border-radius:999px;
-  border:1px solid rgba(0,0,0,.92);
-
-  background:linear-gradient(180deg,#151515,#000);
-  color:#f5f5f5;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  z-index:1300; /* поверх сферы/куполa */
-  box-shadow:
-    0 10px 26px rgba(0,0,0,.28),
-    0 6px 18px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.12);
-
-  transition:
-    transform .38s cubic-bezier(.19,1,.22,1),
-    opacity .28s ease,
-    background .28s ease,
-    color .28s ease,
-    border-color .28s ease,
-    box-shadow .28s ease,
-    width .38s cubic-bezier(.19,1,.22,1),
-    height .38s cubic-bezier(.19,1,.22,1);
-  will-change: transform, width, height;
-}
-
-.contact-pill--visible{
-  --pill-x: 0px;
-  opacity:1;
-  pointer-events:auto;
-}
-
-.contact-pill__label{
-  font-size:.74rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  font-weight:500;
-  line-height:1;
-  user-select:none;
-  white-space:nowrap;
-  transform:rotate(-90deg);
-  transform-origin:center;
-}
-
-/* на тёмном фоне — белая версия + подсветка */
-.contact-pill--on-dark{
-  background:linear-gradient(180deg,#ffffff,#e9e9e9);
-  color:#111;
-  border-color:rgba(255,255,255,.85);
-  box-shadow:
-    0 10px 26px rgba(0,0,0,.35),
-    0 0 0 1px rgba(255,255,255,.7),
-    0 0 28px rgba(255,255,255,.22),
-    inset 0 1px 0 rgba(255,255,255,.96);
-}
-
-.contact-pill:hover{
-  box-shadow:
-    0 14px 34px rgba(0,0,0,.32),
-    inset 0 1px 0 rgba(255,255,255,.16);
-}
-.contact-pill--on-dark:hover{
-  box-shadow:
-    0 14px 34px rgba(0,0,0,.38),
-    0 0 0 1px rgba(255,255,255,.75),
-    0 0 36px rgba(255,255,255,.26),
-    inset 0 1px 0 rgba(255,255,255,.98);
-}
-
-/* open -> horizontal */
-.contact-pill--open{
-  width:236px;
-  height:58px;
-  justify-content:flex-start;
-  padding:10px 14px;
-}
-.contact-pill--open .contact-pill__label{
-  transform:rotate(0deg);
-  font-size:.78rem;
-}
-
-/* icons inside */
-.contact-pill__icons{
-  position:absolute;
-  top:50%;
-  right:12px;
-  transform:translateY(-50%) translateX(10px);
-  opacity:0;
-  pointer-events:none;
-
-  display:flex;
-  gap:8px;
-
-  transition:
-    opacity .22s ease,
-    transform .28s cubic-bezier(.19,1,.22,1);
-}
-.contact-pill--open .contact-pill__icons{
-  opacity:1;
-  pointer-events:auto;
-  transform:translateY(-50%) translateX(0);
-}
-
-/* bigger icons */
-.contact-pill__icon{
-  width:52px;
-  height:52px;
-  border-radius:999px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  border:1px solid rgba(0,0,0,.9);
-  background:#0b0b0b;
-  color:#f5f5f5;
-
-  box-shadow:
-    0 10px 22px rgba(0,0,0,.22),
-    inset 0 1px 0 rgba(255,255,255,.12);
-
-  transition:
-    transform .22s ease,
-    background .22s ease,
-    color .22s ease,
-    border-color .22s ease,
-    box-shadow .22s ease;
-}
-.contact-pill__icon svg{width:26px;height:26px;}
-.contact-pill__icon:hover{transform:translateY(-2px);}
-
-/* icons on white pill */
-.contact-pill--on-dark .contact-pill__icon{
-  background:#fff;
-  color:#111;
-  border-color:rgba(0,0,0,.12);
-  box-shadow:
-    0 10px 22px rgba(0,0,0,.24),
-    inset 0 1px 0 rgba(255,255,255,.98);
-}
-
-/* mobile */
-@media (max-width:768px){
-  /* чуть меньше закрытая капсула */
-  .contact-pill{
-    right:12px;
-    width:32px;
-    height:112px;
-  }
-
-  /* ✅ открытая капсула: ширина адаптивная, чтобы текст всегда влезал
-     и при этом НЕ было белых полей/горизонтального скролла */
-  .contact-pill--open{
-    width:min(240px, calc(100vw - 24px));
-    height:56px;
-  }
-
-  /* ✅ чтобы надпись не переносилась/не обрезалась странно */
-  .contact-pill__label{
-    white-space:nowrap;
-  }
-
-  /* иконки НЕ трогаем (как ты просил) */
-  .contact-pill__icon{
-    width:48px;
-    height:48px;
-  }
-  .contact-pill__icon svg{
-    width:24px;
-    height:24px;
-  }
-}
 
 
 
-/* =========================================================
-Footer
-========================================================= */
-footer{padding:48px var(--pad);color:#bdbdbd;text-align:center;}
-.footer-left{font-weight:700;letter-spacing:.18em;}
-.footer-contact{
-  font-size:.9rem;
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:center;
-  margin-top:12px;
-}
-.footer-contact svg{width:16px;height:16px;opacity:.8;}
 
-/* =========================================================
-Premium cursor (desktop only)
-========================================================= */
-@media (hover:hover) and (pointer:fine){
-  html,body{cursor:none !important;}
-  *,
-  a,
-  button,
-  [role="button"],
-  label,
-  input,
-  textarea,
-  select,
-  summary{
-    cursor:none !important;
-    caret-color:transparent;
-  }
 
-  .cursor-dot,
-  .cursor-ring{
-    position:fixed;
-    top:0;left:0;
-    transform:translate(-50%,-50%);
-    pointer-events:none;
-    z-index:2147483647;
-    transition:opacity .25s ease;
-    mix-blend-mode:difference;
-  }
-  .cursor-dot{
-    width:8px;height:8px;
-    border-radius:50%;
-    background:#fff;
-    opacity:0;
-  }
-  .cursor-ring{
-    width:36px;height:36px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.7);
-    opacity:0;
-    transition:transform .28s cubic-bezier(.16,1,.3,1),
-               border-color .2s,
-               opacity .2s;
-  }
-  .cursor-ring.cursor--hover{
-    transform:translate(-50%,-50%) scale(1.4);
-    border-color:#fff;
-  }
-}
 
-/* Блокируем скролл при открытом мобильном меню */
-body.nav-lock{overflow:hidden;}
 
 /* =========================================================
 Mobile polish
@@ -1071,77 +1029,8 @@ Reduced motion
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important;}
 }
-/* =========================================================
-CONTACT — Underlap from CLIENTS (Variant A) + repeatable motion
-========================================================= */
 
-/* Настройка глубины "из-за клиентов" */
-:root{
-  --contact-overlap: clamp(72px, 12vh, 140px);
-}
 
-/* Clients всегда сверху (чтобы Contact был "за ним") */
-.clients{
-  position:relative;
-  z-index:6;
-  /* тонкая глубина (почти невидимо, но даёт ощущение слоя) */
-  box-shadow: 0 48px 110px rgba(0,0,0,.55);
-}
-
-/* Contact уходит под Clients за счёт отрицательного отступа */
-.contact{
-  position:relative;
-  z-index:4;
-
-  /* подныриваем под Clients */
-  margin-top: calc(var(--contact-overlap) * -1);
-
-  /* компенсируем, чтобы контент не залез под Clients */
-  padding-top: calc(120px + var(--contact-overlap));
-
-  /* якорь #contact не должен прилипать под фикс-нав */
-  scroll-margin-top: 110px;
-}
-
-/* Мобилка: чуть меньше перекрытие */
-@media (max-width: 768px){
-  :root{ --contact-overlap: clamp(56px, 10vh, 110px); }
-  .contact{ padding-top: calc(96px + var(--contact-overlap)); }
-}
-
-/* ===== Reveal (repeatable) ===== */
-/* База: если JS не работает — всё видно */
-.contact__lead,
-.contact__sub{
-  opacity:1;
-  transform:none;
-  filter:none;
-}
-
-/* Заголовок + подзаголовок мягко входят */
-.js .contact__lead,
-.js .contact__sub{
-  opacity:0;
-  transform: translate3d(0, 10px, 0);
-  filter: blur(4px);
-  will-change: transform, opacity, filter;
-  transition:
-    opacity .75s cubic-bezier(.16,1,.3,1),
-    transform .95s cubic-bezier(.16,1,.3,1),
-    filter .95s cubic-bezier(.16,1,.3,1);
-}
-
-.js .contact.is-in .contact__lead{
-  opacity:1;
-  transform: translate3d(0,0,0);
-  filter: blur(0px);
-}
-.js .contact.is-in .contact__sub{
-  opacity:1;
-  transform: translate3d(0,0,0);
-  filter: blur(0px);
-  transition-delay: 70ms;
-}
 
 /* =========================================================
 VIDEO REVIEWS (B) — safe isolated block
@@ -1519,6 +1408,122 @@ CONTACT — Variant A (REAL underlap behind Clients)
   padding-bottom: var(--stack-overlap);
 }
 
+/* =========================
+   CLIENTS — Museum alignment (match “How we work” mood)
+   Paste at the very end of style.css
+========================= */
+
+#clients,
+.clients#clients{
+  /* музейный центр и тишина */
+  text-align: center;
+  padding-top: clamp(52px, 6vw, 84px);
+  padding-bottom: clamp(52px, 6vw, 90px);
+}
+
+/* Заголовок секции клиентов (не увеличиваем, наоборот — дисциплина) */
+#clients :is(.clients__title, .section__title, h2){
+  margin: 0 auto 18px;
+  max-width: 30ch;
+  text-wrap: balance;
+
+  /* музейная типографика: строгая, компактная */
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  /* делаем спокойнее, чтобы не спорил с hero */
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1.15;
+}
+
+/* Если есть лид/описание у блока клиентов */
+#clients :is(.clients__lead, .clients__sub, .section__lead, p){
+  margin: 0 auto 26px;
+  max-width: 74ch;
+  opacity: .78;
+}
+
+/* Сетка логотипов: центр + “экспозиционный” ритм */
+#clients :is(.clients__grid, .clients__list, .grid){
+  margin: 0 auto;
+  max-width: min(1120px, 92vw);
+  gap: clamp(10px, 1.7vw, 16px);
+
+  /* если у тебя grid уже задан — не ломаем колонки,
+     только центрируем и выравниваем */
+  justify-content: center;
+  align-items: stretch;
+}
+
+/* Элемент логотипа: никакой витрины, только рамка и воздух */
+#clients :is(.clients__item, .client, li){
+  border-radius: 14px;
+  background: transparent;
+  box-shadow: none;
+
+  /* музейная рамка */
+  border: 1px solid rgba(0,0,0,.12);
+
+  /* аккуратный внутренний воздух */
+  padding: clamp(14px, 1.8vw, 18px);
+
+  /* единая высота “плашек” для ритма */
+  min-height: clamp(60px, 6vw, 78px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
+}
+
+/* Логотипы: по умолчанию графичные и спокойные */
+#clients :is(.clients__item, .client, li) :is(img, svg){
+  display: block;
+  max-width: 100%;
+  max-height: 34px;     /* не раздуваем */
+  width: auto;
+  height: auto;
+
+  opacity: .86;
+  filter: grayscale(1) contrast(1.05);
+  transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
+}
+
+/* Ховер (десктоп): экспонат “подышал”, но без эффекта “карточек” */
+@media (hover:hover) and (pointer:fine){
+  #clients :is(.clients__item, .client, li):hover{
+    border-color: rgba(0,0,0,.22);
+    background-color: rgba(255,255,255,.18);
+    transform: translateY(-1px);
+  }
+  #clients :is(.clients__item, .client, li):hover :is(img, svg){
+    opacity: 1;
+    filter: grayscale(0) contrast(1.02);
+    transform: translateY(-1px);
+  }
+}
+
+/* Мобилка: ещё тише и плотнее */
+@media (max-width: 640px){
+  #clients,
+  .clients#clients{
+    padding-top: 46px;
+    padding-bottom: 56px;
+  }
+
+  #clients :is(.clients__title, .section__title, h2){
+    margin-bottom: 14px;
+  }
+
+  #clients :is(.clients__item, .client, li){
+    border-radius: 12px;
+    min-height: 62px;
+  }
+}
+
+
 /* ВИДЕО-ОТЗЫВЫ — начинаются под клиентами */
 .video-reviews{
   position: relative;
@@ -1892,6 +1897,124 @@ CONTACT — Variant A (REAL underlap behind Clients)
   position: relative;
   z-index: 6;
 }
+
+/* =========================================================
+   CLIENTS — Infinite Logo Marquee (Single Lane, Dark)
+   Paste at end of style.css
+========================================================= */
+
+#clients.clients--marquee{
+  background: #050505;
+  color: rgba(245,245,245,.92);
+  padding: clamp(72px, 7vw, 112px) var(--pad, 18px) clamp(84px, 7vw, 124px);
+}
+
+#clients.clients--marquee .clients__inner{
+  max-width: var(--grid, 1120px);
+  margin: 0 auto;
+}
+
+#clients.clients--marquee .clients__head{
+  text-align: center;
+  margin: 0 0 clamp(22px, 3vw, 40px);
+}
+
+#clients.clients--marquee .clients__headline{
+  margin: 0 auto;
+  max-width: 32ch;
+  text-wrap: balance;
+
+  font-size: clamp(26px, 2.8vw, 42px);
+  letter-spacing: -0.02em;
+  line-height: 1.06;
+  font-weight: 700;
+}
+
+/* Marquee */
+#clients.clients--marquee .logo-marquee{
+  --gap: 42px;
+  --logo-h: 18px;
+  --fade: 18%;
+}
+
+#clients.clients--marquee .logo-marquee__viewport{
+  overflow: hidden;
+  padding: 16px 0;
+
+  /* мягкая маска по краям как у референса */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  mask-image: linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+
+#clients.clients--marquee .logo-marquee__track{
+  display: flex;
+  width: max-content;
+  will-change: transform;
+
+  /* выставляется JS */
+  animation: logoMarquee var(--duration, 22s) linear infinite;
+}
+
+#clients.clients--marquee .logo-marquee__set{
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding-right: var(--gap);
+}
+
+/* Logo styling */
+#clients.clients--marquee .logo-marquee__logo{
+  height: var(--logo-h);
+  width: auto;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+
+  opacity: .86;
+
+  /* “white on black” как в референсе (инверт) */
+  filter: brightness(0) invert(1);
+  transform: translateZ(0);
+  transition: opacity 220ms ease, filter 220ms ease;
+}
+
+/* если какой-то логотип уже белый и инверт его портит — добавь класс logo-marquee__logo--native */
+#clients.clients--marquee .logo-marquee__logo--native{
+  filter: none;
+  opacity: .92;
+}
+
+@media (min-width: 768px){
+  #clients.clients--marquee .logo-marquee{ --logo-h: 20px; }
+}
+
+@keyframes logoMarquee{
+  from{ transform: translateX(0); }
+  to  { transform: translateX(calc(-1 * var(--distance, 600px))); }
+}
+
+/* hover slowdown (desktop only) */
+@media (hover:hover) and (pointer:fine){
+  #clients.clients--marquee .logo-marquee:hover .logo-marquee__track{
+    animation-duration: var(--duration-hover, var(--duration, 22s));
+  }
+}
+
+/* Reduced motion: без анимации, даём горизонтальный скролл */
+@media (prefers-reduced-motion: reduce){
+  #clients.clients--marquee .logo-marquee__track{ animation: none !important; }
+  #clients.clients--marquee .logo-marquee__viewport{ overflow-x: auto; }
+  #clients.clients--marquee .logo-marquee__viewport::-webkit-scrollbar{ height: 8px; }
+}
+/* =========================================================
+   CLIENTS MARQUEE — make motion rAF-driven (no CSS reset jumps)
+========================================================= */
+#clients.clients--marquee .logo-marquee__track{
+  animation: none !important;          /* убираем keyframes */
+  transform: translate3d(0,0,0);       /* старт */
+  will-change: transform;
+}
+
 /* ====== TEAM mobile: smooth swipe + centered cards ====== */
 @media (max-width: 768px){
   /* класс .team-snap мы повесим через JS на правильный контейнер */
@@ -2672,101 +2795,9 @@ footer .social.is-pulse .social__path{
   .docs__ui{ flex-direction:column; align-items:flex-start; }
 }
 
-/* =========================
-   FOOTER — CENTERED GLOW PODIUM (compact, raised, subtle flow)
-   Один патч. Без засветки от края до края.
-========================= */
-
-:where(footer, .footer, #footer){
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-}
-
-:where(footer, .footer, #footer) > *{
-  position: relative;
-  z-index: 1;
-}
-
-:where(footer, .footer, #footer)::before{
-  content:"";
-  position:absolute;
-
-  /* компактный центр, без края-края */
-  left: 50%;
-  transform: translateX(-50%) translateZ(0);
-
-  /* ширина “пьедестала” */
-  width: min(860px, 92vw);
-  height: 420px;
-
-  /* чуть выше, чтобы подсветить иконки */
-  bottom: -120px;
-
-  pointer-events:none;
-  z-index: 0;
-
-  /* аккуратный многослойный свет в палитре титульника */
-  background:
-    radial-gradient(60% 60% at 50% 78%, rgba(110,210,255,.30) 0%, rgba(0,0,0,0) 62%),
-    radial-gradient(58% 58% at 58% 86%, rgba(210,130,255,.26) 0%, rgba(0,0,0,0) 66%),
-    radial-gradient(58% 58% at 42% 88%, rgba(255,120,210,.20) 0%, rgba(0,0,0,0) 68%),
-    radial-gradient(56% 56% at 50% 92%, rgba(120,140,255,.22) 0%, rgba(0,0,0,0) 70%);
-
-  /* гасим вверх, чтобы не было заливки всего футера */
-  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 42%, rgba(0,0,0,0) 100%);
-  mask-image: linear-gradient(to top, #000 0%, #000 42%, rgba(0,0,0,0) 100%);
-
-  filter: blur(22px) saturate(1.12) contrast(1.06);
-  mix-blend-mode: screen;
-  opacity: .95;
-
-  /* заметный, но аккуратный перелив (двигаем только центр) */
-  animation: bessonFooterCenterFlow 6.8s ease-in-out infinite;
-}
-
-@keyframes bessonFooterCenterFlow{
-  0%{
-    background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
-    transform: translateX(-50%) translateY(-10px) scale(1.01);
-  }
-  50%{
-    background-position: 54% 46%, 58% 54%, 42% 56%, 50% 58%;
-    transform: translateX(-50%) translateY(-14px) scale(1.03);
-  }
-  100%{
-    background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
-    transform: translateX(-50%) translateY(-10px) scale(1.01);
-  }
-}
-
-@media (prefers-reduced-motion: reduce){
-  :where(footer, .footer, #footer)::before{
-    animation: none;
-    transform: translateX(-50%) translateY(-10px) scale(1.01);
-  }
-}
 
 
-/* =========================
-   CONTACT: "Работаем 24/7."
-   (увеличиваем подзаголовок)
-========================= */
-.contact__sub{
-  font-size: clamp(16px, 1.2vw + 12px, 22px);
-  line-height: 1.25;
-  letter-spacing: 0.02em;
-  opacity: 0.8;
-  margin-top: 10px;
-}
-/* CONTACT: actions без WhatsApp */
-.contact .actions{
-  justify-content: center;
-}
 
-.contact .actions .btn{
-  width: min(340px, 100%);
-}
 /* =========================================
    HOWPATH — Museum style (premium light)
    Paste at END of style.css
@@ -3008,33 +3039,324 @@ footer .social.is-pulse .social__path{
     transition: none !important;
   }
 }
+
+
+
+
+
 /* =========================
-   NEBULA SHADER — HERO BACKGROUND
-   Safe layering: does NOT override hero__content positioning
+   CONTACT: "Работаем 24/7."
+   (увеличиваем подзаголовок)
+========================= */
+.contact__sub{
+  font-size: clamp(16px, 1.2vw + 12px, 22px);
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+  margin-top: 10px;
+}
+/* CONTACT: actions без WhatsApp */
+.contact .actions{
+  justify-content: center;
+}
+
+.contact .actions .btn{
+  width: min(340px, 100%);
+}
+
+/* =========================================================
+Contact
+========================================================= */
+.contact{padding:120px var(--pad);text-align:center;}
+.contact__grid{
+  max-width:var(--grid);
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:28px;
+}
+.contact__lead{
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-size:clamp(1.4rem,3.6vw,2.2rem);
+}
+.contact__sub{color:var(--muted);margin-top:10px;max-width:52ch;}
+
+/* Форма */
+.form{
+  background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:32px;
+  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  max-width:460px;
+  width:100%;
+}
+.row{display:block;}
+.field{position:relative;margin-bottom:18px;}
+.input{
+  width:100%;
+  padding:18px 16px 14px;
+  border-radius:14px;
+  border:1px solid #1b1b1b;
+  background:#0f0f0f;
+  color:#fff;
+  font-size:.96rem;
+  outline:none;
+  -webkit-appearance:none;
+  transition:border-color .25s,box-shadow .25s,background .25s,transform .18s;
+}
+.input::placeholder{color:transparent;}
+.input:focus{
+  border-color:#fff;
+  box-shadow:0 0 0 2px rgba(255,255,255,.12);
+  background:#111111;
+  transform:translateY(-1px);
+}
+.label{
+  position:absolute;
+  left:18px;
+  top:18px;
+  padding:2px 6px;
+  border-radius:8px;
+  font-size:.82rem;
+  color:#a9a9a9;
+  background:rgba(255,255,255,.02);
+  transform-origin:left center;
+  transition:top .18s ease, transform .18s ease, opacity .18s ease, color .18s ease;
+}
+.field.filled .label,
+.input:focus + .label{
+  top:4px;
+  transform:scale(.88);
+  opacity:.95;
+  color:#ffffff;
+}
+.form__status{
+  min-height:20px;
+  font-size:.9rem;
+  color:var(--muted);
+  margin-top:18px;
+  transition:opacity .3s;
+}
+.form__status--success{color:#9be7c4;}
+.form__status--error{color:#ff8a80;}
+.actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+.btn{
+  position:relative;
+  padding:16px 22px;
+  border-radius:999px;
+  border:1px solid #fff;
+  background:#fff;
+  color:#000;
+  font-weight:700;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .25s,box-shadow .25s;
+  isolation:isolate;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1);}
+.btn .glow{
+  position:absolute;
+  inset:-2px;
+  border-radius:inherit;
+  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);
+  opacity:0;
+  transition:opacity .25s;
+  filter:blur(14px);
+}
+.btn:hover .glow{opacity:1;}
+.icon-btn{
+  width:44px;height:44px;
+  border:1px solid #1b1b1b;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0f0f0f;
+  color:#fff;
+  transition:background .25s,border-color .25s,transform .2s;
+}
+.icon-btn:hover{
+  background:#fff;
+  color:#000;
+  border-color:#fff;
+  transform:translateY(-2px);
+}
+.icon-btn svg{width:20px;height:20px;fill:currentColor;}
+
+/* =========================================================
+CONTACT — Underlap from CLIENTS (Variant A) + repeatable motion
+========================================================= */
+
+/* Настройка глубины "из-за клиентов" */
+:root{
+  --contact-overlap: clamp(72px, 12vh, 140px);
+}
+
+/* Clients всегда сверху (чтобы Contact был "за ним") */
+.clients{
+  position:relative;
+  z-index:6;
+  /* тонкая глубина (почти невидимо, но даёт ощущение слоя) */
+  box-shadow: 0 48px 110px rgba(0,0,0,.55);
+}
+
+/* Contact уходит под Clients за счёт отрицательного отступа */
+.contact{
+  position:relative;
+  z-index:4;
+
+  /* подныриваем под Clients */
+  margin-top: calc(var(--contact-overlap) * -1);
+
+  /* компенсируем, чтобы контент не залез под Clients */
+  padding-top: calc(120px + var(--contact-overlap));
+
+  /* якорь #contact не должен прилипать под фикс-нав */
+  scroll-margin-top: 110px;
+}
+
+/* Мобилка: чуть меньше перекрытие */
+@media (max-width: 768px){
+  :root{ --contact-overlap: clamp(56px, 10vh, 110px); }
+  .contact{ padding-top: calc(96px + var(--contact-overlap)); }
+}
+
+/* ===== Reveal (repeatable) ===== */
+/* База: если JS не работает — всё видно */
+.contact__lead,
+.contact__sub{
+  opacity:1;
+  transform:none;
+  filter:none;
+}
+
+/* Заголовок + подзаголовок мягко входят */
+.js .contact__lead,
+.js .contact__sub{
+  opacity:0;
+  transform: translate3d(0, 10px, 0);
+  filter: blur(4px);
+  will-change: transform, opacity, filter;
+  transition:
+    opacity .75s cubic-bezier(.16,1,.3,1),
+    transform .95s cubic-bezier(.16,1,.3,1),
+    filter .95s cubic-bezier(.16,1,.3,1);
+}
+
+.js .contact.is-in .contact__lead{
+  opacity:1;
+  transform: translate3d(0,0,0);
+  filter: blur(0px);
+}
+.js .contact.is-in .contact__sub{
+  opacity:1;
+  transform: translate3d(0,0,0);
+  filter: blur(0px);
+  transition-delay: 70ms;
+}
+
+/* =========================
+   FOOTER — CENTERED GLOW PODIUM (compact, raised, subtle flow)
+   Один патч. Без засветки от края до края.
 ========================= */
 
-.hero{
+:where(footer, .footer, #footer){
   position: relative;
-  isolation: isolate; /* keeps negative z-index inside hero (premium + safe) */
-}
-
-.nebula-bg{
-  position: absolute;
-  inset: 0;
-  z-index: -1;          /* behind everything in hero without touching hero__content */
-  pointer-events: none;
+  isolation: isolate;
   overflow: hidden;
-
-  background: #050505;
-  opacity: .9;
 }
 
-.nebula-bg canvas{
-  width: 100%;
-  height: 100%;
-  display: block;
+:where(footer, .footer, #footer) > *{
+  position: relative;
+  z-index: 1;
+}
+
+:where(footer, .footer, #footer)::before{
+  content:"";
+  position:absolute;
+
+  /* компактный центр, без края-края */
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+
+  /* ширина “пьедестала” */
+  width: min(860px, 92vw);
+  height: 420px;
+
+  /* чуть выше, чтобы подсветить иконки */
+  bottom: -120px;
+
+  pointer-events:none;
+  z-index: 0;
+
+  /* аккуратный многослойный свет в палитре титульника */
+  background:
+    radial-gradient(60% 60% at 50% 78%, rgba(110,210,255,.30) 0%, rgba(0,0,0,0) 62%),
+    radial-gradient(58% 58% at 58% 86%, rgba(210,130,255,.26) 0%, rgba(0,0,0,0) 66%),
+    radial-gradient(58% 58% at 42% 88%, rgba(255,120,210,.20) 0%, rgba(0,0,0,0) 68%),
+    radial-gradient(56% 56% at 50% 92%, rgba(120,140,255,.22) 0%, rgba(0,0,0,0) 70%);
+
+  /* гасим вверх, чтобы не было заливки всего футера */
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 42%, rgba(0,0,0,0) 100%);
+  mask-image: linear-gradient(to top, #000 0%, #000 42%, rgba(0,0,0,0) 100%);
+
+  filter: blur(22px) saturate(1.12) contrast(1.06);
+  mix-blend-mode: screen;
+  opacity: .95;
+
+  /* заметный, но аккуратный перелив (двигаем только центр) */
+  animation: bessonFooterCenterFlow 6.8s ease-in-out infinite;
+}
+
+@keyframes bessonFooterCenterFlow{
+  0%{
+    background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
+    transform: translateX(-50%) translateY(-10px) scale(1.01);
+  }
+  50%{
+    background-position: 54% 46%, 58% 54%, 42% 56%, 50% 58%;
+    transform: translateX(-50%) translateY(-14px) scale(1.03);
+  }
+  100%{
+    background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
+    transform: translateX(-50%) translateY(-10px) scale(1.01);
+  }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .nebula-bg{ display:none; }
+  :where(footer, .footer, #footer)::before{
+    animation: none;
+    transform: translateX(-50%) translateY(-10px) scale(1.01);
+  }
 }
+
+
+/* =========================================================
+Footer
+========================================================= */
+footer{padding:48px var(--pad);color:#bdbdbd;text-align:center;}
+.footer-left{font-weight:700;letter-spacing:.18em;}
+.footer-contact{
+  font-size:.9rem;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin-top:12px;
+}
+.footer-contact svg{width:16px;height:16px;opacity:.8;}
+
+
+/* Блокируем скролл при открытом мобильном меню */
+body.nav-lock{overflow:hidden;}

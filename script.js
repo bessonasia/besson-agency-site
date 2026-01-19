@@ -3000,6 +3000,134 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   });
 })();
 
+(() => {
+  const btn = document.getElementById("startProjectHowBtn");
+  if (!btn) return;
+
+  const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // We show CTA only at the very top; hide immediately on scroll down.
+  const TOP_THRESHOLD = 8;
+
+  function setHidden(hidden) {
+    btn.classList.toggle("is-hidden", hidden);
+    if (hidden) {
+      // Reset magnet offsets when hiding so it doesn't "stick" at reappear
+      btn.style.setProperty("--mx", "0px");
+      btn.style.setProperty("--my", "0px");
+      btn.classList.remove("is-near");
+      state.near = false;
+      setTarget(0, 0, true);
+    }
+  }
+
+  function onScroll() {
+    setHidden(window.scrollY > TOP_THRESHOLD);
+  }
+
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // ---------------------------
+  // Magnetic motion (desktop mouse only)
+  // ---------------------------
+  const state = {
+    tx: 0, ty: 0,
+    cx: 0, cy: 0,
+    near: false,
+    radius: 170,
+    strength: 0.35,
+    raf: null,
+  };
+
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  function setVars(x, y) {
+    btn.style.setProperty("--mx", `${x.toFixed(2)}px`);
+    btn.style.setProperty("--my", `${y.toFixed(2)}px`);
+  }
+
+  function tick() {
+    state.cx += (state.tx - state.cx) * 0.12;
+    state.cy += (state.ty - state.cy) * 0.12;
+    setVars(state.cx, state.cy);
+
+    if (Math.abs(state.tx - state.cx) < 0.15 && Math.abs(state.ty - state.cy) < 0.15) {
+      state.raf = null;
+      return;
+    }
+    state.raf = requestAnimationFrame(tick);
+  }
+
+  function setTarget(x, y, immediate = false) {
+    state.tx = x;
+    state.ty = y;
+    if (immediate) {
+      state.cx = x; state.cy = y;
+      setVars(x, y);
+      if (state.raf) cancelAnimationFrame(state.raf);
+      state.raf = null;
+      return;
+    }
+    if (!state.raf) state.raf = requestAnimationFrame(tick);
+  }
+
+  function onPointerMove(e) {
+    if (prefersReduced) return;
+    if (btn.classList.contains("is-hidden")) return;
+    if (e.pointerType && e.pointerType !== "mouse") return;
+
+    const rect = btn.getBoundingClientRect();
+    const bx = rect.left + rect.width / 2;
+    const by = rect.top + rect.height / 2;
+
+    const dx = e.clientX - bx;
+    const dy = e.clientY - by;
+    const dist = Math.hypot(dx, dy);
+
+    const near = dist < state.radius;
+    if (near !== state.near) {
+      state.near = near;
+      btn.classList.toggle("is-near", near);
+    }
+
+    if (near) {
+      const t = 1 - clamp(dist / state.radius, 0, 1);
+      const s = state.strength * (0.35 + 0.65 * t);
+
+      const mx = clamp(dx * s, -34, 34);
+      const my = clamp(dy * s, -34, 34);
+      setTarget(mx, my);
+    } else {
+      setTarget(0, 0);
+    }
+  }
+
+  function onBlur() {
+    btn.classList.remove("is-near");
+    state.near = false;
+    setTarget(0, 0);
+  }
+
+  if (!prefersReduced) {
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("blur", onBlur);
+  }
+
+  // ---------------------------
+  // Click → scroll to "How we work" (#how)
+  // ---------------------------
+  btn.addEventListener("click", () => {
+    const how = document.getElementById("how") || document.querySelector("#how");
+    if (!how) return;
+
+    how.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    // Hide immediately after click — user already left the top.
+    setHidden(true);
+  });
+})();
+
 
 /* =========================================================
 Boot

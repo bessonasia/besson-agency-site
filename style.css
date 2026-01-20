@@ -3370,7 +3370,17 @@ body.nav-lock{overflow:hidden;}
   --cta-left: 56px; /* было 18px; +~38px (примерно 1 см) */
 }
 
-/* Floating CTA — bottom-left, premium minimal */
+:root{
+  --sp-black:#050505;
+  --sp-white:#ffffff;
+  --sp-hairW:rgba(255,255,255,.16);
+  --sp-hairW2:rgba(255,255,255,.30);
+
+  /* Desktop offsets */
+  --cta-left: 56px; /* desktop: смещено вправо примерно на 1 см */
+}
+
+/* Floating CTA — desktop bottom-left */
 .cta-float-left{
   -webkit-tap-highlight-color: transparent;
   appearance:none;
@@ -3380,6 +3390,7 @@ body.nav-lock{overflow:hidden;}
 
   position:fixed;
   left: var(--cta-left);
+  right:auto;
   bottom:calc(18px + env(safe-area-inset-bottom));
   z-index:9998;
 
@@ -3393,7 +3404,7 @@ body.nav-lock{overflow:hidden;}
 
   /* Motion driven by CSS vars from JS */
   transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
-  opacity: 1;
+  opacity:1;
   transition: opacity .28s ease, transform .28s ease;
 }
 
@@ -3419,10 +3430,10 @@ body.nav-lock{overflow:hidden;}
 .cta-float-left__label{
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
   font-size:11px;
-  font-weight:600;              /* было 800 — сделали тоньше */
+  font-weight:600;
   text-transform:uppercase;
-  letter-spacing:.24em;         /* чуть больше “воздуха” */
-  color: rgba(255,255,255,.82); /* было .92 — легче/дороже */
+  letter-spacing:.24em;
+  color: rgba(255,255,255,.82);
   white-space:nowrap;
   padding-right:2px;
 }
@@ -3440,9 +3451,7 @@ body.nav-lock{overflow:hidden;}
   transform: translate3d(1px,-1px,0);
 }
 
-.cta-float-left:focus-visible{
-  outline:none;
-}
+.cta-float-left:focus-visible{ outline:none; }
 .cta-float-left:focus-visible .cta-float-left__orb{
   box-shadow: 0 0 0 3px rgba(255,255,255,.18), 0 12px 34px rgba(0,0,0,.45);
   border-color: rgba(255,255,255,.38);
@@ -3455,15 +3464,35 @@ body.nav-lock{overflow:hidden;}
   transform: translate3d(var(--mx, 0px), calc(var(--my, 0px) + 14px), 0) scale(.98);
 }
 
-/* Mobile — keep only orb */
+/* Mobile: bottom-left, label UNDER the orb (same visual, just left instead of right) */
 @media (max-width: 720px){
-  :root{
-    --cta-left: 52px; /* было 14px; тоже +~38px */
+  .cta-float-left{
+    left:14px;                 /* было right:14px — теперь слева */
+    right:auto;
+    bottom:calc(14px + env(safe-area-inset-bottom));
+
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+
+    padding:8px 6px;
   }
 
-  .cta-float-left{
-    bottom:calc(14px + env(safe-area-inset-bottom));
-    gap:10px;
+  .cta-float-left__orb{
+    width:52px;
+    height:52px;
   }
-  .cta-float-left__label{ display:none; }
+
+  .cta-float-left__label{
+    display:block;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.20em;
+    color: rgba(255,255,255,.72);
+    text-transform:uppercase;
+    white-space:nowrap;
+    padding-right:0;
+    line-height:1;
+    text-align:center;
+  }
 }

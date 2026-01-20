@@ -2946,73 +2946,19 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   init();
 })();
 
-/* =========================
-   LANG SWITCH — UI only (no i18n yet)
-   paste at END of script.js
-========================= */
-(function () {
-  const STORAGE_KEY = "besson_lang";
-
-  // label -> html lang (KZ label, but html lang should be 'kk')
-  const htmlLangMap = { ru: "ru", en: "en", uz: "uz", kz: "kk" };
-
-  function setActiveLang(code) {
-    const groups = [
-      document.getElementById("langSwitch"),
-      document.getElementById("langSwitchMobile"),
-    ].filter(Boolean);
-
-    groups.forEach((root) => {
-      const btns = Array.from(root.querySelectorAll(".lang__btn"));
-      btns.forEach((b) => {
-        const isActive = b.dataset.lang === code;
-        b.classList.toggle("is-active", isActive);
-        b.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-    });
-
-    // purely semantic for now
-    document.documentElement.setAttribute("data-lang", code);
-    document.documentElement.setAttribute("lang", htmlLangMap[code] || code);
-    try { localStorage.setItem(STORAGE_KEY, code); } catch (e) {}
-  }
-
-  function bind(root) {
-    if (!root) return;
-    root.addEventListener("click", (e) => {
-      const btn = e.target.closest(".lang__btn");
-      if (!btn) return;
-      const code = btn.dataset.lang;
-      if (!code) return;
-      setActiveLang(code);
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const saved = (() => {
-      try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; }
-    })();
-
-    bind(document.getElementById("langSwitch"));
-    bind(document.getElementById("langSwitchMobile"));
-
-    setActiveLang(saved || "ru");
-  });
-})();
-
 (() => {
   const btn = document.getElementById("startProjectHowBtn");
   if (!btn) return;
 
   const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mqMobile = window.matchMedia("(max-width: 720px)");
 
-  // We show CTA only at the very top; hide immediately on scroll down.
+  // Show CTA only at top; hide immediately on scroll down.
   const TOP_THRESHOLD = 8;
 
   function setHidden(hidden) {
     btn.classList.toggle("is-hidden", hidden);
     if (hidden) {
-      // Reset magnet offsets when hiding so it doesn't "stick" at reappear
       btn.style.setProperty("--mx", "0px");
       btn.style.setProperty("--my", "0px");
       btn.classList.remove("is-near");
@@ -3027,6 +2973,39 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Avoid overlap with contact pill on mobile (if it exists and overlaps)
+  function applyMobileOffsetIfNeeded() {
+    // Reset inline bottom first (CSS controls default)
+    btn.style.bottom = "";
+
+    if (!mqMobile.matches) return;
+
+    const pill = document.getElementById("contactPill");
+    if (!pill) return;
+
+    const pillRect = pill.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    const pillVisible = pillRect.width > 0 && pillRect.height > 0;
+    if (!pillVisible) return;
+
+    const overlap =
+      !(btnRect.right < pillRect.left ||
+        btnRect.left > pillRect.right ||
+        btnRect.bottom < pillRect.top ||
+        btnRect.top > pillRect.bottom);
+
+    if (overlap) {
+      const base = 14;
+      const lift = Math.round(pillRect.height + 12);
+      btn.style.bottom = `calc(${base + lift}px + env(safe-area-inset-bottom))`;
+    }
+  }
+
+  applyMobileOffsetIfNeeded();
+  window.addEventListener("resize", applyMobileOffsetIfNeeded);
+  mqMobile.addEventListener?.("change", applyMobileOffsetIfNeeded);
 
   // ---------------------------
   // Magnetic motion (desktop mouse only)
@@ -3075,6 +3054,9 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   function onPointerMove(e) {
     if (prefersReduced) return;
     if (btn.classList.contains("is-hidden")) return;
+
+    // Magnetic only on desktop mouse
+    if (mqMobile.matches) return;
     if (e.pointerType && e.pointerType !== "mouse") return;
 
     const rect = btn.getBoundingClientRect();
@@ -3122,12 +3104,9 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
     if (!how) return;
 
     how.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    // Hide immediately after click — user already left the top.
     setHidden(true);
   });
 })();
-
 
 /* =========================================================
 Boot

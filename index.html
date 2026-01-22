@@ -557,181 +557,477 @@
 </section>
 
       
-      <!-- OFFICES -->
-<section class="offices" id="offices" data-theme="dark">
-  <div class="offices__inner">
-    <header class="offices__head">
-      <p class="offices__kicker">Локации</p>
-      <h2 class="offices__title">Офисы</h2>
-      <p class="offices__lead">Выбирайте город — карта откроется и наведётся на адрес.</p>
+      
+      
+
+  <!-- CONTACT (замени текущий #contact на этот блок) -->
+<section class="contact" id="contact" data-theme="dark" aria-labelledby="contactTitle">
+  <div class="contact__inner">
+    <header class="contact__head">
+      <h2 class="contact__title" id="contactTitle">Начать проект</h2>
+      <p class="contact__sub">Короткая заявка в 4 шага. Документы — по желанию.</p>
     </header>
 
-    <div class="offices__layout">
-      <div class="offices__list" aria-label="Список офисов">
-        <!-- KZ -->
-        <div class="office is-active" data-office="kz">
-          <button class="office__select" type="button" aria-label="Офис в Алматы">
-            <span class="office__top">
-              <span class="office__city">Алматы</span>
-              <span class="office__country">Казахстан</span>
+    <div class="msf" aria-label="Форма начала проекта">
+      <div class="msf__card" id="msfCard">
+        <form
+          class="msf-form"
+          id="msfForm"
+          action="https://api.web3forms.com/submit"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <!-- Web3Forms -->
+          <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e" />
+          <input type="hidden" name="subject" value="Besson Agency — Начать проект" />
+          <input type="hidden" name="from_name" value="Besson Agency Website" />
+          <input type="hidden" name="type" value="start_project" />
+          <input type="hidden" name="botcheck" value="" />
+
+          <!-- Optional: message summary -->
+          <input type="hidden" name="message" id="msf_message_h" />
+
+          <!-- Hidden mirrors -->
+          <input type="hidden" name="name" id="msf_name_h" />
+          <input type="hidden" name="email" id="msf_email_h" />
+
+          <input type="hidden" name="phone" id="msf_phone_h" />
+          <input type="hidden" name="phone_e164" id="msf_phone_e164_h" />
+          <input type="hidden" name="phone_country" id="msf_phone_country_h" />
+          <input type="hidden" name="phone_dial" id="msf_phone_dial_h" />
+
+          <input type="hidden" name="no_docs" id="msf_no_docs_h" value="0" />
+
+          <!-- Document link from PS.kz -->
+          <input type="hidden" name="doc_url" id="msf_doc_url" />
+          <input type="hidden" name="doc_name" id="msf_doc_name" />
+          <input type="hidden" name="doc_size" id="msf_doc_size" />
+          <input type="hidden" name="doc_type" id="msf_doc_type" />
+
+          <div class="msf__steps" id="msfSteps" aria-label="Шаги">
+            <button type="button" class="msf-step is-active" data-step="0" aria-current="step">
+              <span class="msf-step__num">1</span>
+            </button>
+            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine01"></span></span>
+
+            <button type="button" class="msf-step" data-step="1" disabled>
+              <span class="msf-step__num">2</span>
+            </button>
+            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine12"></span></span>
+
+            <button type="button" class="msf-step" data-step="2" disabled>
+              <span class="msf-step__num">3</span>
+            </button>
+            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine23"></span></span>
+
+            <button type="button" class="msf-step" data-step="3" disabled>
+              <span class="msf-step__num">4</span>
+            </button>
+          </div>
+
+          <div class="msf__progress" aria-hidden="true">
+            <div class="msf__bar" id="msfBar" style="width: 25%"></div>
+          </div>
+
+          <div class="msf__panel" id="msfPanel">
+            <div class="msf__panelHead">
+              <label class="msf__label" id="msfLabel" for="msfTextInput">Имя</label>
+              <span class="msf__count" id="msfCount">1/4</span>
+            </div>
+
+            <!-- steps 1-2 -->
+            <div class="msf__field" id="msfFieldText">
+              <input
+                class="msf__input"
+                id="msfTextInput"
+                type="text"
+                placeholder="Ваше имя"
+                autocomplete="name"
+                inputmode="text"
+              />
+              <p class="msf__hint" id="msfHint">Как к вам обращаться?</p>
+            </div>
+
+            <!-- step 3: телефон -->
+            <div class="msf__field" id="msfFieldPhone" hidden>
+              <div class="msf-phone" id="msfPhone">
+                <button
+                  type="button"
+                  class="msf-phone__cc"
+                  id="msfCcBtn"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="msfCcMenu"
+                >
+                  <span class="msf-phone__flag" id="msfCcFlag" aria-hidden="true">🇷🇺</span>
+                  <span class="msf-phone__code" id="msfCcCode">+7</span>
+                  <span class="msf-phone__chev" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                </button>
+
+                <input
+                  class="msf__input msf-phone__input"
+                  id="msfPhoneInput"
+                  type="tel"
+                  inputmode="tel"
+                  autocomplete="tel"
+                  placeholder="(999) 999-99-99"
+                />
+              </div>
+
+              <!-- Country overlay -->
+              <div class="msf-cc" id="msfCcMenu" hidden>
+                <div class="msf-cc__panel" role="dialog" aria-label="Выбор страны">
+                  <div class="msf-cc__top">
+                    <input class="msf-cc__search" id="msfCcSearch" type="text" placeholder="Страна или код" />
+                    <button type="button" class="msf-cc__close" id="msfCcClose" aria-label="Закрыть">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="msf-cc__list" id="msfCcList" role="listbox" tabindex="-1"></div>
+                </div>
+              </div>
+
+              <p class="msf__hint" id="msfPhoneHint">Выберите страну и введите номер.</p>
+            </div>
+
+            <!-- step 4: docs -->
+            <div class="msf__field msf__field--docs" id="msfFieldDocs" hidden>
+              <div class="msf__docsTop">
+                <div class="msf__docsMeta">
+                  <span class="msf__docsLabel">Тендерные документы</span>
+                  <span class="msf__docsHint" id="msfDocsHint">PDF / DOCX / ZIP до 50MB</span>
+                </div>
+
+                <label class="msf__attachBtn" for="msfFile" id="msfAttachBtn">
+                  <span class="msf__attachIc" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 16V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                      <path d="M7 8l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      <path d="M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <span class="msf__attachTx">Прикрепить</span>
+                </label>
+
+                <input
+                  id="msfFile"
+                  class="msf__file"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.zip,.rar,.7z,.png,.jpg,.jpeg"
+                />
+              </div>
+
+              <label class="msf__nodocs">
+                <input class="msf__check" id="msfNoDocs" type="checkbox" />
+                <span class="msf__checkUi" aria-hidden="true"></span>
+                <span class="msf__nodocsTx">Документов нет</span>
+              </label>
+
+              <p class="msf__hint">Можно прикрепить документы или отметить «Документов нет».</p>
+            </div>
+          </div>
+
+          <button class="msf__cta" id="msfCta" type="button" disabled>
+            <span class="msf__ctaLabel" id="msfCtaLabel">Продолжить</span>
+
+            <!-- остаётся в HTML, но будет скрыто CSS-ом -->
+            <span class="msf__ctaArrow" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
             </span>
-            <span class="office__addr">Мынбаева 53</span>
           </button>
 
-          <div class="office__actions" aria-label="Контакты офиса Алматы">
-            <a class="office__tel" href="tel:+77058880678">+7 (705) 888-06-78</a>
-            <a class="office__tg" href="tg://resolve?phone=77058880678" aria-label="Telegram (Алматы)">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M21.9 4.6c.3-1.4-1-2.5-2.3-2L2.8 9.2c-1.4.5-1.4 2.5.1 3l4.5 1.5 1.7 5.3c.4 1.3 2.1 1.6 2.9.6l2.5-3.1 4.5 3.3c1.1.8 2.7.2 3-1.2L21.9 4.6zM9 13.2l9.6-6.1c.4-.3.9.3.5.6l-7.9 7.2-.3 3.3-1.6-4.6-.3-.4z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- UZ -->
-        <div class="office" data-office="uz">
-          <button class="office__select" type="button" aria-label="Офис в Ташкенте">
-            <span class="office__top">
-              <span class="office__city">Ташкент</span>
-              <span class="office__country">Узбекистан</span>
-            </span>
-            <span class="office__addr">Шахрисабзская 8/1</span>
-          </button>
-
-          <div class="office__actions" aria-label="Контакты офиса Ташкент">
-            <a class="office__tel" href="tel:+998909988817">+998 (90) 998-88-17</a>
-            <a class="office__tg" href="tg://resolve?phone=998909988817" aria-label="Telegram (Ташкент)">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M21.9 4.6c.3-1.4-1-2.5-2.3-2L2.8 9.2c-1.4.5-1.4 2.5.1 3l4.5 1.5 1.7 5.3c.4 1.3 2.1 1.6 2.9.6l2.5-3.1 4.5 3.3c1.1.8 2.7.2 3-1.2L21.9 4.6zM9 13.2l9.6-6.1c.4-.3.9.3.5.6l-7.9 7.2-.3 3.3-1.6-4.6-.3-.4z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <!-- RU -->
-        <div class="office" data-office="ru">
-          <button class="office__select" type="button" aria-label="Офис в Москве">
-            <span class="office__top">
-              <span class="office__city">Москва</span>
-              <span class="office__country">Россия</span>
-            </span>
-            <span class="office__addr">Переведеновский пер., 13 стр. 18</span>
-          </button>
-
-          <div class="office__actions" aria-label="Контакты офиса Москва">
-            <a class="office__tel" href="tel:+79850178817">+7 (985) 017-88-17</a>
-            <a class="office__tg" href="tg://resolve?phone=79850178817" aria-label="Telegram (Москва)">
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M21.9 4.6c.3-1.4-1-2.5-2.3-2L2.8 9.2c-1.4.5-1.4 2.5.1 3l4.5 1.5 1.7 5.3c.4 1.3 2.1 1.6 2.9.6l2.5-3.1 4.5 3.3c1.1.8 2.7.2 3-1.2L21.9 4.6zM9 13.2l9.6-6.1c.4-.3.9.3.5.6l-7.9 7.2-.3 3.3-1.6-4.6-.3-.4z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
+          <button class="msf__back" id="msfBack" type="button" hidden>Назад</button>
+          <p class="msf__status" id="msfStatus" aria-live="polite"></p>
+        </form>
       </div>
+    </div>
 
-      <div class="offices__mapWrap is-open" id="officesMapWrap">
-        <div class="offices__map" id="officesMap" aria-label="Карта офисов"></div>
-
-        <div class="offices__hint" aria-hidden="false">
-          <div class="offices__hintTitle" id="officesHintCity">Алматы</div>
-          <div class="offices__hintAddr" id="officesHintAddr">Казахстан · Мынбаева 53</div>
-        </div>
-      </div>
+    <!-- SUCCESS (вне карточки, чтобы ничего не “схлопывалось”) -->
+    <div class="contact-success" id="contactSuccess" hidden aria-live="polite" aria-atomic="true">
+      <div class="contact-success__ring" aria-hidden="true"></div>
+      <div class="contact-success__text" id="contactSuccessText">Приступаем к проекту</div>
     </div>
   </div>
 </section>
-<!-- /OFFICES -->
-
-      
-
-    <!-- CONTACT -->
-    <section class="contact" id="contact" data-theme="dark">
-      <div class="contact__grid">
-        <h2 class="contact__lead">Оставьте заявку</h2>
-        <p class="contact__sub">
-          
-          <span class="line">Работаем 24/7.</span>
-        </p>
-
-        <form
-          class="form"
-          id="leadForm"
-          action="https://api.web3forms.com/submit"
-          method="POST"
-          novalidate
-        >
-          <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e">
-          <input type="hidden" name="subject" value="Новая заявка с сайта Besson Agency">
-          <input type="hidden" name="from_name" value="Besson Agency Website">
-          <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
-
-          <!-- Связка загруженного документа с лидом (уйдет в Web3Forms) -->
-<input type="hidden" name="doc_id" id="docIdField" value="">
-<input type="hidden" name="doc_name" id="docNameField" value="">
-<input type="hidden" name="doc_size" id="docSizeField" value="">
-<input type="hidden" name="doc_error" id="docErrorField" value="">
-<input type="hidden" name="doc_url" id="docUrlField" value="">
 
 
-<!-- NDA-first: документы (необязательно) -->
-<div class="docs" aria-labelledby="docsTitle">
-  <div class="docs__head">
-    <h3 class="docs__title" id="docsTitle">Тендерные документы</h3>
-    <p class="docs__hint">
-      Вы можете прикрепить NDA или техническое задание (не обязательно). Это ускорит согласование и расчёт.
-      Форматы: PDF / DOCX / PPTX / XLSX / ZIP. До 50 МБ.
-    </p>
-  </div>
 
-  <label class="docs__upload" for="leadFile">
-    <!-- Важно: name НЕ ставим, чтобы Web3Forms не пытался принять файл -->
-    <input id="leadFile" class="docs__file" type="file"
-      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip">
-    <span class="docs__ui">
-      <span class="docs__btn">Выбрать файл</span>
-      <span class="docs__text" id="leadFileText">Файл не выбран</span>
-    </span>
-  </label>
+<!-- OUR OFFICES (cards) — вставь между #contact и footer -->
+<section class="offices-cards" id="offices" data-theme="dark" aria-labelledby="officesTitle">
+  <div class="offices-cards__inner">
+    <header class="offices-cards__head">
+      <h2 class="offices-cards__title" id="officesTitle">Наши офисы</h2>
+      <p class="offices-cards__sub">Россия · Казахстан · Узбекистан</p>
+    </header>
 
-  <p class="docs__status" id="leadUploadStatus" role="status" aria-live="polite"></p>
-</div>
+    <div class="offices-cards__grid" id="officesGrid">
+      <!-- RU / Moscow -->
+      <article
+        class="office-card"
+        data-city="Москва"
+        data-country="Россия"
+        data-address="Малый Демидовский пер, дом 3"
+        data-coords="55.755864, 37.617698"
+        data-phone="+7 (985) 017 - 88 - 17"
+        data-messenger="telegram"
+        data-link="https://t.me/"
+      >
+        <button class="office-card__btn" type="button" aria-expanded="false">
+          <div class="office-card__frame">
+            <div class="office-card__bg" aria-hidden="true">
+              <div class="office-card__gridPattern"></div>
 
-          
-          <div class="row">
-            <div class="field">
-              <input class="input" id="name" name="name" placeholder=" " required>
-              <label class="label" for="name">Имя</label>
+              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
+                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
+                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
+                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
+                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
+                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
+                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
+                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
+              </svg>
+
+              <div class="office-card__buildings" aria-hidden="true">
+                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
+                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
+              </div>
+
+              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
+              <div class="office-card__shade" aria-hidden="true"></div>
             </div>
-            <div class="field">
-              <input class="input" id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
-                placeholder=" " required pattern="[\d\s\+\-\(\)]{6,}">
-              <label class="label" for="phone">Телефон</label>
+
+            <div class="office-card__content">
+              <div class="office-card__top">
+                <span class="office-card__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
+                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                  </svg>
+                </span>
+
+                <span class="office-card__status" aria-label="Статус">
+                  <span class="office-card__dot" aria-hidden="true"></span>
+                  <span class="office-card__statusText">Открыто</span>
+                </span>
+              </div>
+
+              <div class="office-card__bottom">
+                <h3 class="office-card__name">Москва, Россия</h3>
+                <p class="office-card__addr">Малый Демидовский пер, дом 3</p>
+                <p class="office-card__coords">55.755864, 37.617698</p>
+
+                <!-- Contacts (reveal) -->
+                <div class="office-card__contacts" aria-hidden="true">
+                  <p class="office-card__phone">+7 (985) 017 - 88 - 17</p>
+                  <div class="office-card__actions">
+                    <a class="office-action is-telegram" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Написать в Telegram">
+                      <span class="office-action__ic" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                          <path d="M21.8 4.2L3.9 11.1c-1.2.5-1.2 1.2-.2 1.5l4.6 1.4 1.8 5.5c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.2-2.1 4.6 3.4c.9.5 1.5.2 1.7-.8l3-14.2c.3-1.2-.4-1.7-1.3-1.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+                          <path d="M9.2 13.8l10.7-6.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                        </svg>
+                      </span>
+                      <span class="office-action__tx">Telegram</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="office-card__underline" aria-hidden="true"></div>
+              </div>
             </div>
           </div>
 
-          <div class="row row--single">
-  <div class="field">
-    <input class="input" id="email" name="email" type="email" autocomplete="email" placeholder=" " required>
-    <label class="label" for="email">Почта</label>
-  </div>
-</div>
+          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
+        </button>
+      </article>
 
-          
-          <div class="actions">
-            <button class="btn" type="submit">
-              <span class="glow"></span>
-              Отправить
-            </button>
-            
+      <!-- KZ / Almaty -->
+      <article
+        class="office-card"
+        data-city="Алматы"
+        data-country="Казахстан"
+        data-address="Мынбаева 53"
+        data-coords="43.238949, 76.889709"
+        data-phone="+7 (705) 888 - 06 - 78"
+        data-messenger="whatsapp"
+        data-link="https://wa.me/77058880678"
+      >
+        <button class="office-card__btn" type="button" aria-expanded="false">
+          <div class="office-card__frame">
+            <div class="office-card__bg" aria-hidden="true">
+              <div class="office-card__gridPattern"></div>
+
+              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
+                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
+                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
+                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
+                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
+                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
+                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
+                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
+              </svg>
+
+              <div class="office-card__buildings" aria-hidden="true">
+                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
+                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
+              </div>
+
+              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
+              <div class="office-card__shade" aria-hidden="true"></div>
+            </div>
+
+            <div class="office-card__content">
+              <div class="office-card__top">
+                <span class="office-card__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
+                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                  </svg>
+                </span>
+
+                <span class="office-card__status" aria-label="Статус">
+                  <span class="office-card__dot" aria-hidden="true"></span>
+                  <span class="office-card__statusText">Открыто</span>
+                </span>
+              </div>
+
+              <div class="office-card__bottom">
+                <h3 class="office-card__name">Алматы, Казахстан</h3>
+                <p class="office-card__addr">Мынбаева 53</p>
+                <p class="office-card__coords">43.238949, 76.889709</p>
+
+                <!-- Contacts (reveal) -->
+                <div class="office-card__contacts" aria-hidden="true">
+                  <p class="office-card__phone">+7 (705) 888 - 06 - 78</p>
+                  <div class="office-card__actions">
+                    <a class="office-action is-whatsapp" href="https://wa.me/77058880678" target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">
+                      <span class="office-action__ic" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                          <path d="M20 12.1c0 4.3-3.5 7.8-7.8 7.8-1.3 0-2.6-.3-3.7-.9L4 20l1.1-4.2c-.7-1.1-1.1-2.4-1.1-3.7 0-4.3 3.5-7.8 7.8-7.8S20 7.8 20 12.1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+                          <path d="M9.2 9.1c.2-.5.5-.6.9-.5l.9.3c.2.1.3.2.3.4l-.1 1c0 .2-.1.3-.2.4l-.3.3c.5 1 1.4 1.9 2.4 2.4l.3-.3c.1-.1.2-.2.4-.2l1-.1c.2 0 .3.1.4.3l.3.9c.1.4 0 .7-.5.9-.6.2-1.4.2-2.2-.1-1.3-.5-2.9-2-3.4-3.4-.3-.8-.3-1.6-.1-2.2z" fill="currentColor" opacity="0.85"></path>
+                        </svg>
+                      </span>
+                      <span class="office-action__tx">WhatsApp</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="office-card__underline" aria-hidden="true"></div>
+              </div>
+            </div>
           </div>
 
-          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-  </main>
+          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
+        </button>
+      </article>
 
+      <!-- UZ / Tashkent -->
+      <article
+        class="office-card"
+        data-city="Ташкент"
+        data-country="Узбекистан"
+        data-address="Шахрисабзская 8/1"
+        data-coords="41.299496, 69.240074"
+        data-phone="+998 (90) 998 - 88 - 17"
+        data-messenger="telegram"
+        data-link="https://t.me/"
+      >
+        <button class="office-card__btn" type="button" aria-expanded="false">
+          <div class="office-card__frame">
+            <div class="office-card__bg" aria-hidden="true">
+              <div class="office-card__gridPattern"></div>
 
+              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
+                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
+                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
+                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
+                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
+                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
+                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
+                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
+                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
+              </svg>
+
+              <div class="office-card__buildings" aria-hidden="true">
+                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
+                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
+              </div>
+
+              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
+              <div class="office-card__shade" aria-hidden="true"></div>
+            </div>
+
+            <div class="office-card__content">
+              <div class="office-card__top">
+                <span class="office-card__icon" aria-hidden="true">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
+                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
+                  </svg>
+                </span>
+
+                <span class="office-card__status" aria-label="Статус">
+                  <span class="office-card__dot" aria-hidden="true"></span>
+                  <span class="office-card__statusText">Открыто</span>
+                </span>
+              </div>
+
+              <div class="office-card__bottom">
+                <h3 class="office-card__name">Ташкент, Узбекистан</h3>
+                <p class="office-card__addr">Шахрисабзская 8/1</p>
+                <p class="office-card__coords">41.299496, 69.240074</p>
+
+                <!-- Contacts (reveal) -->
+                <div class="office-card__contacts" aria-hidden="true">
+                  <p class="office-card__phone">+998 (90) 998 - 88 - 17</p>
+                  <div class="office-card__actions">
+                    <a class="office-action is-telegram" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Написать в Telegram">
+                      <span class="office-action__ic" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
+                          <path d="M21.8 4.2L3.9 11.1c-1.2.5-1.2 1.2-.2 1.5l4.6 1.4 1.8 5.5c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.2-2.1 4.6 3.4c.9.5 1.5.2 1.7-.8l3-14.2c.3-1.2-.4-1.7-1.3-1.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
+                          <path d="M9.2 13.8l10.7-6.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+                        </svg>
+                      </span>
+                      <span class="office-action__tx">Telegram</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="office-card__underline" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+
+          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
+        </button>
+      </article>
+    </div>
+  </div>
+</section>
+
+    
 
   <!-- FOOTER -->
   <footer>

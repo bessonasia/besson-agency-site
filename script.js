@@ -1498,559 +1498,127 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
 })();
 
 
-/* =========================
-   OFFICES: MapLibre map + premium interactions + auto-tour (no Leaflet)
-========================= */
-(function () {
-  const OFFICES = {
-    kz: {
-      city: "Алматы",
-      label: "Казахстан · Мынбаева 53",
-      phoneDigits: "77058880678",
-      lat: 43.237583,
-      lng: 76.902445,
-      zoom: 16,
-    },
-    uz: {
-      city: "Ташкент",
-      label: "Узбекистан · Шахрисабзская 8/1",
-      phoneDigits: "998909988817",
-      lat: 41.297142,
-      lng: 69.271274,
-      zoom: 16,
-    },
-    ru: {
-      city: "Москва",
-      label: "Россия · Переведеновский пер., 13 стр. 18",
-      phoneDigits: "79850178817",
-      lat: 55.7809559,
-      lng: 37.6893926,
-      zoom: 16,
-    },
+
+
+/* =========================================
+   OFFICES CARDS (tilt + expand) — script.js
+   ========================================= */
+(() => {
+  const cards = Array.from(document.querySelectorAll(".office-card"));
+  if (!cards.length) return;
+
+  const canTilt = window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+
+  const closeAll = (exceptEl) => {
+    cards.forEach((card) => {
+      if (exceptEl && card === exceptEl) return;
+      card.classList.remove("is-expanded");
+      const btn = card.querySelector(".office-card__btn");
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    });
   };
 
-  // CARTO Dark Matter GL Style (с улицами/подписями)
-  const STYLE_URL = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+  // Fill from data-attrs (so ты правишь только data-* в HTML)
+  cards.forEach((card) => {
+    const btn = card.querySelector(".office-card__btn");
+    const frame = card.querySelector(".office-card__frame");
+    if (!btn || !frame) return;
 
-  // Настройки “постоянной анимации”
-  const TOUR_INTERVAL_MS = 8000;      // шаг тура
-  const PAUSE_AFTER_INTERACT_MS = 20000; // пауза после действий пользователя
+    const city = card.getAttribute("data-city") || "";
+    const country = card.getAttribute("data-country") || "";
+    const address = card.getAttribute("data-address") || "";
+    const coords = card.getAttribute("data-coords") || "";
+    const phone = card.getAttribute("data-phone") || "";
+    const messenger = (card.getAttribute("data-messenger") || "").toLowerCase();
+    const link = card.getAttribute("data-link") || "";
 
-  function onReady(fn) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn, { once: true });
-    } else {
-      fn();
-    }
-  }
+    const nameEl = card.querySelector(".office-card__name");
+    const addrEl = card.querySelector(".office-card__addr");
+    const coordsEl = card.querySelector(".office-card__coords");
+    const phoneEl = card.querySelector(".office-card__phone");
+    const actionLink = card.querySelector(".office-action");
 
-  function loadScript(src) {
-    return new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = src;
-      s.defer = true;
-      s.onload = resolve;
-      s.onerror = () => reject(new Error("JS failed: " + src));
-      document.head.appendChild(s);
-    });
-  }
+    if (nameEl) nameEl.textContent = `${city}, ${country}`.trim().replace(/^,|,$/g, "");
+    if (addrEl) addrEl.textContent = address;
+    if (coordsEl) coordsEl.textContent = coords;
+    if (phoneEl) phoneEl.textContent = phone;
 
-  function loadCss(href) {
-    return new Promise((resolve, reject) => {
-      const l = document.createElement("link");
-      l.rel = "stylesheet";
-      l.href = href;
-      l.onload = resolve;
-      l.onerror = () => reject(new Error("CSS failed: " + href));
-      document.head.appendChild(l);
-    });
-  }
+    if (actionLink && link) {
+      actionLink.setAttribute("href", link);
 
-  async function loadMapLibre() {
-    if (window.maplibregl) return;
-
-    const css1 = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css";
-    const js1  = "https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js";
-
-    const css2 = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css";
-    const js2  = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js";
-
-    try {
-      await loadCss(css1);
-      await loadScript(js1);
-    } catch (e1) {
-      await loadCss(css2).catch(() => {});
-      await loadScript(js2);
-    }
-  }
-
-  function makePinEl(active) {
-    const el = document.createElement("div");
-    el.className = active ? "offices-pin is-active" : "offices-pin";
-    return el;
-  }
-
-  function killBlur(mapWrap, mapEl) {
-    if (mapWrap) {
-      mapWrap.style.filter = "none";
-      mapWrap.style.backdropFilter = "none";
-      mapWrap.style.webkitBackdropFilter = "none";
-    }
-    if (mapEl) {
-      mapEl.style.filter = "none";
-      mapEl.style.backdropFilter = "none";
-      mapEl.style.webkitBackdropFilter = "none";
-    }
-    const overlays = [];
-    if (mapWrap) {
-      overlays.push(
-        ...mapWrap.querySelectorAll(
-          ".offices__blur, .offices__veil, .offices__glass, .offices__overlay, .map-blur, .map-veil"
-        )
-      );
-    }
-    overlays.forEach((n) => n.remove());
-  }
-
-  onReady(async function () {
-    const section = document.getElementById("offices");
-    if (!section) return;
-
-    const mapWrap = document.getElementById("officesMapWrap");
-    const mapEl = document.getElementById("officesMap");
-    const hintCity = document.getElementById("officesHintCity");
-    const hintAddr = document.getElementById("officesHintAddr");
-
-    if (!mapWrap || !mapEl) return;
-
-    // контейнер открыт
-    mapWrap.classList.add("is-open");
-    killBlur(mapWrap, mapEl);
-
-    try {
-      await loadMapLibre();
-    } catch (e) {
-      console.warn(e);
-      return;
-    }
-
-    // защита от повторной инициализации
-    mapEl.innerHTML = "";
-
-    const reduceMotion =
-      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    const keys = Object.keys(OFFICES);
-    let activeKey = "kz";
-
-    // Автотур: таймеры + состояния
-    let inView = true;
-    let tourTimer = null;
-    let resumeTimer = null;
-    let tourIndex = Math.max(0, keys.indexOf(activeKey));
-    let userPaused = false;
-
-    const map = new maplibregl.Map({
-      container: mapEl,
-      style: STYLE_URL,
-      center: [OFFICES[activeKey].lng, OFFICES[activeKey].lat],
-      zoom: OFFICES[activeKey].zoom || 15,
-      attributionControl: false,
-      interactive: true,
-      dragRotate: false,
-      pitchWithRotate: false,
-      touchPitch: false,
-      cooperativeGestures: true,
-    });
-
-    // Атрибуция без “иконок/флагов”
-    map.addControl(
-      new maplibregl.AttributionControl({
-        compact: true,
-        customAttribution: "© OpenStreetMap © CARTO",
-      })
-    );
-
-    // Зум вверх-вправо — не пересекаемся с капсулой “связаться”
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
-
-    const markers = {};
-    keys.forEach((key) => {
-      const o = OFFICES[key];
-      const el = makePinEl(false);
-      markers[key] = new maplibregl.Marker({ element: el, anchor: "center" })
-        .setLngLat([o.lng, o.lat])
-        .addTo(map);
-    });
-
-    function setPinActive(key) {
-      keys.forEach((k) => {
-        const m = markers[k];
-        const el = m && m.getElement ? m.getElement() : null;
-        if (!el) return;
-        el.classList.toggle("is-active", k === key);
-      });
-    }
-
-    function bumpHint() {
-      section.classList.remove("is-hint-swap");
-      // принудительный reflow, чтобы анимация всегда стартовала
-      void section.offsetWidth;
-      section.classList.add("is-hint-swap");
-      clearTimeout(bumpHint._t);
-      bumpHint._t = setTimeout(() => section.classList.remove("is-hint-swap"), 450);
-    }
-
-    function setActive(key, animate = true, fromTour = false) {
-      const o = OFFICES[key];
-      if (!o) return;
-
-      activeKey = key;
-      tourIndex = Math.max(0, keys.indexOf(key));
-
-      section.querySelectorAll(".office").forEach((el) => {
-        el.classList.toggle("is-active", el.dataset.office === key);
-      });
-
-      if (hintCity) hintCity.textContent = o.city;
-      if (hintAddr) hintAddr.textContent = o.label;
-
-      setPinActive(key);
-      bumpHint();
-
-      const center = [o.lng, o.lat];
-      const zoom = o.zoom || 15;
-
-      if (!animate || reduceMotion) {
-        map.jumpTo({ center, zoom });
+      // Small safety: ensure correct target labeling if someone swaps messenger type later
+      if (messenger === "whatsapp") {
+        actionLink.classList.remove("is-telegram");
+        actionLink.classList.add("is-whatsapp");
+        actionLink.setAttribute("aria-label", "Написать в WhatsApp");
+        const tx = actionLink.querySelector(".office-action__tx");
+        if (tx) tx.textContent = "WhatsApp";
       } else {
-        map.flyTo({
-          center,
-          zoom,
-          duration: fromTour ? 1100 : 900,
-          essential: true,
-        });
-      }
-
-      killBlur(mapWrap, mapEl);
-      const c = map.getCanvas && map.getCanvas();
-      if (c) c.style.filter = "none";
-
-      requestAnimationFrame(() => map.resize());
-      setTimeout(() => map.resize(), 350);
-    }
-
-    function stopTour() {
-      if (tourTimer) {
-        clearInterval(tourTimer);
-        tourTimer = null;
+        actionLink.classList.remove("is-whatsapp");
+        actionLink.classList.add("is-telegram");
+        actionLink.setAttribute("aria-label", "Написать в Telegram");
+        const tx = actionLink.querySelector(".office-action__tx");
+        if (tx) tx.textContent = "Telegram";
       }
     }
 
-    function startTour() {
-      if (reduceMotion) return;
-      if (!inView) return;
-      if (document.hidden) return;
-      if (userPaused) return;
-      if (tourTimer) return;
-
-      tourTimer = setInterval(() => {
-        const nextIndex = (tourIndex + 1) % keys.length;
-        const nextKey = keys[nextIndex];
-        setActive(nextKey, true, true);
-      }, TOUR_INTERVAL_MS);
-    }
-
-    function pauseTour(ms = PAUSE_AFTER_INTERACT_MS) {
-      userPaused = true;
-      stopTour();
-      if (resumeTimer) clearTimeout(resumeTimer);
-
-      resumeTimer = setTimeout(() => {
-        userPaused = false;
-        startTour();
-      }, ms);
-    }
-
-    // клик по карточке — ручной выбор, тур ставим на паузу
-    section.addEventListener("click", (e) => {
-      const a = e.target.closest("a");
-      if (a) return;
-
-      const card = e.target.closest(".office");
-      if (!card) return;
-
-      mapWrap.classList.add("is-open");
-      pauseTour();
-      setActive(card.dataset.office, true, false);
+    // Click: expand / collapse (one at a time)
+    btn.addEventListener("click", () => {
+      const isOpen = card.classList.contains("is-expanded");
+      if (isOpen) {
+        card.classList.remove("is-expanded");
+        btn.setAttribute("aria-expanded", "false");
+      } else {
+        closeAll(card);
+        card.classList.add("is-expanded");
+        btn.setAttribute("aria-expanded", "true");
+      }
     });
 
-    // любые взаимодействия с картой = пауза тура
-    const pauseEvents = [
-      "dragstart",
-      "zoomstart",
-      "rotatestart",
-      "pitchstart",
-      "movestart",
-    ];
-    pauseEvents.forEach((evt) => map.on(evt, () => pauseTour()));
+    // Tilt on hover (desktop only)
+    if (!canTilt) return;
 
-    // на тач/колесо — тоже пауза
-    mapEl.addEventListener("touchstart", () => pauseTour(), { passive: true });
-    mapEl.addEventListener("wheel", () => pauseTour(), { passive: true });
+    let rafId = 0;
 
-    // только когда блок реально виден
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver(
-        (entries) => {
-          const ent = entries[0];
-          inView = !!(ent && ent.isIntersecting && ent.intersectionRatio > 0.2);
-          if (!inView) stopTour();
-          else startTour();
-        },
-        { threshold: [0, 0.2, 0.6, 1] }
-      );
-      io.observe(section);
-    }
+    const onMove = (e) => {
+      const r = frame.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
 
-    // вкладка/страница скрыта — останавливаем
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) stopTour();
-      else startTour();
-    });
+      const dx = (e.clientX - cx) / (r.width / 2);
+      const dy = (e.clientY - cy) / (r.height / 2);
 
-    // init
-    map.once("load", () => {
-      map.resize();
-      setActive("kz", false, false);
-      // лёгкая пауза перед стартом — выглядит как “вдумчиво”
-      setTimeout(() => startTour(), 1200);
-    });
+      const rx = (-dy * 7).toFixed(2);
+      const ry = (dx * 7).toFixed(2);
 
-    setTimeout(() => map.resize(), 600);
-    
-    
-  });
-})();
-
-/* =========================
-   OFFICES: section animation only (NO map overlays, NO map logic changes)
-   paste at end of script.js (after map code)
-========================= */
-(function () {
-  function onReady(fn) {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", fn, { once: true });
-    } else {
-      fn();
-    }
-  }
-
-  onReady(function () {
-    const section = document.getElementById("offices");
-    if (!section) return;
-
-    // включаем анимационный режим (CSS завязан на это)
-    section.classList.add("is-anim");
-
-    // если старый патч уже внедрил оверлей — удаляем из DOM
-    const oldNet = section.querySelector(".offices-net");
-    if (oldNet) oldNet.remove();
-
-    // индексы для stagger-анимации карточек офисов
-    const cards = Array.from(section.querySelectorAll(".office"));
-    cards.forEach((el, i) => el.style.setProperty("--i", String(i)));
-
-    const reduceMotion =
-      window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (reduceMotion) {
-      section.classList.add("is-inview");
-      section.classList.remove("is-out");
-      return;
-    }
-
-    // reveal/out (в обе стороны)
-    let inView = false;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const e = entries[0];
-        const now = !!(e && e.isIntersecting && e.intersectionRatio > 0.22);
-
-        if (now && !inView) {
-          inView = true;
-          section.classList.add("is-inview");
-          section.classList.remove("is-out");
-        } else if (!now && inView) {
-          inView = false;
-          section.classList.remove("is-inview");
-          section.classList.add("is-out");
-        }
-      },
-      { threshold: [0, 0.22, 0.6], rootMargin: "0px 0px -10% 0px" }
-    );
-    io.observe(section);
-
-    // очень мягкий параллакс (не трогаем карту, только CSS-переменную секции)
-    let raf = 0;
-    function updateParallax() {
-      raf = 0;
-      const r = section.getBoundingClientRect();
-      const vh = Math.max(
-        1,
-        window.innerHeight || document.documentElement.clientHeight
-      );
-      const center = r.top + r.height * 0.5;
-      const p = (vh * 0.5 - center) / (vh * 0.5);
-      const clamped = Math.max(-1, Math.min(1, p));
-      section.style.setProperty("--off-p", clamped.toFixed(3));
-    }
-
-    function onScroll() {
-      if (raf) return;
-      raf = requestAnimationFrame(updateParallax);
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    updateParallax();
-  });
-})();
-
-/* =========================
-   Fix: mobile opens not from top (scroll restore / #team / bfcache)
-========================= */
-(function () {
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  if (!isMobile) return;
-
-  // запретить браузеру "восстанавливать" скролл
-  try {
-    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-  } catch (_) {}
-
-  const startedAt = performance.now();
-  let fixed = false;
-
-  const stripTeamHash = () => {
-    if (location.hash === "#team" || location.hash === "#teamRail") {
-      history.replaceState(null, document.title, location.pathname + location.search);
-    }
-  };
-
-  const forceTop = () => {
-    stripTeamHash();
-
-    // если пользователь реально открыл ссылку с якорем (#about и т.п.) — не мешаем
-    if (location.hash) return;
-
-    const top = () => window.scrollTo(0, 0);
-    top();
-    requestAnimationFrame(top);
-    setTimeout(top, 60);
-    setTimeout(top, 250);
-  };
-
-  // ранняя попытка
-  forceTop();
-
-  // если мобилка всё равно "подкинет" вниз через restore/layout — ловим в первые ~1.2с
-  const watch = () => {
-    if (fixed) return;
-    if (performance.now() - startedAt > 1200) return;
-
-    // считаем улётом только реально большой прыжок (чтобы не мешать юзерскому скроллу)
-    const bigJump = (window.scrollY || 0) > (window.innerHeight * 0.6);
-    if (!location.hash && bigJump) {
-      fixed = true;
-      forceTop();
-      return;
-    }
-    requestAnimationFrame(watch);
-  };
-  requestAnimationFrame(watch);
-
-  // iOS часто восстанавливает позицию через pageshow (bfcache)
-  window.addEventListener("pageshow", forceTop);
-  window.addEventListener("load", forceTop, { once: true });
-})();
-
-
-/* =========================
-   OFFICES mobile behavior:
-   - map hidden by default
-   - open map on office tap
-   - close map when scrolled above section
-   paste at end of script.js
-========================= */
-(function () {
-  const mql = window.matchMedia("(max-width: 900px)");
-
-  function initMobileOfficesMapUX() {
-    if (!mql.matches) return;
-
-    const section = document.getElementById("offices");
-    const mapWrap = document.getElementById("officesMapWrap");
-    if (!section || !mapWrap) return;
-
-    // старт: карта скрыта
-    mapWrap.classList.remove("is-open");
-
-    // вычисляем верх секции (для автозакрытия при уходе выше)
-    let sectionTop = 0;
-    const recalcTop = () => {
-      sectionTop = section.getBoundingClientRect().top + window.scrollY;
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        frame.style.setProperty("--rx", `${rx}deg`);
+        frame.style.setProperty("--ry", `${ry}deg`);
+      });
     };
-    recalcTop();
-    window.addEventListener("resize", recalcTop, { passive: true });
 
-    // открываем карту по клику на карточку офиса
-    section.addEventListener("click", (e) => {
-      const a = e.target.closest("a");
-      if (a) return; // не мешаем tel/tg ссылкам
+    const onLeave = () => {
+      cancelAnimationFrame(rafId);
+      frame.style.setProperty("--rx", `0deg`);
+      frame.style.setProperty("--ry", `0deg`);
+    };
 
-      const card = e.target.closest(".office");
-      if (!card) return;
+    btn.addEventListener("mousemove", onMove);
+    btn.addEventListener("mouseleave", onLeave);
+  });
 
-      mapWrap.classList.add("is-open");
-
-      // даём Leaflet шанс пересчитать размеры (не ломая твой flyTo)
-      requestAnimationFrame(() => window.dispatchEvent(new Event("resize")));
-      setTimeout(() => window.dispatchEvent(new Event("resize")), 350);
-    });
-
-    // закрываем карту, если пользователь прокрутил страницу выше секции офисов
-    window.addEventListener(
-      "scroll",
-      () => {
-        // "выше" = верх страницы + небольшой зазор меньше верхней точки секции
-        if (window.scrollY + 20 < sectionTop) {
-          if (mapWrap.classList.contains("is-open")) {
-            mapWrap.classList.remove("is-open");
-          }
-        }
-      },
-      { passive: true }
-    );
-  }
-
-  // старт
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initMobileOfficesMapUX, { once: true });
-  } else {
-    initMobileOfficesMapUX();
-  }
-
-  // если меняется ширина (поворот/ресайз)
-  if (mql.addEventListener) {
-    mql.addEventListener("change", () => {
-      // при уходе в мобилку/возврате — просто переинициализируем логику
-      // (без вмешательства в саму карту)
-      initMobileOfficesMapUX();
-    });
-  }
+  // Click outside: close all
+  document.addEventListener("click", (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest(".office-card")) return;
+    closeAll(null);
+  });
 })();
+
+
+
 
 /* =========================
    FOOTER socials: random loop (starts when #contact reached)
@@ -3108,6 +2676,604 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   });
 })();
 
+
+(() => {
+  const PS_UPLOAD_URL = "//api/upload-doc.php"; // <-- поставь свой реальный URL на PS.kz
+  const MAX_MB = 50;
+
+  const COUNTRIES = [
+    { iso: "RU", name: "Россия", dial: "7",  flag: "🇷🇺", placeholder: "(999) 999-99-99", max: 10, fmt: (d) => fmtGroups(d, [3,3,2,2], ["(", ") ", "-", "-"]) },
+    { iso: "KZ", name: "Казахстан", dial: "7", flag: "🇰🇿", placeholder: "(999) 999-99-99", max: 10, fmt: (d) => fmtGroups(d, [3,3,2,2], ["(", ") ", "-", "-"]) },
+    { iso: "UZ", name: "Узбекистан", dial: "998", flag: "🇺🇿", placeholder: "(99) 999-99-99", max: 9, fmt: (d) => fmtGroups(d, [2,3,2,2], ["(", ") ", "-", "-"]) },
+    { iso: "US", name: "United States", dial: "1",  flag: "🇺🇸", placeholder: "(999) 999-9999", max: 10, fmt: (d) => fmtGroups(d, [3,3,4], ["(", ") ", "-"]) },
+    { iso: "DE", name: "Deutschland", dial: "49", flag: "🇩🇪", placeholder: "151 23456789", max: 11, fmt: (d) => fmtPlainGroups(d, [3,8], [" "]) },
+    { iso: "GB", name: "United Kingdom", dial: "44", flag: "🇬🇧", placeholder: "20 1234 5678", max: 10, fmt: (d) => fmtPlainGroups(d, [2,4,4], [" ", " "]) },
+  ];
+
+  const contact = document.getElementById("contact");
+  const successWrap = document.getElementById("contactSuccess");
+  const successTextEl = document.getElementById("contactSuccessText");
+
+  const form = document.getElementById("msfForm");
+  const stepsWrap = document.getElementById("msfSteps");
+  const stepBtns = stepsWrap ? Array.from(stepsWrap.querySelectorAll(".msf-step")) : [];
+
+  const line01 = document.getElementById("msfLine01");
+  const line12 = document.getElementById("msfLine12");
+  const line23 = document.getElementById("msfLine23");
+  const bar = document.getElementById("msfBar");
+
+  const label = document.getElementById("msfLabel");
+  const count = document.getElementById("msfCount");
+
+  const fieldText = document.getElementById("msfFieldText");
+  const fieldPhone = document.getElementById("msfFieldPhone");
+  const fieldDocs = document.getElementById("msfFieldDocs");
+
+  const textInput = document.getElementById("msfTextInput");
+  const hint = document.getElementById("msfHint");
+
+  const ccBtn = document.getElementById("msfCcBtn");
+  const ccFlag = document.getElementById("msfCcFlag");
+  const ccCode = document.getElementById("msfCcCode");
+  const ccMenu = document.getElementById("msfCcMenu");
+  const ccSearch = document.getElementById("msfCcSearch");
+  const ccList = document.getElementById("msfCcList");
+  const ccClose = document.getElementById("msfCcClose");
+
+  const phoneInput = document.getElementById("msfPhoneInput");
+
+  const fileInput = document.getElementById("msfFile");
+  const docsHint = document.getElementById("msfDocsHint");
+  const noDocs = document.getElementById("msfNoDocs");
+
+  const cta = document.getElementById("msfCta");
+  const ctaLabel = document.getElementById("msfCtaLabel");
+  const backBtn = document.getElementById("msfBack");
+  const status = document.getElementById("msfStatus");
+
+  const hMessage = document.getElementById("msf_message_h");
+  const hName = document.getElementById("msf_name_h");
+  const hEmail = document.getElementById("msf_email_h");
+  const hPhone = document.getElementById("msf_phone_h");
+  const hPhoneE164 = document.getElementById("msf_phone_e164_h");
+  const hPhoneCountry = document.getElementById("msf_phone_country_h");
+  const hPhoneDial = document.getElementById("msf_phone_dial_h");
+  const hNoDocs = document.getElementById("msf_no_docs_h");
+  const hDocUrl = document.getElementById("msf_doc_url");
+  const hDocName = document.getElementById("msf_doc_name");
+  const hDocSize = document.getElementById("msf_doc_size");
+  const hDocType = document.getElementById("msf_doc_type");
+
+  if (
+    !form || !label || !count || !bar || !cta || !ctaLabel || !backBtn || !status ||
+    !fieldText || !fieldPhone || !fieldDocs || !textInput || !phoneInput ||
+    !ccBtn || !ccMenu || !ccList || !fileInput || !docsHint || !noDocs ||
+    !contact || !successWrap
+  ) return;
+
+  const steps = [
+    { label: "Имя", type: "text", placeholder: "Ваше имя", hint: "Как к вам обращаться?" },
+    { label: "Email", type: "email", placeholder: "you@example.com", hint: "Туда пришлем уточнения и тайминг." },
+    { label: "Телефон", type: "phone", placeholder: "", hint: "Выберите страну и введите номер." },
+    { label: "Документы", type: "docs", placeholder: "", hint: "Файл или «Документов нет»." },
+  ];
+
+  let current = 0;
+  let busy = false;
+
+  const data = { name: "", email: "" };
+
+  let selected = COUNTRIES.find(c => c.iso === "RU") || COUNTRIES[0];
+  let phoneDigits = "";
+
+  const digitsOnly = (v) => (v || "").replace(/\D/g, "");
+  const isEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+  function fmtGroups(d, groups, tokens) {
+    const s = (d || "").slice(0, groups.reduce((a,b)=>a+b,0));
+    const parts = [];
+    let idx = 0;
+    for (let g of groups) {
+      const chunk = s.slice(idx, idx + g);
+      if (chunk) parts.push(chunk);
+      idx += g;
+    }
+    if (!parts.length) return "";
+    if (tokens[0] === "(") {
+      const a = parts[0] || "";
+      const b = parts[1] || "";
+      const c = parts[2] || "";
+      const e = parts[3] || "";
+      let out = "";
+      if (a) out += `(${a}`;
+      if (a && a.length === groups[0]) out += `)`;
+      if (b) out += ` ${b}`;
+      if (c) out += `${tokens[2] || "-"}${c}`;
+      if (e) out += `${tokens[3] || "-"}${e}`;
+      return out.trim();
+    }
+    return fmtPlainGroups(s, groups, tokens);
+  }
+
+  function fmtPlainGroups(d, groups, seps) {
+    const s = (d || "").slice(0, groups.reduce((a,b)=>a+b,0));
+    if (!s) return "";
+    const parts = [];
+    let idx = 0;
+    for (let i=0;i<groups.length;i++){
+      const g = groups[i];
+      const chunk = s.slice(idx, idx+g);
+      if (chunk) parts.push(chunk);
+      idx += g;
+    }
+    let out = "";
+    for (let i=0;i<parts.length;i++){
+      out += parts[i];
+      if (i < parts.length-1) out += (seps[i] || " ");
+    }
+    return out;
+  }
+
+  function digitIndexBeforeCaret(str, caretPos) {
+    return (str.slice(0, Math.max(0, caretPos)).match(/\d/g) || []).length;
+  }
+  function caretFromDigitIndex(formatted, digitIndex) {
+    if (digitIndex <= 0) return 0;
+    let count = 0;
+    for (let i = 0; i < formatted.length; i++) {
+      if (/\d/.test(formatted[i])) count++;
+      if (count >= digitIndex) return i + 1;
+    }
+    return formatted.length;
+  }
+  function removeDigitsRange(srcDigits, startIndex, endIndex) {
+    const a = srcDigits.slice(0, Math.max(0, startIndex));
+    const b = srcDigits.slice(Math.min(srcDigits.length, endIndex));
+    return a + b;
+  }
+
+  function e164() {
+    if (!phoneDigits) return "";
+    return `+${selected.dial}${phoneDigits}`;
+  }
+  function phoneDisplay() {
+    if (!phoneDigits) return "";
+    const local = selected.fmt(phoneDigits);
+    return `+${selected.dial} ${local}`.trim();
+  }
+
+  function buildMessage() {
+    const parts = [];
+    parts.push(`Имя: ${(data.name || "").trim()}`);
+    parts.push(`Email: ${(data.email || "").trim()}`);
+    parts.push(`Телефон: ${phoneDisplay() || "-"}`);
+    const nd = noDocs.checked ? "Да" : "Нет";
+    parts.push(`Документов нет: ${nd}`);
+    const url = (hDocUrl && hDocUrl.value) ? hDocUrl.value : "";
+    if (url) parts.push(`Документ: ${url}`);
+    return parts.join("\n");
+  }
+
+  function syncHidden() {
+    if (hName) hName.value = (data.name || "").trim();
+    if (hEmail) hEmail.value = (data.email || "").trim();
+
+    if (hPhoneCountry) hPhoneCountry.value = selected.iso;
+    if (hPhoneDial) hPhoneDial.value = `+${selected.dial}`;
+    if (hPhoneE164) hPhoneE164.value = e164();
+    if (hPhone) hPhone.value = phoneDisplay();
+
+    if (hNoDocs) hNoDocs.value = (noDocs.checked ? "1" : "0");
+
+    if (hMessage) hMessage.value = buildMessage();
+  }
+
+  function setLines() {
+    if (line01) line01.style.transform = `scaleX(${current >= 1 ? 1 : 0})`;
+    if (line12) line12.style.transform = `scaleX(${current >= 2 ? 1 : 0})`;
+    if (line23) line23.style.transform = `scaleX(${current >= 3 ? 1 : 0})`;
+  }
+
+  function phoneValid() {
+    return phoneDigits.length === selected.max;
+  }
+
+  function isValidStep() {
+    if (current === 0) return (data.name || "").trim().length >= 2;
+    if (current === 1) return isEmail((data.email || "").trim());
+    if (current === 2) return phoneValid();
+    if (current === 3) {
+      const hasFile = fileInput.files && fileInput.files.length > 0;
+      return hasFile || noDocs.checked;
+    }
+    return false;
+  }
+
+  function setCountry(iso) {
+    const found = COUNTRIES.find(c => c.iso === iso);
+    if (!found) return;
+
+    selected = found;
+
+    if (ccFlag) ccFlag.textContent = selected.flag;
+    if (ccCode) ccCode.textContent = `+${selected.dial}`;
+
+    phoneDigits = (phoneDigits || "").slice(0, selected.max);
+    phoneInput.placeholder = selected.placeholder;
+    phoneInput.value = selected.fmt(phoneDigits);
+
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  }
+
+  function escapeHtml(s){
+    return (s||"").replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m] || m));
+  }
+
+  function renderCcList(query) {
+    const q = (query || "").trim().toLowerCase();
+    const items = COUNTRIES.filter(c => {
+      if (!q) return true;
+      return (
+        c.name.toLowerCase().includes(q) ||
+        c.iso.toLowerCase().includes(q) ||
+        (`+${c.dial}`).includes(q.replace(/\s/g,"")) ||
+        c.dial.includes(q.replace(/\D/g,""))
+      );
+    });
+
+    ccList.innerHTML = items.map(c => `
+      <button type="button" class="msf-cc__item ${c.iso === selected.iso ? "is-active" : ""}" role="option" data-iso="${c.iso}" aria-selected="${c.iso === selected.iso ? "true" : "false"}">
+        <span class="msf-cc__itemLeft">
+          <span class="msf-cc__itemFlag" aria-hidden="true">${c.flag}</span>
+          <span class="msf-cc__itemName">${escapeHtml(c.name)}</span>
+        </span>
+        <span class="msf-cc__itemCode">+${c.dial}</span>
+      </button>
+    `).join("");
+  }
+
+  function openCc() {
+    ccMenu.hidden = false;
+    ccBtn.setAttribute("aria-expanded", "true");
+    renderCcList(ccSearch ? ccSearch.value : "");
+    requestAnimationFrame(() => {
+      if (ccSearch) ccSearch.focus({ preventScroll: true });
+      document.body.style.overflow = "hidden";
+    });
+  }
+
+  function closeCc() {
+    ccMenu.hidden = true;
+    ccBtn.setAttribute("aria-expanded", "false");
+    if (ccSearch) ccSearch.value = "";
+    document.body.style.overflow = "";
+    requestAnimationFrame(() => phoneInput.focus({ preventScroll: true }));
+  }
+
+  ccBtn.addEventListener("click", openCc);
+  if (ccClose) ccClose.addEventListener("click", closeCc);
+  ccMenu.addEventListener("click", (e) => { if (e.target === ccMenu) closeCc(); });
+
+  if (ccSearch) {
+    ccSearch.addEventListener("input", () => renderCcList(ccSearch.value));
+    ccSearch.addEventListener("keydown", (e) => { if (e.key === "Escape") closeCc(); });
+  }
+
+  ccList.addEventListener("click", (e) => {
+    const btn = e.target.closest(".msf-cc__item");
+    if (!btn) return;
+    setCountry(btn.getAttribute("data-iso"));
+    closeCc();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (!ccMenu.hidden && e.key === "Escape") closeCc();
+  });
+
+  function applyPhoneRawDigits(rawDigits) {
+    const d = (rawDigits || "").replace(/\D/g, "");
+    phoneDigits = d.slice(0, selected.max);
+    phoneInput.value = phoneDigits ? selected.fmt(phoneDigits) : "";
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  }
+
+  phoneInput.addEventListener("keydown", (e) => {
+    const isBackspace = e.key === "Backspace";
+    const isDelete = e.key === "Delete";
+
+    if ((isBackspace || isDelete) && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      e.preventDefault();
+
+      const val = phoneInput.value || "";
+      const selStart = phoneInput.selectionStart ?? val.length;
+      const selEnd = phoneInput.selectionEnd ?? val.length;
+
+      const startDigit = digitIndexBeforeCaret(val, selStart);
+      const endDigit = digitIndexBeforeCaret(val, selEnd);
+
+      if (selEnd > selStart) {
+        phoneDigits = removeDigitsRange(phoneDigits, startDigit, endDigit);
+        phoneInput.value = phoneDigits ? selected.fmt(phoneDigits) : "";
+        const caret = caretFromDigitIndex(phoneInput.value, startDigit);
+        requestAnimationFrame(() => phoneInput.setSelectionRange(caret, caret));
+        syncHidden();
+        cta.disabled = busy || !isValidStep();
+        return;
+      }
+
+      if (isBackspace) {
+        const removeAt = startDigit - 1;
+        if (removeAt >= 0) phoneDigits = removeDigitsRange(phoneDigits, removeAt, removeAt + 1);
+        phoneInput.value = phoneDigits ? selected.fmt(phoneDigits) : "";
+        const caret = caretFromDigitIndex(phoneInput.value, Math.max(0, startDigit - 1));
+        requestAnimationFrame(() => phoneInput.setSelectionRange(caret, caret));
+      }
+
+      if (isDelete) {
+        const removeAt = startDigit;
+        if (removeAt < phoneDigits.length) phoneDigits = removeDigitsRange(phoneDigits, removeAt, removeAt + 1);
+        phoneInput.value = phoneDigits ? selected.fmt(phoneDigits) : "";
+        const caret = caretFromDigitIndex(phoneInput.value, startDigit);
+        requestAnimationFrame(() => phoneInput.setSelectionRange(caret, caret));
+      }
+
+      syncHidden();
+      cta.disabled = busy || !isValidStep();
+      return;
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!cta.disabled) cta.click();
+    }
+  });
+
+  phoneInput.addEventListener("input", () => {
+    const val = phoneInput.value || "";
+    const caret = phoneInput.selectionStart ?? val.length;
+    const digitIndex = digitIndexBeforeCaret(val, caret);
+
+    applyPhoneRawDigits(digitsOnly(val));
+
+    const formatted = phoneInput.value || "";
+    const newCaret = caretFromDigitIndex(formatted, Math.min(digitIndex, phoneDigits.length));
+    requestAnimationFrame(() => phoneInput.setSelectionRange(newCaret, newCaret));
+  });
+
+  textInput.addEventListener("input", () => {
+    if (current === 0) data.name = textInput.value;
+    if (current === 1) data.email = textInput.value;
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  });
+
+  textInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!cta.disabled) cta.click();
+    }
+  });
+
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files && fileInput.files[0];
+    docsHint.textContent = f ? f.name : "PDF / DOCX / ZIP до 50MB";
+    if (f) noDocs.checked = false;
+
+    if (f) {
+      const mb = f.size / (1024 * 1024);
+      if (mb > MAX_MB) {
+        fileInput.value = "";
+        docsHint.textContent = `Слишком большой файл. Максимум ${MAX_MB}MB`;
+      }
+    }
+
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  });
+
+  noDocs.addEventListener("change", () => {
+    if (noDocs.checked) {
+      fileInput.value = "";
+      docsHint.textContent = "PDF / DOCX / ZIP до 50MB";
+      if (hDocUrl) hDocUrl.value = "";
+      if (hDocName) hDocName.value = "";
+      if (hDocSize) hDocSize.value = "";
+      if (hDocType) hDocType.value = "";
+    }
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  });
+
+  function setStepsUI() {
+    label.textContent = steps[current].label;
+    count.textContent = `${current + 1}/${steps.length}`;
+
+    stepBtns.forEach((b, idx) => {
+      b.classList.toggle("is-active", idx === current);
+      b.classList.toggle("is-done", idx < current);
+      b.toggleAttribute("disabled", idx > current);
+      if (idx === current) b.setAttribute("aria-current", "step");
+      else b.removeAttribute("aria-current");
+    });
+
+    bar.style.width = `${((current + 1) / steps.length) * 100}%`;
+    setLines();
+
+    fieldText.hidden = !(current === 0 || current === 1);
+    fieldPhone.hidden = current !== 2;
+    fieldDocs.hidden = current !== 3;
+
+    if (current === 0 || current === 1) {
+      textInput.type = (current === 1) ? "email" : "text";
+      textInput.placeholder = steps[current].placeholder;
+      textInput.value = current === 0 ? (data.name || "") : (data.email || "");
+      if (hint) hint.textContent = steps[current].hint || "";
+      ctaLabel.textContent = "Продолжить";
+      requestAnimationFrame(() => textInput.focus({ preventScroll: true }));
+    }
+
+    if (current === 2) {
+      ccMenu.hidden = true;
+      ccBtn.setAttribute("aria-expanded", "false");
+      phoneInput.placeholder = selected.placeholder;
+      phoneInput.value = selected.fmt(phoneDigits);
+      ctaLabel.textContent = "Продолжить";
+      requestAnimationFrame(() => phoneInput.focus({ preventScroll: true }));
+    }
+
+    if (current === 3) ctaLabel.textContent = "Отправить";
+
+    backBtn.hidden = current === 0;
+    syncHidden();
+    cta.disabled = busy || !isValidStep();
+  }
+
+  backBtn.addEventListener("click", () => {
+    if (busy) return;
+    current = Math.max(0, current - 1);
+    setStepsUI();
+  });
+
+  function setBusy(on) {
+    busy = on;
+    cta.classList.toggle("is-busy", on);
+    cta.disabled = on || !isValidStep();
+    backBtn.disabled = on;
+  }
+
+  function showError(msg) {
+    status.textContent = msg || "Ошибка отправки";
+  }
+
+  async function uploadToPs(file) {
+    const mb = file.size / (1024 * 1024);
+    if (mb > MAX_MB) throw new Error(`Файл слишком большой. Максимум ${MAX_MB}MB`);
+
+    const fd = new FormData();
+    fd.append("file", file, file.name);
+
+    const res = await fetch(PS_UPLOAD_URL, { method: "POST", body: fd });
+    const text = await res.text();
+
+    try {
+      const json = JSON.parse(text);
+      const url = json.url || json.file_url || json.download_url;
+      if (!res.ok || !url) throw new Error(json.error || "Upload failed");
+      return { url, json };
+    } catch (_) {
+      const maybeUrl = (text || "").trim();
+      if (!res.ok) throw new Error("Upload failed");
+      if (/^https?:\/\/|^\//.test(maybeUrl)) return { url: maybeUrl, json: null };
+      throw new Error("Сервер загрузки не вернул ссылку");
+    }
+  }
+
+  async function sendToWeb3Forms() {
+    const fd = new FormData(form);
+    syncHidden();
+
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: fd,
+      headers: { Accept: "application/json" },
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json || json.success !== true) {
+      throw new Error((json && (json.message || json.error)) || "Web3Forms error");
+    }
+    return json;
+  }
+
+  function showFinalSuccess() {
+    // 1) скрываем заголовок + форму (CSS по классу #contact.is-success)
+    contact.classList.add("is-success");
+
+    // 2) показываем премиальный успех
+    if (successTextEl) successTextEl.textContent = "Приступаем к проекту";
+    successWrap.hidden = false;
+
+    // 3) приятное появление (класс для transition)
+    requestAnimationFrame(() => {
+      successWrap.classList.add("is-on");
+    });
+  }
+
+  async function submitFlow() {
+    setBusy(true);
+    status.textContent = "Отправляем…";
+
+    if (hDocUrl) hDocUrl.value = "";
+    if (hDocName) hDocName.value = "";
+    if (hDocSize) hDocSize.value = "";
+    if (hDocType) hDocType.value = "";
+
+    try {
+      const hasFile = fileInput.files && fileInput.files[0];
+      if (hasFile && !noDocs.checked) {
+        status.textContent = "Загружаем документы…";
+        const file = fileInput.files[0];
+
+        const { url } = await uploadToPs(file);
+
+        if (hDocUrl) hDocUrl.value = url;
+        if (hDocName) hDocName.value = file.name;
+        if (hDocSize) hDocSize.value = String(file.size);
+        if (hDocType) hDocType.value = file.type || "";
+
+        syncHidden();
+      } else {
+        syncHidden();
+      }
+
+      status.textContent = "Отправляем заявку…";
+
+      // микро-пауза, чтобы busy-пульс был “виден” и не рвало UX
+      await new Promise(r => setTimeout(r, 520));
+
+      await sendToWeb3Forms();
+
+      status.textContent = "";
+      setBusy(false);
+      showFinalSuccess();
+    } catch (err) {
+      setBusy(false);
+      showError(err && err.message ? err.message : "Ошибка отправки");
+    }
+  }
+
+  cta.addEventListener("click", () => {
+    if (busy) return;
+    if (!isValidStep()) return;
+
+    if (current < 3) {
+      if (current === 0) data.name = textInput.value;
+      if (current === 1) data.email = textInput.value;
+      current += 1;
+      setStepsUI();
+      return;
+    }
+
+    submitFlow();
+  });
+
+  // init
+  successWrap.hidden = true;
+  successWrap.classList.remove("is-on");
+
+  ccMenu.hidden = true;
+  if (ccSearch) ccSearch.value = "";
+
+  renderCcList("");
+  setCountry("RU");
+  setStepsUI();
+})();
+
+
+
 /* =========================================================
 Boot
 ========================================================= */
@@ -3119,3 +3285,7 @@ if (document.readyState === 'loading') {
   
   initBesson();
 }
+const card = document.getElementById("msfCard");
+form.classList.remove("is-success", "is-successing");
+if (card) card.classList.remove("is-success", "is-successing");
+success.hidden = true;

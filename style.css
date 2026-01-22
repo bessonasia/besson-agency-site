@@ -835,165 +835,6 @@ Work
 
 
 
-/* =========================================================
-Clients
-========================================================= */
-.clients{
-  background:#050505;
-  color:#f5f5f5;
-  padding:80px var(--pad) 90px;
-}
-.clients__inner{max-width:var(--grid);margin:0 auto;text-align:center;}
-.clients__headline{
-  font-size:clamp(1.4rem,3vw,2.1rem);
-  font-weight:600;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  max-width:40rem;
-  line-height:1.3;
-  margin:0 auto 40px;
-}
-.clients__grid{
-  display:grid;
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:32px 48px;
-  align-items:center;
-  justify-items:center;
-}
-.clients__item{
-  font-size:.9rem;
-  text-transform:uppercase;
-  letter-spacing:.18em;
-  font-weight:500;
-  white-space:nowrap;
-  opacity:.9;
-  transition:opacity .25s ease,transform .25s ease;
-}
-.clients__item:hover{opacity:1;transform:translateY(-2px);}
-@media (max-width:1024px){
-  .clients__grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 32px;}
-}
-@media (max-width:680px){
-  .clients{padding:60px 18px 70px;}
-  .clients__grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px 18px;}
-  .clients__item{font-size:.75rem;letter-spacing:.16em;}
-}
-
-/* =========================================================
-Clients — reveal animation (repeatable, premium)
-Включается только при .js на <html>
-========================================================= */
-
-/* База: если JS не работает — всё видно */
-.clients__item{
-  opacity: .9;
-  transform: none;
-  filter: none;
-}
-
-/* Стартовая поза (только когда JS включён) */
-.js .clients__item{
-  opacity: 0;
-  transform: translate3d(0, 12px, 0);
-  filter: blur(6px);
-  will-change: transform, opacity, filter;
-  transition:
-    opacity .55s cubic-bezier(.19,1,.22,1),
-    transform .72s cubic-bezier(.19,1,.22,1),
-    filter .72s cubic-bezier(.19,1,.22,1);
-  transition-delay: var(--c-delay, 0ms);
-}
-
-/* Тонкая “статусная” линия — появляется слева направо */
-.js .clients__item::after{
-  content:"";
-  display:block;
-  height:1px;
-  width:100%;
-  margin-top:10px;
-  background: currentColor;
-  opacity: .22;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform .75s cubic-bezier(.19,1,.22,1);
-  transition-delay: calc(var(--c-delay, 0ms) + 90ms);
-}
-
-/* Когда секция в кадре — показываем элементы */
-.js .clients.is-in .clients__item{
-  opacity: .92;
-  transform: translate3d(0,0,0);
-  filter: blur(0px);
-}
-
-/* Линия раскрывается */
-.js .clients.is-in .clients__item::after{
-  transform: scaleX(1);
-}
-
-/* Мобилка: блюр меньше, чтобы было легче */
-@media (max-width: 768px){
-  .js .clients__item{
-    filter: blur(4px);
-    transform: translate3d(0, 10px, 0);
-    transition-duration: .5s, .64s, .64s;
-  }
-}
-
-/* =========================================================
-Clients — reveal animation (smooth, NO lines) — FIXED
-Включается только при .js на <html>
-========================================================= */
-
-/* База: если JS не работает — всё видно */
-.clients__item{
-  opacity:.9;
-  transform:none;
-  filter:none;
-}
-
-/* Стартовая поза (только когда JS включён) */
-.js .clients__item{
-  opacity:0;
-  transform:translate3d(0,10px,0) scale(.995);
-  filter:blur(4px);
-  will-change:transform, opacity, filter;
-  transition:
-    opacity .85s cubic-bezier(.16,1,.3,1),
-    transform 1.05s cubic-bezier(.16,1,.3,1),
-    filter 1.05s cubic-bezier(.16,1,.3,1);
-  transition-delay:var(--c-delay, 0ms);
-}
-
-/* Когда секция в кадре — показываем элементы */
-.js .clients.is-in .clients__item{
-  opacity:.92;
-  transform:translate3d(0,0,0) scale(1);
-  filter:blur(0px);
-}
-
-/* Мобилка — чуть легче */
-@media (max-width: 768px){
-  .js .clients__item{
-    transform:translate3d(0,8px,0) scale(.996);
-    filter:blur(3px);
-    transition-duration:.78s, .96s, .96s;
-  }
-}
-
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .js .clients__item{
-    transition:none !important;
-    transform:none !important;
-    filter:none !important;
-    opacity:.92 !important;
-  }
-}
-
-
-
-
 
 
 
@@ -1316,212 +1157,7 @@ body.reviews-lock{ overflow:hidden; }
 }
 
 
-/* =========================================================
-CONTACT — Variant A (REAL underlap behind Clients)
-========================================================= */
-:root{
-  --contact-overlap: clamp(90px, 13vh, 160px);
-}
 
-/* Clients сверху и закрывает то, что "под ним" */
-.clients{
-  position:relative;
-  z-index:6;
-
-  /* важно: чтобы маска не накрыла контент, добавляем снизу место */
-  padding-bottom: calc(90px + var(--contact-overlap));
-
-  /* лёгкая глубина */
-  box-shadow: 0 48px 110px rgba(0,0,0,.55);
-}
-
-/* Маска снизу (именно она создаёт "из-за блока") */
-.clients::after{
-  content:"";
-  position:absolute;
-  left:0; right:0;
-  bottom:0;
-  height: var(--contact-overlap);
-  background:#050505;          /* фон Clients */
-  pointer-events:none;
-  z-index:2;
-}
-
-/* Contact реально подныривает под Clients */
-.contact{
-  position:relative;
-  z-index:4;
-  margin-top: calc(var(--contact-overlap) * -1);
-
-  /* НЕ добавляем overlap в padding-top — иначе ничего "из-за" не будет */
-  padding-top: 120px;
-
-  scroll-margin-top: 110px;
-}
-
-/* мобилка */
-@media (max-width: 768px){
-  :root{ --contact-overlap: clamp(72px, 12vh, 130px); }
-  .contact{ padding-top: 96px; }
-}
-/* ===== Форма: выезд "из-за Clients" (повторяемо) ===== */
-.js .contact .form{
-  --form-enter: calc(var(--contact-overlap) * -0.55); /* старт за маской (выше) */
-  --form-float: 0px;                                  /* микродвижение по скроллу (JS) */
-
-  opacity:0;
-  transform: translate3d(0, calc(var(--form-enter) + var(--form-float)), 0) scale(.99);
-  filter: blur(10px);
-
-  will-change: transform, opacity, filter;
-
-  transition:
-    opacity .85s cubic-bezier(.16,1,.3,1),
-    transform 1.15s cubic-bezier(.16,1,.3,1),
-    filter 1.15s cubic-bezier(.16,1,.3,1);
-}
-
-.js .contact.is-in .form{
-  opacity:1;
-  transform: translate3d(0, var(--form-float), 0) scale(1);
-  filter: blur(0px);
-}
-
-/* мобилка — легче */
-@media (max-width: 768px){
-  .js .contact .form{
-    filter: blur(7px);
-    transition-duration: .78s, 1.02s, 1.02s;
-  }
-  
-}
-:root{
-  --stack-overlap: clamp(48px, 7vw, 140px);  /* насколько отзывы “залезают” под клиентов */
-  --rv-shift: clamp(70px, 9vw, 170px);       /* сила выезда */
-}
-
-/* КЛИЕНТЫ — верхний слой, с “юбкой” снизу */
-.clients{
-  position: relative;
-  z-index: 5;
-  background: var(--bg, #050505);
-  padding-bottom: var(--stack-overlap);
-}
-
-/* =========================
-   CLIENTS — Museum alignment (match “How we work” mood)
-   Paste at the very end of style.css
-========================= */
-
-#clients,
-.clients#clients{
-  /* музейный центр и тишина */
-  text-align: center;
-  padding-top: clamp(52px, 6vw, 84px);
-  padding-bottom: clamp(52px, 6vw, 90px);
-}
-
-/* Заголовок секции клиентов (не увеличиваем, наоборот — дисциплина) */
-#clients :is(.clients__title, .section__title, h2){
-  margin: 0 auto 18px;
-  max-width: 30ch;
-  text-wrap: balance;
-
-  /* музейная типографика: строгая, компактная */
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-
-  /* делаем спокойнее, чтобы не спорил с hero */
-  font-size: clamp(16px, 1.35vw, 20px);
-  line-height: 1.15;
-}
-
-/* Если есть лид/описание у блока клиентов */
-#clients :is(.clients__lead, .clients__sub, .section__lead, p){
-  margin: 0 auto 26px;
-  max-width: 74ch;
-  opacity: .78;
-}
-
-/* Сетка логотипов: центр + “экспозиционный” ритм */
-#clients :is(.clients__grid, .clients__list, .grid){
-  margin: 0 auto;
-  max-width: min(1120px, 92vw);
-  gap: clamp(10px, 1.7vw, 16px);
-
-  /* если у тебя grid уже задан — не ломаем колонки,
-     только центрируем и выравниваем */
-  justify-content: center;
-  align-items: stretch;
-}
-
-/* Элемент логотипа: никакой витрины, только рамка и воздух */
-#clients :is(.clients__item, .client, li){
-  border-radius: 14px;
-  background: transparent;
-  box-shadow: none;
-
-  /* музейная рамка */
-  border: 1px solid rgba(0,0,0,.12);
-
-  /* аккуратный внутренний воздух */
-  padding: clamp(14px, 1.8vw, 18px);
-
-  /* единая высота “плашек” для ритма */
-  min-height: clamp(60px, 6vw, 78px);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  transition: border-color 180ms ease, transform 180ms ease, background-color 180ms ease;
-}
-
-/* Логотипы: по умолчанию графичные и спокойные */
-#clients :is(.clients__item, .client, li) :is(img, svg){
-  display: block;
-  max-width: 100%;
-  max-height: 34px;     /* не раздуваем */
-  width: auto;
-  height: auto;
-
-  opacity: .86;
-  filter: grayscale(1) contrast(1.05);
-  transition: opacity 180ms ease, filter 180ms ease, transform 180ms ease;
-}
-
-/* Ховер (десктоп): экспонат “подышал”, но без эффекта “карточек” */
-@media (hover:hover) and (pointer:fine){
-  #clients :is(.clients__item, .client, li):hover{
-    border-color: rgba(0,0,0,.22);
-    background-color: rgba(255,255,255,.18);
-    transform: translateY(-1px);
-  }
-  #clients :is(.clients__item, .client, li):hover :is(img, svg){
-    opacity: 1;
-    filter: grayscale(0) contrast(1.02);
-    transform: translateY(-1px);
-  }
-}
-
-/* Мобилка: ещё тише и плотнее */
-@media (max-width: 640px){
-  #clients,
-  .clients#clients{
-    padding-top: 46px;
-    padding-bottom: 56px;
-  }
-
-  #clients :is(.clients__title, .section__title, h2){
-    margin-bottom: 14px;
-  }
-
-  #clients :is(.clients__item, .client, li){
-    border-radius: 12px;
-    min-height: 62px;
-  }
-}
 
 
 /* ВИДЕО-ОТЗЫВЫ — начинаются под клиентами */
@@ -1861,42 +1497,7 @@ CONTACT — Variant A (REAL underlap behind Clients)
     transition: none !important;
   }
 }
-/* =========================================
-   LIGHT SHEET: clients + reviews одним цветом
-   (глобус/другие секции не трогаем)
-========================================= */
 
-#clients[data-theme="light"],
-#reviews[data-theme="light"]{
-  background: #f6f4f1 !important;     /* единый премиальный off-white */
-  background-image: none !important;
-  box-shadow: none !important;
-  color: #0b0b0b !important;
-
-  margin: 0 !important;              /* чтобы не светился body */
-  position: relative;
-  z-index: 5;
-  isolation: isolate;
-}
-
-/* убираем любые “переходы” и оверлеи, которые рисуют полосу */
-#clients[data-theme="light"]::before,
-#clients[data-theme="light"]::after,
-#reviews[data-theme="light"]::before,
-#reviews[data-theme="light"]::after,
-#clients[data-theme="light"] .clients__inner::before,
-#clients[data-theme="light"] .clients__inner::after,
-#reviews[data-theme="light"] .reviews__inner::before,
-#reviews[data-theme="light"] .reviews__inner::after{
-  content: none !important;
-}
-
-/* контент поверх всего (на случай, если что-то “накрывает”) */
-#clients[data-theme="light"] .clients__inner,
-#reviews[data-theme="light"] .reviews__inner{
-  position: relative;
-  z-index: 6;
-}
 
 /* =========================================================
    CLIENTS — Infinite Logo Marquee (Single Lane, Dark)
@@ -2073,389 +1674,8 @@ CONTACT — Variant A (REAL underlap behind Clients)
   padding-bottom: 18px; /* чтобы точки не прилипали к следующей секции */
   z-index: 3;
 }
-/* =========================
-   OFFICES (premium map)
-========================= */
-.offices {
-  padding: clamp(56px, 7vw, 96px) 0;
-  background: #050505;
-  color: #fff;
-}
 
-.offices__inner {
-  width: min(1120px, calc(100% - 32px));
-  margin: 0 auto;
-}
 
-.offices__head {
-  margin-bottom: 22px;
-}
-
-.offices__kicker {
-  opacity: 0.7;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-size: 12px;
-  margin: 0 0 10px;
-}
-
-.offices__title {
-  margin: 0 0 10px;
-  font-size: clamp(28px, 3.5vw, 44px);
-  letter-spacing: 0.02em;
-}
-
-.offices__lead {
-  margin: 0;
-  opacity: 0.75;
-  max-width: 60ch;
-}
-
-.offices__layout {
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 18px;
-  align-items: start;
-}
-
-.offices__list {
-  display: grid;
-  gap: 12px;
-}
-
-.office {
-  border-radius: 18px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-  overflow: hidden;
-}
-
-.office.is-active {
-  border-color: rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.06);
-}
-
-.office__select {
-  width: 100%;
-  text-align: left;
-  background: transparent;
-  border: 0;
-  color: inherit;
-  padding: 14px 14px 12px;
-  cursor: pointer;
-}
-
-.office__top {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.office__city {
-  font-size: 16px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.office__country {
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
-.office__addr {
-  display: block;
-  opacity: 0.85;
-  font-size: 14px;
-}
-
-.office__actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 14px 14px;
-}
-
-.office__tel {
-  color: rgba(255,255,255,0.86);
-  text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-}
-
-.office__tel:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-.office__tg {
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  text-decoration: none;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.06);
-}
-
-.office__tg svg {
-  width: 16px;
-  height: 16px;
-  fill: rgba(255,255,255,0.92);
-  transform: translateX(0.5px);
-}
-
-.office__tg:hover {
-  background: rgba(255,255,255,0.10);
-  border-color: rgba(255,255,255,0.28);
-}
-
-.offices__mapWrap {
-  position: relative;
-  border-radius: 22px;
-  overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: radial-gradient(1200px 420px at 10% 0%, rgba(255,255,255,0.06), rgba(0,0,0,0) 65%),
-              rgba(255,255,255,0.03);
-  box-shadow: 0 26px 80px rgba(0,0,0,0.45);
-  max-height: 0;
-  transition: max-height 0.55s ease;
-}
-
-.offices__mapWrap.is-open {
-  max-height: 720px;
-}
-
-.offices__map {
-  height: 520px;
-  width: 100%;
-}
-
-/* Премиальная “бумага/пленка” поверх карты */
-.offices__mapWrap::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(900px 420px at 80% 10%, rgba(255,255,255,0.06), transparent 60%),
-    linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.55));
-  mix-blend-mode: normal;
-}
-
-/* Leaflet: делаем карту монохромной, “дорогой” */
-#officesMap .leaflet-tile {
-  filter: grayscale(1) contrast(1.08) brightness(1.03);
-}
-
-#officesMap .leaflet-control-attribution {
-  opacity: 0.55;
-}
-
-.offices__hint {
-  position: absolute;
-  left: 14px;
-  bottom: 14px;
-  z-index: 5;
-  border-radius: 16px;
-  padding: 10px 12px;
-  background: rgba(0,0,0,0.52);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(10px);
-}
-
-.offices__hintTitle {
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  opacity: 0.9;
-  margin-bottom: 4px;
-}
-
-.offices__hintAddr {
-  font-size: 13px;
-  opacity: 0.85;
-}
-
-/* Кастомный маркер */
-.offices-pin {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.75);
-  background: rgba(0,0,0,0.55);
-  box-shadow: 0 0 0 10px rgba(255,255,255,0.07);
-  position: relative;
-}
-
-.offices-pin::after {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.95);
-}
-
-.offices-pin.is-active {
-  box-shadow: 0 0 0 14px rgba(255,255,255,0.10);
-}
-
-/* Адаптив */
-@media (max-width: 860px) {
-  .offices__layout {
-    grid-template-columns: 1fr;
-  }
-  .offices__map {
-    height: 380px;
-  }
-}
-#officesMap {
-  width: 100%;
-  height: 520px; /* можно 420–560 под твой ритм */
-  border-radius: 28px;
-  overflow: hidden;
-}
-
-/* если у тебя раскрытие через is-open */
-#officesMapWrap {
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(10px);
-  overflow: hidden;
-  transition: max-height .5s ease, opacity .35s ease, transform .5s ease;
-}
-
-#officesMapWrap.is-open {
-  max-height: 600px;
-  opacity: 1;
-  transform: none;
-}
-/* OFFICES MAP — убрать белую плашку атрибуции MapLibre */
-#officesMap .maplibregl-ctrl-attrib {
-  display: none !important;
-}
-
-/* OFFICES MAP — наша компактная атрибуция */
-#officesMap .offices-map__attr {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  z-index: 5;
-
-  padding: 8px 10px;
-  border-radius: 999px;
-
-  background: rgba(0, 0, 0, 0.38);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  font-size: 12px;
-  line-height: 1;
-  letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.68);
-}
-
-#officesMap .offices-map__attr a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-}
-
-#officesMap .offices-map__attr a:hover {
-  color: rgba(255, 255, 255, 0.9);
-  border-bottom-color: rgba(255, 255, 255, 0.55);
-}
-/* =========================
-   OFFICES: section reveal only (NO overlay on map)
-   paste at end of style.css
-========================= */
-
-/* если предыдущий патч уже добавил оверлей — убираем */
-#offices .offices-net { display: none !important; }
-
-#offices {
-  --off-p: 0; /* -1..1 */
-  --off-ease: cubic-bezier(.2,.9,.2,1);
-}
-
-/* включаем анимации только когда JS добавит .is-anim */
-#offices.is-anim .offices__head,
-#offices.is-anim .offices__list,
-#offices.is-anim .offices__layout,
-#offices.is-anim #officesMapWrap {
-  opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity .55s var(--off-ease),
-    transform .70s var(--off-ease);
-  will-change: transform, opacity;
-}
-
-/* карта — мягче, без clip-path, без оверлеев */
-#offices.is-anim #officesMapWrap {
-  transform: translateY(14px);
-  transition:
-    opacity .60s var(--off-ease),
-    transform .85s var(--off-ease);
-}
-
-/* вход */
-#offices.is-anim.is-inview .offices__head,
-#offices.is-anim.is-inview .offices__list,
-#offices.is-anim.is-inview .offices__layout {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* карта: добавляем очень лёгкий параллакс, только когда секция видна */
-#offices.is-anim.is-inview #officesMapWrap {
-  opacity: 1;
-  transform: translateY(calc(var(--off-p) * -8px));
-}
-
-/* выход при прокрутке назад */
-#offices.is-anim.is-out .offices__head,
-#offices.is-anim.is-out .offices__list,
-#offices.is-anim.is-out .offices__layout,
-#offices.is-anim.is-out #officesMapWrap {
-  opacity: 0;
-  transform: translateY(14px);
-}
-
-/* карточки офисов — лёгкий stagger */
-#offices.is-anim .office {
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity .45s var(--off-ease),
-    transform .65s var(--off-ease);
-  transition-delay: calc(var(--i, 0) * 70ms);
-  will-change: transform, opacity;
-}
-
-#offices.is-anim.is-inview .office {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* уважение reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  #offices.is-anim .offices__head,
-  #offices.is-anim .offices__list,
-  #offices.is-anim .offices__layout,
-  #offices.is-anim #officesMapWrap,
-  #offices.is-anim .office {
-    transition: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-  }
-}
 /* =========================
    TEAM — mobile swipe + page scroll fix (SAFE)
    paste at end of style.css
@@ -2509,209 +1729,8 @@ CONTACT — Variant A (REAL underlap behind Clients)
     min-width: var(--teamCardW) !important;
   }
 }
-/* =========================
-   OFFICES → CONTACT spacing + mobile map collapse
-   paste at end of style.css
-========================= */
 
-/* 1) Отлепляем форму от офисов (и на мобилке и на десктопе — безопасно) */
-#offices{
-  padding-bottom: clamp(56px, 7vw, 120px) !important;
-}
 
-/* 2) Мобилка: карта скрыта, открывается только по клику */
-@media (max-width: 900px){
-
-  /* карта по умолчанию "схлопнута" */
-  #officesMapWrap{
-    max-height: 0 !important;
-    opacity: 0 !important;
-    transform: translateY(10px) !important;
-    pointer-events: none !important;
-    overflow: hidden !important;
-
-    margin-top: 0 !important;
-    transition:
-      max-height 420ms ease,
-      opacity 260ms ease,
-      transform 420ms ease,
-      margin-top 420ms ease !important;
-  }
-
-  /* открытое состояние */
-  #officesMapWrap.is-open{
-    max-height: clamp(320px, 56vh, 560px) !important;
-    opacity: 1 !important;
-    transform: none !important;
-    pointer-events: auto !important;
-    margin-top: 16px !important;
-  }
-
-  /* фикс высоты карты (чтобы Leaflet имел нормальный контейнер) */
-  #officesMap{
-    height: clamp(320px, 56vh, 560px) !important;
-  }
-}
-/* === PATCH: detach Contact from Offices + lower Contact heading === */
-#offices{
-  padding-bottom: clamp(72px, 9vh, 140px) !important;
-}
-
-section.contact#contact{
-  margin-top: 0 !important; /* отменяем underlap */
-  padding-top: clamp(120px, 14vh, 175px) !important; /* опускаем весь блок */
-}
-
-section.contact#contact .contact__lead{
-  margin-top: 10px; /* чуть ниже заголовок */
-}
-
-@media (max-width: 768px){
-  section.contact#contact{
-    padding-top: clamp(110px, 13vh, 160px) !important;
-  }
-  section.contact#contact .contact__lead{
-    margin-top: 6px;
-  }
-}
-/* === FOOTER: premium socials (append-only patch) === */
-footer .footer-socials{
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin: 14px 0 18px;
-}
-
-footer .social{
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  display: inline-grid;
-  place-items: center;
-  color: #f5f5f5;
-
-  border: 1px solid rgba(245,245,245,.14);
-  background: rgba(245,245,245,.03);
-
-  position: relative;
-  text-decoration: none;
-  transition: transform .18s ease, border-color .18s ease, background .18s ease;
-  will-change: transform;
-}
-
-footer .social::before{
-  content:"";
-  position:absolute;
-  inset:-1px;
-  border-radius: inherit;
-  opacity: 0;
-  background: radial-gradient(60% 60% at 50% 30%, rgba(245,245,245,.18), transparent 60%);
-  transition: opacity .22s ease;
-  pointer-events: none;
-}
-
-footer .social:hover{
-  transform: translateY(-2px);
-  border-color: rgba(245,245,245,.26);
-  background: rgba(245,245,245,.06);
-}
-
-footer .social:hover::before{ opacity: 1; }
-
-footer .social__icon{
-  width: 18px;
-  height: 18px;
-}
-
-footer .social__path{
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-
-  stroke-dasharray: 120;
-  stroke-dashoffset: 120;
-  opacity: .92;
-  transition: stroke-dashoffset .55s ease, opacity .18s ease;
-}
-
-footer .social:hover .social__path{
-  stroke-dashoffset: 0;
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce){
-  footer .social, footer a{ transition: none; }
-  footer .social__path{ transition: none; stroke-dashoffset: 0; }
-}
-/* === FOOTER: center mail + socials under it === */
-footer .footer-contact{
-  display: flex;
-  justify-content: center;
-}
-
-footer .footer-contact a{
-  justify-content: center; /* твой mail-link display:flex уже есть inline */
-}
-
-footer .footer-socials{
-  justify-content: center;
-  margin: 12px 0 18px;
-}
-
-/* === FOOTER: auto pulse (random) === */
-footer .social{
-  --pulse-dur: 1800ms;   /* будет переопределяться из JS */
-}
-
-footer .social.is-pulse{
-  animation: footerSocialGlow var(--pulse-dur) ease both;
-}
-
-footer .social.is-pulse::before{
-  opacity: 1;
-}
-
-footer .social.is-pulse .social__path{
-  animation: footerSocialStroke var(--pulse-dur) ease both;
-}
-
-@keyframes footerSocialGlow{
-  0%{
-    transform: translateY(0);
-    border-color: rgba(245,245,245,.14);
-    background: rgba(245,245,245,.03);
-  }
-  18%{
-    transform: translateY(-2px);
-    border-color: rgba(245,245,245,.30);
-    background: rgba(245,245,245,.07);
-  }
-  70%{
-    transform: translateY(-2px);
-    border-color: rgba(245,245,245,.28);
-    background: rgba(245,245,245,.06);
-  }
-  100%{
-    transform: translateY(0);
-    border-color: rgba(245,245,245,.14);
-    background: rgba(245,245,245,.03);
-  }
-}
-
-@keyframes footerSocialStroke{
-  0%{   stroke-dashoffset: 120; opacity: .86; }
-  22%{  stroke-dashoffset: 0;   opacity: 1; }
-  76%{  stroke-dashoffset: 0;   opacity: 1; }
-  100%{ stroke-dashoffset: 120; opacity: .86; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  footer .social.is-pulse,
-  footer .social.is-pulse .social__path{
-    animation: none !important;
-  }
-}
 /* ===== NDA-first docs block (patch) ===== */
 
 .docs{
@@ -3044,227 +2063,846 @@ footer .social.is-pulse .social__path{
 
 
 
-/* =========================
-   CONTACT: "Работаем 24/7."
-   (увеличиваем подзаголовок)
-========================= */
-.contact__sub{
-  font-size: clamp(16px, 1.2vw + 12px, 22px);
-  line-height: 1.25;
-  letter-spacing: 0.02em;
-  opacity: 0.8;
-  margin-top: 10px;
+#contact.contact{
+  position:relative;
+  padding:clamp(44px,6vw,88px) 0;
+  background:#050505;
+  color:rgba(255,255,255,0.92);
 }
-/* CONTACT: actions без WhatsApp */
-.contact .actions{
-  justify-content: center;
-}
-
-.contact .actions .btn{
-  width: min(340px, 100%);
-}
-
-/* =========================================================
-Contact
-========================================================= */
-.contact{padding:120px var(--pad);text-align:center;}
-.contact__grid{
-  max-width:var(--grid);
+#contact .contact__inner{
+  width:min(780px, calc(100% - 48px));
   margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:28px;
+  position:relative;
 }
-.contact__lead{
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  font-size:clamp(1.4rem,3.6vw,2.2rem);
+#contact .contact__head{ margin-bottom:18px; text-align:center; }
+#contact .contact__title{
+  margin:0;
+  font-size:clamp(22px,2.6vw,30px);
+  letter-spacing:-0.02em;
+  font-weight:620;
 }
-.contact__sub{color:var(--muted);margin-top:10px;max-width:52ch;}
+#contact .contact__sub{
+  margin:8px 0 0 0;
+  font-size:12px;
+  letter-spacing:0.02em;
+  color:rgba(255,255,255,0.46);
+}
 
-/* Форма */
-.form{
-  background:linear-gradient(180deg,#0e0e0e,#0a0a0a);
-  border:1px solid rgba(255,255,255,.08);
+#contact .msf__card{
+  position:relative;
   border-radius:18px;
-  padding:32px;
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
-  max-width:460px;
-  width:100%;
+  border:1px solid rgba(255,255,255,0.10);
+  background:
+    radial-gradient(900px 360px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+  box-shadow:0 18px 44px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.05);
+  overflow:hidden;
 }
-.row{display:block;}
-.field{position:relative;margin-bottom:18px;}
-.input{
-  width:100%;
-  padding:18px 16px 14px;
-  border-radius:14px;
-  border:1px solid #1b1b1b;
-  background:#0f0f0f;
-  color:#fff;
-  font-size:.96rem;
-  outline:none;
-  -webkit-appearance:none;
-  transition:border-color .25s,box-shadow .25s,background .25s,transform .18s;
-}
-.input::placeholder{color:transparent;}
-.input:focus{
-  border-color:#fff;
-  box-shadow:0 0 0 2px rgba(255,255,255,.12);
-  background:#111111;
-  transform:translateY(-1px);
-}
-.label{
-  position:absolute;
-  left:18px;
-  top:18px;
-  padding:2px 6px;
-  border-radius:8px;
-  font-size:.82rem;
-  color:#a9a9a9;
-  background:rgba(255,255,255,.02);
-  transform-origin:left center;
-  transition:top .18s ease, transform .18s ease, opacity .18s ease, color .18s ease;
-}
-.field.filled .label,
-.input:focus + .label{
-  top:4px;
-  transform:scale(.88);
-  opacity:.95;
-  color:#ffffff;
-}
-.form__status{
-  min-height:20px;
-  font-size:.9rem;
-  color:var(--muted);
-  margin-top:18px;
-  transition:opacity .3s;
-}
-.form__status--success{color:#9be7c4;}
-.form__status--error{color:#ff8a80;}
-.actions{
+#contact .msf-form{ padding:18px; position:relative; }
+
+#contact .msf__steps{
   display:flex;
   align-items:center;
   justify-content:center;
   gap:14px;
-  margin-top:24px;
-  flex-wrap:wrap;
+  margin:6px 0 14px;
 }
-.btn{
-  position:relative;
-  padding:16px 22px;
-  border-radius:999px;
-  border:1px solid #fff;
-  background:#fff;
-  color:#000;
-  font-weight:700;
-  text-transform:uppercase;
+#contact .msf-step{
+  width:38px;height:38px;border-radius:999px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.68);
   cursor:pointer;
-  transition:transform .25s,box-shadow .25s;
-  isolation:isolate;
+  transition:transform 220ms ease, background 220ms ease, border-color 220ms ease, color 220ms ease, opacity 220ms ease;
 }
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(255,255,255,.1);}
-.btn .glow{
-  position:absolute;
-  inset:-2px;
-  border-radius:inherit;
-  background:radial-gradient(280px 160px at var(--x,50%) var(--y,50%),rgba(255,255,255,.35),transparent 60%);
-  opacity:0;
-  transition:opacity .25s;
-  filter:blur(14px);
+#contact .msf-step:disabled{ cursor:not-allowed; opacity:0.55; }
+#contact .msf-step__num{ font-size:12px;font-weight:600;letter-spacing:0.02em; }
+#contact .msf-step.is-active{
+  background:rgba(255,255,255,0.92);
+  color:#050505;
+  border-color:rgba(255,255,255,0.30);
+  box-shadow:0 0 22px rgba(255,255,255,0.10);
 }
-.btn:hover .glow{opacity:1;}
-.icon-btn{
-  width:44px;height:44px;
-  border:1px solid #1b1b1b;
-  border-radius:12px;
+#contact .msf-step.is-done{ background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.52); }
+
+#contact .msf-step__line{
+  width:56px;height:2px;border-radius:999px;
+  background:rgba(255,255,255,0.12);
+  position:relative;overflow:hidden;
+}
+#contact .msf-step__lineFill{
+  position:absolute;inset:0;
+  background:rgba(255,255,255,0.42);
+  transform:scaleX(0);
+  transform-origin:0 50%;
+  transition:transform 520ms cubic-bezier(.2,.8,.2,1);
+}
+
+#contact .msf__progress{
+  height:2px;width:100%;
+  border-radius:999px;
+  background:rgba(255,255,255,0.10);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+#contact .msf__bar{
+  height:100%;
+  background:linear-gradient(to right, rgba(255,255,255,0.52), rgba(255,255,255,0.92));
+  transition:width 520ms cubic-bezier(.2,.8,.2,1);
+}
+
+#contact .msf__panel{ display:grid; gap:12px; }
+#contact .msf__panelHead{
+  display:flex; align-items:baseline; justify-content:space-between; gap:12px;
+}
+#contact .msf__label{
+  font-size:16px; letter-spacing:-0.01em; font-weight:560;
+  color:rgba(255,255,255,0.90);
+}
+#contact .msf__count{
+  font-size:11px; letter-spacing:0.12em; color:rgba(255,255,255,0.42);
+}
+
+#contact .msf__input{
+  width:100%; height:54px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.92);
+  padding:0 16px;
+  outline:none;
+  transition:border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+  cursor:text;
+  caret-color: rgba(255,255,255,0.92);
+}
+#contact .msf__input::placeholder{ color:rgba(255,255,255,0.28); }
+#contact .msf__input:focus{
+  border-color:rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.04);
+  box-shadow:0 0 0 4px rgba(255,255,255,0.04);
+  caret-color: rgba(255,255,255,0.98);
+}
+#contact .msf__hint{
+  margin:8px 0 0 0;
+  font-size:11px;
+  color:rgba(255,255,255,0.40);
+  line-height:1.35;
+}
+
+/* phone */
+#contact .msf-phone{
+  display:grid;
+  grid-template-columns: 116px 1fr;
+  gap:10px;
+  align-items:stretch;
+}
+#contact .msf-phone__cc{
+  height:54px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.92);
+  padding:0 12px;
   display:flex;
   align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  cursor:pointer;
+  user-select:none;
+  transition:border-color 200ms ease, background 200ms ease, transform 200ms ease;
+}
+#contact .msf-phone__cc:focus{
+  outline:none;
+  box-shadow:0 0 0 4px rgba(255,255,255,0.04);
+}
+@media (hover:hover) and (pointer:fine){
+  #contact .msf-phone__cc:hover{
+    border-color:rgba(255,255,255,0.16);
+    background:rgba(255,255,255,0.04);
+    transform:translateY(-1px);
+  }
+}
+#contact .msf-phone__flag{ font-size:14px; line-height:1; }
+#contact .msf-phone__code{
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.78);
+}
+#contact .msf-phone__chev{
+  color:rgba(255,255,255,0.55);
+  display:grid; place-items:center;
+}
+#contact .msf-phone__input{ padding-left:16px; }
+
+/* country overlay */
+#contact .msf-cc{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display:grid;
+  place-items:center;
+  padding:18px;
+}
+#contact .msf-cc[hidden]{ display:none !important; }
+
+#contact .msf-cc__panel{
+  width:min(520px, 100%);
+  max-height:min(72vh, 620px);
+  border-radius:18px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:
+    radial-gradient(900px 360px at 20% 0%, rgba(255,255,255,0.06), transparent 55%),
+    linear-gradient(180deg, rgba(10,10,10,0.92), rgba(10,10,10,0.88));
+  box-shadow:0 18px 54px rgba(0,0,0,0.6);
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:auto 1fr;
+}
+#contact .msf-cc__top{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+#contact .msf-cc__search{
+  width:100%;
+  height:44px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.92);
+  padding:0 14px;
+  outline:none;
+}
+#contact .msf-cc__search::placeholder{ color:rgba(255,255,255,0.26); }
+#contact .msf-cc__search:focus{
+  border-color:rgba(255,255,255,0.16);
+  box-shadow:0 0 0 4px rgba(255,255,255,0.04);
+}
+#contact .msf-cc__close{
+  width:44px;height:44px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.80);
+  cursor:pointer;
+  display:grid;place-items:center;
+}
+@media (hover:hover) and (pointer:fine){
+  #contact .msf-cc__close:hover{
+    border-color:rgba(255,255,255,0.16);
+    background:rgba(255,255,255,0.05);
+  }
+}
+#contact .msf-cc__list{
+  overflow:auto;
+  padding:8px;
+}
+#contact .msf-cc__item{
+  width:100%;
+  border:none;
+  background:transparent;
+  color:rgba(255,255,255,0.90);
+  padding:12px 12px;
+  border-radius:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  transition:background 160ms ease, transform 160ms ease;
+}
+#contact .msf-cc__itemLeft{
+  display:flex; align-items:center; gap:10px;
+  min-width:0;
+}
+#contact .msf-cc__itemFlag{ font-size:14px; line-height:1; }
+#contact .msf-cc__itemName{
+  font-size:12px;
+  letter-spacing:0.02em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:rgba(255,255,255,0.84);
+}
+#contact .msf-cc__itemCode{
+  font-size:11px;
+  letter-spacing:0.14em;
+  color:rgba(255,255,255,0.52);
+}
+#contact .msf-cc__item.is-active{ background:rgba(255,255,255,0.06); }
+@media (hover:hover) and (pointer:fine){
+  #contact .msf-cc__item:hover{
+    background:rgba(255,255,255,0.05);
+    transform:translateY(-1px);
+  }
+}
+
+/* docs */
+#contact .msf__field--docs{ padding-top:2px; }
+#contact .msf__docsTop{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px;
+  border-radius:16px;
+  border:1px dashed rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.02);
+}
+#contact .msf__docsMeta{ display:grid; gap:6px; }
+#contact .msf__docsLabel{
+  font-size:10px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.42);
+}
+#contact .msf__docsHint{ font-size:11px; color:rgba(255,255,255,0.46); }
+
+#contact .msf__attachBtn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.86);
+  cursor:pointer;
+  user-select:none;
+  transition:transform 200ms ease, background 200ms ease, border-color 200ms ease, opacity 200ms ease;
+}
+#contact .msf__attachIc{
+  width:34px;height:34px; display:grid; place-items:center;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.10);
+  background:rgba(255,255,255,0.02);
+}
+#contact .msf__attachTx{
+  font-size:10px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.70);
+}
+#contact .msf__file{ display:none; }
+
+#contact .msf__nodocs{
+  margin-top:12px;
+  display:inline-flex; align-items:center; gap:10px;
+  cursor:pointer; user-select:none;
+}
+#contact .msf__check{ position:absolute; opacity:0; pointer-events:none; }
+#contact .msf__checkUi{
+  width:18px;height:18px;border-radius:6px;
+  border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.02);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+  position:relative;
+}
+#contact .msf__checkUi::after{
+  content:"";
+  position:absolute;
+  inset:3px;
+  border-radius:4px;
+  background:rgba(255,255,255,0.92);
+  transform:scale(0);
+  transition:transform 180ms ease;
+}
+#contact .msf__nodocs input:checked + .msf__checkUi::after{ transform:scale(1); }
+#contact .msf__nodocsTx{
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+}
+
+/* CTA */
+#contact .msf__cta{
+  margin-top:16px;
+  width:100%; height:52px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.06);
+  color:rgba(255,255,255,0.92);
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  display:inline-flex;
+  align-items:center;
   justify-content:center;
-  background:#0f0f0f;
-  color:#fff;
-  transition:background .25s,border-color .25s,transform .2s;
+  gap:0; /* важно: без стрелки */
+  transition:transform 200ms ease, background 200ms ease, border-color 200ms ease, opacity 200ms ease;
 }
-.icon-btn:hover{
-  background:#fff;
-  color:#000;
-  border-color:#fff;
-  transform:translateY(-2px);
-}
-.icon-btn svg{width:20px;height:20px;fill:currentColor;}
-
-/* =========================================================
-CONTACT — Underlap from CLIENTS (Variant A) + repeatable motion
-========================================================= */
-
-/* Настройка глубины "из-за клиентов" */
-:root{
-  --contact-overlap: clamp(72px, 12vh, 140px);
-}
-
-/* Clients всегда сверху (чтобы Contact был "за ним") */
-.clients{
+#contact .msf__cta:disabled{ opacity:0.45; cursor:not-allowed; }
+#contact .msf__ctaLabel{
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
   position:relative;
-  z-index:6;
-  /* тонкая глубина (почти невидимо, но даёт ощущение слоя) */
-  box-shadow: 0 48px 110px rgba(0,0,0,.55);
+  z-index:2;
 }
+#contact .msf__ctaArrow{ display:none; } /* убрали стрелочку полностью */
 
-/* Contact уходит под Clients за счёт отрицательного отступа */
-.contact{
-  position:relative;
-  z-index:4;
-
-  /* подныриваем под Clients */
-  margin-top: calc(var(--contact-overlap) * -1);
-
-  /* компенсируем, чтобы контент не залез под Clients */
-  padding-top: calc(120px + var(--contact-overlap));
-
-  /* якорь #contact не должен прилипать под фикс-нав */
-  scroll-margin-top: 110px;
+/* Busy pulse on CTA */
+@keyframes msfPulseRing {
+  0%   { transform:translate(-50%,-50%) scale(0.94); opacity:0.0; }
+  16%  { opacity:0.42; }
+  55%  { opacity:0.18; }
+  100% { transform:translate(-50%,-50%) scale(1.90); opacity:0; }
 }
-
-/* Мобилка: чуть меньше перекрытие */
-@media (max-width: 768px){
-  :root{ --contact-overlap: clamp(56px, 10vh, 110px); }
-  .contact{ padding-top: calc(96px + var(--contact-overlap)); }
+#contact .msf__cta.is-busy::after{
+  content:"";
+  position:absolute;
+  left:50%; top:50%;
+  width:52px; height:52px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.85);
+  animation:msfPulseRing 1.05s infinite;
+  pointer-events:none;
+  z-index:1;
 }
-
-/* ===== Reveal (repeatable) ===== */
-/* База: если JS не работает — всё видно */
-.contact__lead,
-.contact__sub{
-  opacity:1;
+#contact .msf__cta.is-busy{
+  cursor:default;
   transform:none;
-  filter:none;
+  background:rgba(255,255,255,0.08);
+  border-color:rgba(255,255,255,0.16);
 }
 
-/* Заголовок + подзаголовок мягко входят */
-.js .contact__lead,
-.js .contact__sub{
+#contact .msf__back{
+  margin-top:10px;
+  width:100%;
+  background:transparent;
+  border:none;
+  color:rgba(255,255,255,0.42);
+  cursor:pointer;
+  font-size:12px;
+  padding:10px 0 0;
+  transition:color 200ms ease;
+}
+#contact .msf__status{
+  margin:10px 0 0 0;
+  font-size:11px;
+  color:rgba(255,255,255,0.55);
+  min-height:16px;
+}
+
+/* ===== SUCCESS: только кольцо + текст внутри, без схлопываний ===== */
+#contact .contact-success{
+  width:100%;
+  min-height:320px;
+  display:grid;
+  place-items:center;
+  position:relative;
   opacity:0;
-  transform: translate3d(0, 10px, 0);
-  filter: blur(4px);
-  will-change: transform, opacity, filter;
-  transition:
-    opacity .75s cubic-bezier(.16,1,.3,1),
-    transform .95s cubic-bezier(.16,1,.3,1),
-    filter .95s cubic-bezier(.16,1,.3,1);
+  transform:translateY(10px) scale(0.985);
+  transition:opacity 520ms cubic-bezier(.16,1,.3,1), transform 520ms cubic-bezier(.16,1,.3,1);
+}
+#contact .contact-success.is-on{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+#contact .contact-success__ring,
+#contact .contact-success__text{
+  grid-area: 1 / 1;
+}
+@keyframes msfSuccessPulse {
+  0%   { transform:scale(0.985); opacity:0.92; }
+  45%  { transform:scale(1.07);  opacity:0.58; }
+  100% { transform:scale(0.985); opacity:0.92; }
+}
+#contact .contact-success__ring{
+  width:200px;height:200px;border-radius:999px;
+  border:1px solid rgba(255,255,255,0.90);
+  box-shadow:0 0 26px rgba(255,255,255,0.08);
+  animation:msfSuccessPulse 1.35s ease-in-out infinite;
+}
+#contact .contact-success__text{
+  width:200px;
+  padding:0 18px;
+  text-align:center;
+  font-size:11px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.82);
+  line-height:1.35;
 }
 
-.js .contact.is-in .contact__lead{
-  opacity:1;
-  transform: translate3d(0,0,0);
-  filter: blur(0px);
+/* Когда успех: скрываем заголовок и форму целиком */
+#contact.is-success .contact__head,
+#contact.is-success .msf{
+  display:none !important;
 }
-.js .contact.is-in .contact__sub{
-  opacity:1;
-  transform: translate3d(0,0,0);
-  filter: blur(0px);
-  transition-delay: 70ms;
+
+/* Моб */
+@media (max-width: 480px){
+  #contact .msf-phone{ grid-template-columns: 104px 1fr; }
+  #contact .contact__inner{ width:calc(100% - 32px); }
 }
+
+
+
+/* =========================================
+   OFFICES CARDS (between #contact and footer)
+   ========================================= */
+.offices-cards {
+  position: relative;
+  background: #050505;
+  color: rgba(255,255,255,0.92);
+  padding: clamp(42px, 6vw, 84px) 0;
+}
+
+.offices-cards__inner {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.offices-cards__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.offices-cards__title {
+  margin: 0;
+  font-size: clamp(20px, 2.3vw, 28px);
+  letter-spacing: -0.02em;
+  font-weight: 650;
+}
+
+.offices-cards__sub {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.42);
+  white-space: nowrap;
+}
+
+.offices-cards__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* Card base */
+.office-card { position: relative; }
+.office-card__btn {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  color: inherit;
+}
+
+.office-card__frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  height: 140px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background:
+    radial-gradient(800px 260px at 20% 0%, rgba(255,255,255,0.06), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+  box-shadow:
+    0 16px 40px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: height 420ms cubic-bezier(.2,.8,.2,1), border-color 280ms ease, background 280ms ease, transform 140ms linear;
+}
+
+.office-card__bg { position: absolute; inset: 0; pointer-events: none; }
+.office-card__gridPattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.09) 1px, transparent 1px);
+  background-size: 20px 20px;
+  transition: opacity 260ms ease;
+}
+
+.office-card__map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.office-card__line {
+  stroke: rgba(255,255,255,0.12);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+}
+.office-card__line.is-main { stroke: rgba(255,255,255,0.18); stroke-width: 3.6; }
+.office-card__line.is-mid  { stroke: rgba(255,255,255,0.14); stroke-width: 2.6; }
+.office-card__line.is-thin { stroke: rgba(255,255,255,0.10); stroke-width: 1.5; }
+
+.office-card__buildings .bld {
+  position: absolute;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 3px;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 260ms ease, transform 380ms cubic-bezier(.2,.8,.2,1);
+}
+.office-card__buildings .b1 { top: 40%; left: 10%; width: 15%; height: 20%; }
+.office-card__buildings .b2 { top: 15%; left: 35%; width: 12%; height: 15%; }
+.office-card__buildings .b3 { top: 70%; left: 75%; width: 18%; height: 18%; }
+.office-card__buildings .b4 { top: 20%; right: 10%; width: 10%; height: 25%; }
+.office-card__buildings .b5 { top: 55%; left: 5%; width: 8%; height: 12%; }
+.office-card__buildings .b6 { top: 8%; left: 75%; width: 14%; height: 10%; }
+
+.office-card__pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+.office-card__pinDot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 0 22px rgba(255,255,255,0.18);
+}
+
+.office-card__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55), transparent 60%);
+  opacity: 0.55;
+}
+
+/* Content */
+.office-card__content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform: translateZ(24px);
+}
+
+.office-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.office-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.85);
+}
+
+.office-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+}
+
+.office-card__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 0 14px rgba(255,255,255,0.16);
+}
+
+.office-card__statusText {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+.office-card__bottom { margin-top: 8px; }
+.office-card__name {
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  font-weight: 560;
+  color: rgba(255,255,255,0.88);
+  transition: transform 280ms cubic-bezier(.2,.8,.2,1);
+}
+
+.office-card__addr,
+.office-card__coords {
+  margin: 6px 0 0 0;
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  color: rgba(255,255,255,0.46);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 220ms ease, transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+.office-card__coords {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Contacts (reveal) */
+.office-card__contacts {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 220ms ease, transform 260ms cubic-bezier(.2,.8,.2,1);
+}
+
+.office-card__phone {
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.75);
+}
+
+.office-card__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.office-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.86);
+  text-decoration: none;
+  transition: transform 220ms cubic-bezier(.2,.8,.2,1), background 220ms ease, border-color 220ms ease;
+}
+
+.office-action__ic {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: rgba(255,255,255,0.02);
+}
+
+.office-action__tx {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(255,255,255,0.70);
+}
+
+@media (hover:hover) and (pointer:fine) {
+  .office-action:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.16);
+  }
+}
+
+.office-card__underline {
+  margin-top: 12px;
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.55), rgba(255,255,255,0.12), transparent);
+  transform-origin: 0 50%;
+  transform: scaleX(0.28);
+  opacity: 0.7;
+  transition: transform 360ms ease, opacity 260ms eae;
+}
+
+/* Hint */
+.office-card__hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.30);
+}
+
+/* Hover polish */
+@media (hover:hover) and (pointer:fine) {
+  .office-card__btn:hover .office-card__frame {
+    border-color: rgba(255,255,255,0.16);
+    background:
+      radial-gradient(800px 260px at 20% 0%, rgba(255,255,255,0.07), transparent 55%),
+      linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+  }
+  .office-card__btn:hover .office-card__name { transform: translateX(4px); }
+  .office-card__btn:hover .office-card__underline { transform: scaleX(0.92); opacity: 0.95; }
+}
+
+/* Expanded state */
+.office-card.is-expanded .office-card__frame { height: 320px; }
+.office-card.is-expanded .office-card__gridPattern { opacity: 0; }
+.office-card.is-expanded .office-card__map { opacity: 1; }
+.office-card.is-expanded .office-card__buildings .bld { opacity: 1; transform: scale(1); }
+.office-card.is-expanded .office-card__pin { opacity: 1; }
+
+.office-card.is-expanded .office-card__addr,
+.office-card.is-expanded .office-card__coords,
+.office-card.is-expanded .office-card__contacts {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.office-card.is-expanded .office-card__underline { transform: scaleX(1); opacity: 1; }
+.office-card.is-expanded .office-card__hint { opacity: 0; transform: translateY(-4px); pointer-events: none; }
+
+@keyframes officeDash { to { stroke-dashoffset: 0; } }
+.office-card.is-expanded .office-card__line {
+  animation: officeDash 820ms ease forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+@media (min-width: 860px) {
+  .office-card.is-expanded { grid-column: span 2; }
+}
+
+@media (max-width: 560px) {
+  .offices-cards__head { flex-direction: column; align-items: flex-start; }
+  .offices-cards__sub { white-space: normal; }
+  .office-card__frame { height: 150px; }
+  .office-card.is-expanded .office-card__frame { height: 340px; }
+  .office-action__tx { letter-spacing: 0.18em; }
+}
+
 
 /* =========================
    FOOTER — CENTERED GLOW PODIUM (compact, raised, subtle flow)
@@ -3378,6 +3016,76 @@ body.nav-lock{overflow:hidden;}
 
   /* Desktop offsets */
   --cta-left: 56px; /* desktop: смещено вправо примерно на 1 см */
+}
+
+
+/* === FOOTER: center mail + socials under it === */
+footer .footer-contact{
+  display: flex;
+  justify-content: center;
+}
+
+footer .footer-contact a{
+  justify-content: center; /* твой mail-link display:flex уже есть inline */
+}
+
+footer .footer-socials{
+  justify-content: center;
+  margin: 12px 0 18px;
+}
+
+/* === FOOTER: auto pulse (random) === */
+footer .social{
+  --pulse-dur: 1800ms;   /* будет переопределяться из JS */
+}
+
+footer .social.is-pulse{
+  animation: footerSocialGlow var(--pulse-dur) ease both;
+}
+
+footer .social.is-pulse::before{
+  opacity: 1;
+}
+
+footer .social.is-pulse .social__path{
+  animation: footerSocialStroke var(--pulse-dur) ease both;
+}
+
+@keyframes footerSocialGlow{
+  0%{
+    transform: translateY(0);
+    border-color: rgba(245,245,245,.14);
+    background: rgba(245,245,245,.03);
+  }
+  18%{
+    transform: translateY(-2px);
+    border-color: rgba(245,245,245,.30);
+    background: rgba(245,245,245,.07);
+  }
+  70%{
+    transform: translateY(-2px);
+    border-color: rgba(245,245,245,.28);
+    background: rgba(245,245,245,.06);
+  }
+  100%{
+    transform: translateY(0);
+    border-color: rgba(245,245,245,.14);
+    background: rgba(245,245,245,.03);
+  }
+}
+
+@keyframes footerSocialStroke{
+  0%{   stroke-dashoffset: 120; opacity: .86; }
+  22%{  stroke-dashoffset: 0;   opacity: 1; }
+  76%{  stroke-dashoffset: 0;   opacity: 1; }
+  100%{ stroke-dashoffset: 120; opacity: .86; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  footer .social.is-pulse,
+  footer .social.is-pulse .social__path{
+    animation: none !important;
+  }
 }
 
 /* Floating CTA — desktop bottom-left */
@@ -3495,4 +3203,75 @@ body.nav-lock{overflow:hidden;}
     line-height:1;
     text-align:center;
   }
+}
+
+/* === FOOTER: premium socials (append-only patch) === */
+footer .footer-socials{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 14px 0 18px;
+}
+
+footer .social{
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  color: #f5f5f5;
+
+  border: 1px solid rgba(245,245,245,.14);
+  background: rgba(245,245,245,.03);
+
+  position: relative;
+  text-decoration: none;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  will-change: transform;
+}
+
+footer .social::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(60% 60% at 50% 30%, rgba(245,245,245,.18), transparent 60%);
+  transition: opacity .22s ease;
+  pointer-events: none;
+}
+
+footer .social:hover{
+  transform: translateY(-2px);
+  border-color: rgba(245,245,245,.26);
+  background: rgba(245,245,245,.06);
+}
+
+footer .social:hover::before{ opacity: 1; }
+
+footer .social__icon{
+  width: 18px;
+  height: 18px;
+}
+
+footer .social__path{
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  opacity: .92;
+  transition: stroke-dashoffset .55s ease, opacity .18s ease;
+}
+
+footer .social:hover .social__path{
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce){
+  footer .social, footer a{ transition: none; }
+  footer .social__path{ transition: none; stroke-dashoffset: 0; }
 }

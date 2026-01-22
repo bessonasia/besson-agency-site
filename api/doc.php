@@ -1,69 +1,50 @@
 <?php
 declare(strict_types=1);
 
-header('Content-Type: application/json; charset=utf-8');
+$f = isset($_GET['f']) ? (string)$_GET['f'] : '';
+$n = isset($_GET['n']) ? (string)$_GET['n'] : '';
 
-function out(bool $ok, array $payload = []): void {
-  echo json_encode(array_merge(['ok' => $ok], $payload), JSON_UNESCAPED_UNICODE);
+if ($f === '') {
+  http_response_code(404);
+  echo 'Not found';
   exit;
 }
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
-  out(false, ['error' => 'Method not allowed', 'code' => 'METHOD']);
+// Разрешаем только безопасные имена вида 32hex.ext
+if (!preg_match('/^[a-f0-9]{32}\.[a-z0-9]{1,6}$/i', $f)) {
+  http_response_code(400);
+  echo 'Bad request';
+  exit;
 }
 
-if (!isset($_FILES['file'])) {
-  out(false, ['error' => 'Файл не получен', 'code' => 'NO_FILE']);
-}
-
-$f = $_FILES['file'];
-
-if (!empty($f['error']) && $f['error'] !== UPLOAD_ERR_OK) {
-  out(false, ['error' => 'Ошибка загрузки файла', 'code' => 'UPLOAD_ERR', 'php_error' => $f['error']]);
-}
-
-$MAX_MB = 50;
-$MAX_BYTES = $MAX_MB * 1024 * 1024;
-
-if (($f['size'] ?? 0) > $MAX_BYTES) {
-  out(false, ['error' => "Файл слишком большой. Максимум {$MAX_MB}MB", 'code' => 'TOO_LARGE']);
-}
-
-$allowedExt = ['pdf','doc','docx','ppt','pptx','xls','xlsx','zip','rar','7z','png','jpg','jpeg'];
-
-$origName = (string)($f['name'] ?? 'file');
-$ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
-
-if (!$ext || !in_array($ext, $allowedExt, true)) {
-  out(false, ['error' => 'Недопустимый тип файла', 'code' => 'BAD_EXT']);
-}
-
-// Папка вне httpdocs: /_uploads/tender_docs
 $baseDir = dirname(__DIR__, 2); // .../ (на уровень выше httpdocs)
 $storeDir = $baseDir . '/_uploads/tender_docs';
+$path = $storeDir . '/' . $f;
 
-if (!is_dir($storeDir) && !mkdir($storeDir, 0755, true)) {
-  out(false, ['error' => 'Не удалось создать папку хранения', 'code' => 'MKDIR']);
+if (!is_file($path)) {
+  http_response_code(404);
+  echo 'Not found';
+  exit;
 }
 
-if (!is_writable($storeDir)) {
-  out(false, ['error' => 'Папка хранения недоступна для записи', 'code' => 'NOT_WRITABLE']);
+$downloadName = $n !== '' ? $n : $f;
+// примитивная очистка имени файла
+$downloadName = preg_replace('/[^\pL\pN\.\-\_\(\)\s]+/u', '', $downloadName) ?: $f;
+
+$mime = 'application/octet-stream';
+if (function_exists('finfo_open')) {
+  $fi = finfo_open(FILEINFO_MIME_TYPE);
+  if ($fi) {
+    $m = finfo_file($fi, $path);
+    if (is_string($m) && $m !== '') $mime = $m;
+    finfo_close($fi);
+  }
 }
 
-$token = bin2hex(random_bytes(16));
-$saveName = $token . '.' . $ext;
-$savePath = $storeDir . '/' . $saveName;
+header('Content-Type: ' . $mime);
+header('Content-Length: ' . (string)filesize($path));
+header('Content-Disposition: attachment; filename="' . str_replace('"', '', $downloadName) . '"');
+header('X-Content-Type-Options: nosniff');
 
-if (!move_uploaded_file((string)$f['tmp_name'], $savePath)) {
-  out(false, ['error' => 'Не удалось сохранить файл', 'code' => 'MOVE_FAIL']);
-}
-
-// Ссылка отдачи через doc.php (привязка к твоему серверу)
-$publicUrl = '/api/doc.php?f=' . rawurlencode($saveName) . '&n=' . rawurlencode($origName);
-
-out(true, [
-  'url'  => $publicUrl,
-  'name' => $origName,
-  'size' => (int)($f['size'] ?? 0),
-  'type' => (string)($f['type'] ?? '')
-]);
+readfile($path);
+exit;

@@ -2200,6 +2200,8 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   }, { once:true });
 })();
 
+
+
 /* =========================
    WORK TILES — GLOW CONTROL (NO LIBS)
    Desktop: hover + pointer-follow
@@ -3272,7 +3274,113 @@ VIDEO REVIEWS (B) — self-boot, no dependency on initBesson
   setStepsUI();
 })();
 
+document.addEventListener("DOMContentLoaded", () => {
 
+  const data = [
+    { name: "Юрий Бессонов", designation: "Москва · Россия", quote: "Стратегическое управление международными проектами.", src: "https://images.unsplash.com/photo-1607746882042-944635dfe10e" },
+    { name: "Севара Р.", designation: "Ташкент · Узбекистан", quote: "Национальные BTL-кампании и масштабные промо.", src: "https://images.unsplash.com/photo-1599566150163-29194dcaad36" },
+    { name: "Людмила К.", designation: "Алматы · Казахстан", quote: "Финансовая архитектура и устойчивость структуры.", src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2" },
+    { name: "Игорь Н.", designation: "Бишкек · Кыргызстан", quote: "Локальные команды и операционный контроль.", src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e" },
+    { name: "Мария Л.", designation: "Тбилиси · Грузия", quote: "Event-проекты международного уровня.", src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330" },
+    { name: "Анна С.", designation: "Баку · Азербайджан", quote: "Digital-поддержка и стратегия продвижения.", src: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1" },
+    { name: "Дмитрий П.", designation: "Ереван · Армения", quote: "Креатив и архитектура презентаций.", src: "https://images.unsplash.com/photo-1511367461989-f85a21fda167" },
+    { name: "Ольга В.", designation: "Душанбе · Таджикистан", quote: "Региональные кампании и аналитика.", src: "https://images.unsplash.com/photo-1544725176-7c40e5a2c9f9" },
+    { name: "Роман Т.", designation: "Минск · Беларусь", quote: "Организация масштабных форумов.", src: "https://images.unsplash.com/photo-1521119989659-a83eee488004" },
+    { name: "Елена К.", designation: "Киев · Украина", quote: "Международные коммуникации.", src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb" },
+    { name: "Максим Д.", designation: "Берлин · Германия", quote: "Операционная стратегия.", src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d" },
+    { name: "Алина П.", designation: "Вена · Австрия", quote: "Кросс-культурные проекты.", src: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f" }
+  ];
+
+  let index = 0;
+
+  const wrapper = document.getElementById("teamImageWrapper");
+  const textInner = document.getElementById("teamTextInner");
+  const thumbs = document.getElementById("teamThumbnails");
+  const pagination = document.querySelector(".team-pagination");
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
+
+  function updatePagination() {
+    if (!pagination) return;
+    pagination.textContent =
+      `${String(index + 1).padStart(2, "0")} / ${String(data.length).padStart(2, "0")}`;
+  }
+
+  function renderImage() {
+
+    const oldImg = document.querySelector(".team-image.active");
+
+    if (oldImg) {
+      oldImg.classList.remove("active");
+      oldImg.classList.add("exit");
+      setTimeout(() => oldImg.remove(), 500);
+    }
+
+    const img = document.createElement("img");
+    img.src = data[index].src;
+    img.className = "team-image";
+    wrapper.appendChild(img);
+
+    setTimeout(() => img.classList.add("active"), 20);
+  }
+
+  function renderText() {
+    textInner.classList.remove("active");
+
+    textInner.innerHTML = `
+      <h3 class="team-name">${data[index].name}</h3>
+      <p class="team-affiliation">${data[index].designation}</p>
+      <p class="team-quote">${data[index].quote}</p>
+    `;
+
+    setTimeout(() => textInner.classList.add("active"), 50);
+  }
+
+  function renderThumbs() {
+    if (!thumbs) return;
+
+    thumbs.innerHTML = "";
+
+    data.forEach((item, i) => {
+      const div = document.createElement("div");
+      div.className = "team-thumb";
+      if (i === index) div.classList.add("active");
+
+      div.innerHTML = `<img src="${item.src}" alt="${item.name}">`;
+
+      div.onclick = () => {
+        index = i;
+        render();
+      };
+
+      thumbs.appendChild(div);
+    });
+  }
+
+  function render() {
+    renderImage();
+    renderText();
+    renderThumbs();
+    updatePagination();
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      index = (index + 1) % data.length;
+      render();
+    };
+  }
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      index = (index - 1 + data.length) % data.length;
+      render();
+    };
+  }
+
+  render();
+
+});
 
 /* =========================================================
 Boot

@@ -622,8 +622,8 @@ Hero
 #logoText span[data-space="true"]{pointer-events:none;}
 
 .hero__slogan{
-  margin-top:24px;
-  font-size:clamp(1.1rem,2.4vw,1.6rem);
+  margin-top:20px;
+  font-size:clamp(1.4rem,2.4vw,1.6rem);
   letter-spacing:.22em;
   text-transform:uppercase;
   opacity:0;
@@ -632,7 +632,7 @@ Hero
   display:flex;
   justify-content:center;
   flex-wrap:wrap;
-  gap:.6em;
+  gap:.4em;
   cursor:default;
 }
 .hero__slogan span{
@@ -1194,309 +1194,219 @@ body.reviews-lock{ overflow:hidden; }
     --rv-shift: 90px;
   }
 }
-/* =========================
-   TEAM (premium carousel)
-========================= */
-.team{
-  position: relative;
-  padding: clamp(56px, 7vw, 96px) 0;
+/* =========================================
+   TEAM SECTION
+========================================= */
+
+.team-slider {
+  padding: 160px 80px;
+  background: #000;
+  color: #fff;
 }
 
-.team__inner{
-  width: min(1180px, calc(100% - 48px));
-  margin: 0 auto;
+.team-header {
+  text-align: center;
+  margin-bottom: 80px;
 }
 
-.team__kicker{
-  font-size: 12px;
-  letter-spacing: .28em;
-  opacity: .72;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-.team__headRow{
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.team__title{
-  margin: 0;
-  font-size: clamp(28px, 4.2vw, 52px);
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  line-height: 1.05;
-}
-
-.team__sub{
-  margin: 12px 0 0;
-  max-width: 760px;
-  opacity: .70;
-  line-height: 1.6;
-}
-
-.team__controls{
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-/* Кнопки навигации — премиальные круги */
-.team-nav-btn{
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.28);
-  background: rgba(0,0,0,.35);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  cursor: pointer;
-  color: rgba(255,255,255,.92);
-  transition: transform .25s ease, border-color .25s ease, background .25s ease, box-shadow .25s ease;
-}
-
-.team-nav-btn svg{
-  width: 20px;
-  height: 20px;
-}
-
-.team-nav-btn:hover{
-  transform: translateY(-1px);
-  border-color: rgba(255,255,255,.42);
-  background: rgba(0,0,0,.46);
-  box-shadow: 0 18px 40px rgba(0,0,0,.45);
-}
-
-.team-nav-btn:active{
-  transform: translateY(0);
-}
-
-.team__railWrap{
-  position: relative;
-  margin-top: 28px;
-}
-
-/* “Виньетка” по краям, чтобы выглядело дороже */
-.team__railWrap::before,
-.team__railWrap::after{
-  content:"";
-  position:absolute;
-  top:0;
-  bottom:44px;
-  width: 64px;
-  pointer-events:none;
-  z-index: 2;
-}
-.team__railWrap::before{
-  left: -6px;
-  background: linear-gradient(90deg, rgba(0,0,0,.85), rgba(0,0,0,0));
-}
-.team__railWrap::after{
-  right: -6px;
-  background: linear-gradient(270deg, rgba(0,0,0,.85), rgba(0,0,0,0));
-}
-
-.team__rail{
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 8px 6px 18px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.team__rail::-webkit-scrollbar{ display:none; }
-
-/* Карточка */
-.team-card{
-  scroll-snap-align: start;
-  flex: 0 0 clamp(250px, 28vw, 320px);
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.12);
-  background:
-    radial-gradient(120% 120% at 20% 10%, rgba(255,255,255,.08), rgba(255,255,255,0) 55%),
-    rgba(255,255,255,.03);
-  box-shadow: 0 30px 80px rgba(0,0,0,.55);
-  overflow: hidden;
-  position: relative;
-  transform: translateZ(0);
-  transition: transform .45s cubic-bezier(.22,.61,.36,1), border-color .45s cubic-bezier(.22,.61,.36,1);
-}
-
-/* Постоянная “живая” микродинамика карточек */
-@keyframes teamFloat{
-  0%   { transform: translateY(0) }
-  50%  { transform: translateY(-6px) }
-  100% { transform: translateY(0) }
-}
-.team-card{
-  animation: teamFloat 7.5s ease-in-out infinite;
-}
-.team-card:nth-child(2n){ animation-duration: 8.6s; animation-delay: -1.8s; }
-.team-card:nth-child(3n){ animation-duration: 9.3s; animation-delay: -3.1s; }
-
-.team-card::after{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  border-radius: 24px;
-  background: radial-gradient(70% 60% at 30% 0%, rgba(255,255,255,.18), rgba(255,255,255,0) 55%);
-  opacity: .55;
-  pointer-events:none;
-  mix-blend-mode: screen;
-}
-
-.team-card:hover{
-  transform: translateY(-4px);
-  border-color: rgba(255,255,255,.22);
-}
-
-.team-card__media{
-  aspect-ratio: 4 / 5;
-  background: rgba(255,255,255,.04);
-  position: relative;
-  overflow: hidden;
-}
-
-.team-card__media img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display:block;
-  transform: scale(1.02);
-  filter: grayscale(1) contrast(1.08) brightness(.92);
-}
-
-/* Если фото уже подготовлено “ч/б + красный акцент” — фильтр не трогаем */
-.team-card.is-colorpop .team-card__media img{
-  filter: none;
-}
-
-/* Текст */
-.team-card__body{
-  padding: 16px 16px 18px;
-}
-
-.team-card__name{
-  font-size: 14px;
-  letter-spacing: .22em;
+.team-title {
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: 2px;
   text-transform: uppercase;
   opacity: .95;
 }
 
-.team-card__role{
-  margin-top: 8px;
-  font-size: 16px;
-  letter-spacing: .02em;
-  opacity: .86;
+/* ===== GRID ===== */
+
+.team-container {
+  max-width: 1750px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 4fr 5fr 5fr;
+  gap: 100px;
+  align-items: center;
 }
 
-.team-card__meta{
-  margin-top: 12px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  font-size: 13px;
-  opacity: .72;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+/* ===== LEFT COLUMN (3 x 4) ===== */
+
+.team-left {
+  height: 560px;
 }
 
-.team-card__dot{
-  width: 4px;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.45);
+.team-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 120px);
+  gap: 18px;
+  width: 100%;
 }
 
-/* “Колёсики” */
-.team__dots{
-  display:flex;
-  justify-content: center;
-  gap: 10px;
-  padding-top: 10px;
-}
-
-.team-dot{
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.35);
-  background: rgba(255,255,255,.08);
+.team-thumb {
+  border-radius: 18px;
+  overflow: hidden;
   cursor: pointer;
-  padding: 0;
-  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  opacity: .45;
+  transition: .35s ease;
+  transform: scale(.94);
 }
 
-.team-dot.is-active{
-  background: rgba(255,255,255,.85);
-  border-color: rgba(255,255,255,.85);
-  transform: scale(1.25);
+.team-thumb:hover {
+  opacity: .85;
+  transform: scale(.98);
 }
 
-/* Мобилка: стрелки можно оставить, но если захочешь — можно скрыть */
-@media (max-width: 680px){
-  .team__headRow{
-    align-items: flex-start;
-  }
-  .team-nav-btn{
-    width: 52px;
-    height: 52px;
-  }
-}
-
-/* Уважение к prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce){
-  .team-card{ animation: none; }
-  .team__rail{ scroll-behavior: auto; }
-}
-
-/* =========================
-   TEAM — reveal on scroll (repeat)
-========================= */
-
-/* Базовое состояние (скрыто) */
-.team .reveal {
-  opacity: 0;
-  transform: translateY(18px);
-  filter: blur(8px);
-  transition:
-    transform 1.05s cubic-bezier(.22,.61,.36,1),
-    opacity 1.05s cubic-bezier(.22,.61,.36,1),
-    filter 1.05s cubic-bezier(.22,.61,.36,1);
-  will-change: transform, opacity, filter;
-}
-
-/* Видимое состояние */
-.team .reveal.is-inview {
+.team-thumb.active {
   opacity: 1;
+  transform: scale(1);
+}
+
+.team-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ===== CENTER IMAGE ===== */
+
+.team-image-wrapper {
+  position: relative;
+  height: 560px;
+  overflow: hidden;
+  transform: translateX(70px);
+}
+
+.team-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  object-fit: cover;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: .6s cubic-bezier(.4,0,.2,1);
+}
+
+.team-image.active {
   transform: translateY(0);
-  filter: blur(0);
+  opacity: 1;
 }
 
-/* Ступеньки (если задано из JS) */
-.team .reveal.is-inview {
-  transition-delay: var(--td, 0s);
+.team-image.exit {
+  transform: translateY(100%);
+  opacity: 0;
 }
 
-/* Reduce motion */
-@media (prefers-reduced-motion: reduce){
-  .team .reveal,
-  .team .reveal.is-inview{
-    opacity: 1 !important;
-    transform: none !important;
-    filter: none !important;
-    transition: none !important;
+/* ===== TEXT ===== */
+
+.team-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 560px;
+  max-width: 520px;
+}
+
+.team-text-inner {
+  transform: translateX(60px);
+  opacity: 0;
+  transition: .6s cubic-bezier(.4,0,.2,1);
+}
+
+.team-text-inner.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.team-name {
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.team-affiliation {
+  font-size: 13px;
+  font-weight: 300;
+  opacity: .5;
+  letter-spacing: 1px;
+}
+
+.team-quote {
+  margin-top: 24px;
+  font-size: 20px;
+  line-height: 1.6;
+  font-weight: 300;
+  opacity: .85;
+}
+
+/* ===== CONTROLS ===== */
+
+.team-controls {
+  display: flex;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.team-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.4);
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: .3s ease;
+}
+
+.team-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .team-slider {
+    padding: 80px 24px;
+  }
+
+  .team-title {
+    font-size: 22px;
+    letter-spacing: 1.5px;
+  }
+
+  .team-container {
+    display: block;
+  }
+
+  .team-left {
+    display: none;
+  }
+
+  .team-image-wrapper {
+    height: 380px;
+    transform: none;
+  }
+
+  .team-right {
+    height: auto;
+    margin-top: 30px;
+  }
+
+  .team-quote {
+    font-size: 17px;
+  }
+
+  .team-controls {
+    justify-content: center;
   }
 }
+
 
 
 /* =========================================================
@@ -3034,59 +2944,7 @@ footer .footer-socials{
   margin: 12px 0 18px;
 }
 
-/* === FOOTER: auto pulse (random) === */
-footer .social{
-  --pulse-dur: 1800ms;   /* будет переопределяться из JS */
-}
 
-footer .social.is-pulse{
-  animation: footerSocialGlow var(--pulse-dur) ease both;
-}
-
-footer .social.is-pulse::before{
-  opacity: 1;
-}
-
-footer .social.is-pulse .social__path{
-  animation: footerSocialStroke var(--pulse-dur) ease both;
-}
-
-@keyframes footerSocialGlow{
-  0%{
-    transform: translateY(0);
-    border-color: rgba(245,245,245,.14);
-    background: rgba(245,245,245,.03);
-  }
-  18%{
-    transform: translateY(-2px);
-    border-color: rgba(245,245,245,.30);
-    background: rgba(245,245,245,.07);
-  }
-  70%{
-    transform: translateY(-2px);
-    border-color: rgba(245,245,245,.28);
-    background: rgba(245,245,245,.06);
-  }
-  100%{
-    transform: translateY(0);
-    border-color: rgba(245,245,245,.14);
-    background: rgba(245,245,245,.03);
-  }
-}
-
-@keyframes footerSocialStroke{
-  0%{   stroke-dashoffset: 120; opacity: .86; }
-  22%{  stroke-dashoffset: 0;   opacity: 1; }
-  76%{  stroke-dashoffset: 0;   opacity: 1; }
-  100%{ stroke-dashoffset: 120; opacity: .86; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  footer .social.is-pulse,
-  footer .social.is-pulse .social__path{
-    animation: none !important;
-  }
-}
 
 /* Floating CTA — desktop bottom-left */
 .cta-float-left{
@@ -3275,3 +3133,68 @@ footer .social:hover .social__path{
   footer .social, footer a{ transition: none; }
   footer .social__path{ transition: none; stroke-dashoffset: 0; }
 }
+
+/* =========================
+   SPACE BEFORE CONTACT
+========================= */
+
+#contact {
+  margin-top: 120px;
+}
+
+/* =========================================
+   HERO CLEAN RESET
+========================================= */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+
+#nebulaBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================
+   NEON LINE (ACME STYLE)
+========================================= */
+
+#logoText {
+  position: relative;
+  display: inline-block;
+}
+
+#logoText::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -6px;
+
+  width: 58%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(120,180,255,0.2) 20%,
+    rgba(120,180,255,1) 50%,
+    rgba(120,180,255,0.2) 80%,
+    transparent 100%
+  );
+
+  box-shadow:
+    0 0 12px rgba(120,180,255,0.9),
+    0 0 36px rgba(120,180,255,0.45),
+    0 0 80px rgba(120,180,255,0.2);
+}
+

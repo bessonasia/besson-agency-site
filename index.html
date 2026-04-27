@@ -1,1136 +1,585 @@
 <!DOCTYPE html>
 <html lang="ru" class="no-js">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Besson Agency</title>
-  <meta name="color-scheme" content="dark light">
-  
-  
-  <link rel="stylesheet" href="style.css" 
-        <link rel="stylesheet" href="start-project-left.css" />
-        
-        
-        
-        
+  <meta name="color-scheme" content="dark light" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-  
-  <button
-  class="cta-float-left"
-  id="startProjectHowBtn"
-  type="button"
-  aria-label="Начать проект — перейти к блоку Как мы работаем"
->
-  <span class="cta-float-left__orb" aria-hidden="true">
-    <svg class="cta-float-left__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <path d="M7 17L17 7M17 7H8M17 7V16" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </span>
-  <span class="cta-float-left__label">Начать проект</span>
-</button>
+  <button class="cta-float-left" id="startProjectHowBtn" type="button" aria-label="Начать проект - перейти к блоку Как мы работаем">
+    <span class="cta-float-left__orb" aria-hidden="true">
+      <svg class="cta-float-left__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M7 17L17 7M17 7H8M17 7V16" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+    <span class="cta-float-left__label">Начать проект</span>
+  </button>
 
-<script src="start-project-left.js" defer></script>
-  
-  <!-- NAV -->
   <header class="nav" id="siteNav">
     <a href="#top" class="brand__mark" id="navLogo">BESSON</a>
 
-    <!-- Десктопное меню -->
     <nav class="nav__group" aria-label="Основное меню">
       <a class="link" href="#about">Об агентстве</a>
       <a class="link" href="#work">Проекты</a>
+      <a class="link" href="#news">Новости</a>
       <a class="link" href="#contact">Контакты</a>
-      
-      <!-- LANG SWITCH (desktop) -->
-<div class="lang" id="langSwitch" aria-label="Язык сайта">
-  <button class="lang__btn" type="button" data-lang="ru" aria-pressed="true">RU</button>
-  <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
-  <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
-  <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
-</div>
-      
+
+      <div class="lang" id="langSwitch" aria-label="Язык сайта">
+        <button class="lang__btn is-active" type="button" data-lang="ru" aria-pressed="true">RU</button>
+        <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+        <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+        <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+      </div>
     </nav>
-    
-    
 
-
-    <!-- Бургер (только мобилка) -->
-    <button
-      class="burger"
-      type="button"
-      aria-label="Открыть меню"
-      aria-expanded="false"
-      aria-controls="mobileMenu"
-    >
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
       <span class="burger__line"></span>
       <span class="burger__line"></span>
     </button>
-    
-    
 
-    <!-- Мобильное меню -->
     <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
       <ul>
         <li><a href="#about">Об агентстве</a></li>
         <li><a href="#work">Проекты</a></li>
+        <li><a href="#news">Новости</a></li>
         <li><a href="#contact">Контакты</a></li>
-        <!-- LANG SWITCH (mobile) -->
-<div class="lang lang--mobile" id="langSwitchMobile" aria-label="Язык сайта">
-  <button class="lang__btn" type="button" data-lang="ru" aria-pressed="true">RU</button>
-  <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
-  <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
-  <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
-</div>
-
-        
       </ul>
-      
-      
+      <div class="lang lang--mobile" id="langSwitchMobile" aria-label="Язык сайта">
+        <button class="lang__btn is-active" type="button" data-lang="ru" aria-pressed="true">RU</button>
+        <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+        <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+        <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+      </div>
     </nav>
   </header>
 
   <main>
-    <!-- HERO (тёмный фон) -->
     <section class="hero" id="top" data-theme="dark">
-      
-      <!-- Nebula shader background (always behind hero content) -->
-  <div id="nebulaBg"
-       class="nebula-bg"
-       data-palette="default"
-       data-center-dim="1"
-       aria-hidden="true"></div>
-      
+      <div id="nebulaBg" class="nebula-bg" data-palette="default" data-center-dim="1" aria-hidden="true"></div>
+      <div class="hero-video" id="heroVideoWrap" aria-hidden="true">
+        <video
+          class="hero-video__media"
+          id="heroPortfolioVideo"
+          muted
+          playsinline
+          autoplay
+          loop
+          preload="auto"
+          data-fallback-src="assets/video/showreel2.mp4"
+        >
+          <source src="assets/video/showreel2.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-video__veil" aria-hidden="true"></div>
+        <div class="hero-video__grain" aria-hidden="true"></div>
+      </div>
+
       <div class="hero__content">
         <div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
         <div class="hero__slogan" id="slogan">
-          <span>BTL &</span><span>Event Production</span><span></span><span></span>
+          <span>BTL</span><span>&amp;</span><span>EVENT Production</span>
         </div>
       </div>
 
-      <!-- Индикатор скролла -->
-      <div class="hero__scroll">
+      <div class="hero__scroll" aria-hidden="true">
         <div class="scroll-indicator">
           <span class="scroll-indicator__mouse">
             <span class="scroll-indicator__wheel"></span>
           </span>
         </div>
       </div>
-
-      <!-- Белая панель, которая «вытягивается» вверх при скролле -->
-      <div class="hero__reveal"></div>
+      <div class="hero__reveal" aria-hidden="true"></div>
     </section>
 
-    <!-- INTERLUDE (светлый блок) -->
     <section class="interlude" data-theme="light">
       <h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
     </section>
 
-    <!-- ABOUT (светлый блок) -->
     <section class="stage" id="about" data-theme="light">
       <h2 class="stage__title">
-        Мы создаём яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
+        Мы создаем яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события.
         Реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
       </h2>
-
     </section>
 
-    <!-- GLOBE DOME -->
-    <section class="globe-bridge" id="globeBridge" data-theme="light" aria-hidden="true">
-      <div class="globe-dome" id="globeDome">
-        <canvas id="globeCanvas"></canvas>
-        <div class="globe-label" id="globeLabel" aria-live="polite"></div>
+    <section class="resources" id="resources" data-theme="dark" aria-labelledby="resourcesTitle">
+      <div class="resources__inner">
+        <header class="resources__head">
+          <h2 class="resources__title" id="resourcesTitle">Ресурсы</h2>
+        </header>
+
+        <div class="resources__body">
+          <div class="resources__grid" aria-label="Ресурсы агентства">
+          <article class="resource-card resource-card--offices" data-resource-card data-target="3" data-prefix-key="" data-suffix="">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>3</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesLegalOffices">Офиса и юридические лица в Евразии</p>
+          </article>
+
+          <article class="resource-card resource-card--wide" data-resource-card data-target="200000" data-prefix-key="resourcesUpTo" data-suffix="">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix">до</span>
+              <span class="resource-card__value" data-count>200 000</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesCredit">Кредитуем проекты на срок до 90 календарных дней и сумму до 200 000$</p>
+          </article>
+
+          <article class="resource-card" data-resource-card data-target="100" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>100</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesMechanics">Креативных промо механик</p>
+          </article>
+
+          <article class="resource-card" data-resource-card data-target="2000" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>2000</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesPromoters">Опытных промоутеров в базе</p>
+          </article>
+
+          <article class="resource-card resource-card--wide-sm" data-resource-card data-target="30" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>30</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesRepresentatives">Региональных представителей в крупных городах Центральной Азии</p>
+          </article>
+          </div>
+        </div>
       </div>
     </section>
-    <!-- /GLOBE DOME -->
 
-    <!-- WORK -->
-    <section id="work" data-theme="dark">
+    <div class="globe-zone" data-theme="light">
+      <section class="globe-heading" data-theme="light" aria-labelledby="globeTitle">
+        <div class="globe-intro">
+          <p class="globe-intro__kicker" id="globeSub">Три офиса обслуживания</p>
+          <h2 class="globe-intro__title" id="globeTitle">Одно окно в Евразию</h2>
+        </div>
+      </section>
+
+      <section class="globe-bridge" id="globeBridge" data-theme="light" aria-hidden="true">
+        <div class="globe-dome" id="globeDome">
+          <canvas id="globeCanvas"></canvas>
+          <div class="globe-label" id="globeLabel" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="work-switch" id="work" data-theme="dark" aria-label="Фильтр проектов">
+      <p class="work-switch__kicker" id="workSwitchKicker">Выберите тип проекта</p>
+      <div class="work-switch__inner">
+        <button class="work-switch__btn" type="button" data-work-filter="btl" aria-pressed="false">BTL</button>
+        <button class="work-switch__btn is-active" type="button" data-work-filter="event" aria-pressed="true">EVENT</button>
+      </div>
+    </section>
+
+    <section id="workGrid" data-theme="dark">
       <div class="wall" id="wall">
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" width="1600" height="900" alt="Project 1">
-          <div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" width="1600" height="900" alt="Project 2">
-          <div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" width="1600" height="900" alt="Project 3">
-          <div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" width="1600" height="900" alt="Project 4">
-          <div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" width="1600" height="900" alt="Project 5">
-          <div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" width="1600" height="900" alt="Project 6">
-          <div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" width="1600" height="900" alt="Project 7">
-          <div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" width="1600" height="900" alt="Project 8">
-          <div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" width="1600" height="900" alt="Project 9">
-          <div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" width="1600" height="900" alt="Project 10">
-          <div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" width="1600" height="900" alt="Project 11">
-          <div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div>
-        </a>
-        <a class="tile" href="#">
-          <img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" width="1600" height="900" alt="Project 12">
-          <div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div>
-        </a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" width="1600" height="900" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" width="1600" height="900" alt="Project 2"><div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" width="1600" height="900" alt="Project 3"><div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" width="1600" height="900" alt="Project 4"><div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" width="1600" height="900" alt="Project 5"><div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" width="1600" height="900" alt="Project 6"><div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" width="1600" height="900" alt="Project 7"><div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" width="1600" height="900" alt="Project 8"><div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" width="1600" height="900" alt="Project 9"><div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" width="1600" height="900" alt="Project 10"><div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" width="1600" height="900" alt="Project 11"><div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" width="1600" height="900" alt="Project 12"><div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div></a>
       </div>
     </section>
 
-    <!-- CLIENTS — Infinite Logo Cloud (Single Lane, Dark) -->
-<section class="clients clients--marquee" id="clients" data-theme="dark" aria-labelledby="clientsTitle">
-  <div class="clients__inner">
-    <header class="clients__head">
-      <h2 class="clients__headline" id="clientsTitle">Компании, которые нам доверяют</h2>
-    </header>
-
-    <div class="logo-marquee" data-speed="18" data-speed-hover="25" aria-label="Логотипы клиентов">
-      <div class="logo-marquee__viewport">
-        <div class="logo-marquee__track">
-          <div class="logo-marquee__set">
-            <!-- ВСТАВЬ СЮДА СВОИ ЛОГОТИПЫ (12–24 шт). Лучше SVG, можно IMG. -->
-            <img class="logo-marquee__logo" src="assets/logos/nestle.svg" alt="Nestlé" loading="lazy" />
-            <img class="logo-marquee__logo" src="assets/logos/pepsico.svg" alt="PepsiCo" loading="lazy" />
-            <img class="logo-marquee__logo" src="assets/logos/astrazeneca.svg" alt="AstraZeneca" loading="lazy" />
-            <img class="logo-marquee__logo" src="assets/logos/avito.svg" alt="Avito" loading="lazy" />
-            <img class="logo-marquee__logo" src="assets/logos/technomart.svg" alt="Technomart" loading="lazy" />
-            <img class="logo-marquee__logo" src="assets/logos/centrumair.svg" alt="Centrum Air" loading="lazy" />
-            <!-- /логотипы -->
+    <section class="clients clients--marquee" id="clients" data-theme="light" aria-labelledby="clientsTitle">
+      <div class="clients__inner">
+        <header class="clients__head">
+          <p class="clients__kicker" id="clientsKicker">Наши клиенты</p>
+          <h2 class="clients__headline" id="clientsTitle">Компании, которые нам доверяют</h2>
+        </header>
+        <div class="logo-marquee" data-speed="80" data-speed-hover="32" aria-label="Логотипы клиентов">
+          <div class="logo-marquee__viewport">
+            <div class="logo-marquee__track">
+              <div class="logo-marquee__set">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/nestle.com" alt="Nestle" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/pepsico.com" alt="PepsiCo" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/astrazeneca.com" alt="AstraZeneca" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/avito.ru" alt="Avito" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/texnomart.uz" alt="Texnomart" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/centrum-air.com" alt="Centrum Air" loading="lazy">
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="reviews" id="reviews" data-theme="light">
+      <div class="reviews__inner">
+        <header class="reviews__head" data-rv>
+          <p class="reviews__kicker">Видео отзывы</p>
+          <h2 class="reviews__title">Клиенты о нас</h2>
+          <p class="reviews__lead" id="rvLead">Коротко. По делу. Без рекламной пены.</p>
+        </header>
+
+        <button class="reviews__card" type="button" id="rvOpen" data-rv aria-label="Открыть видео-отзыв">
+          <div class="reviews__thumb" id="rvThumb" aria-hidden="true"></div>
+          <span class="reviews__play" aria-hidden="true"><span class="reviews__playRing"></span><span class="reviews__playTri"></span></span>
+          <span class="reviews__caption" aria-hidden="true">
+            <span class="reviews__quote" id="rvQuote">"Сильная режиссура процесса: все под контролем."</span>
+            <span class="reviews__meta" id="rvMeta">Head of Trade - METRO</span>
+          </span>
+        </button>
+
+        <nav class="reviews__tabs" aria-label="Выбор отзыва" data-rv>
+          <button class="reviews__tab is-active" type="button" data-rv-tab="0"><span>01</span> Nestle</button>
+          <button class="reviews__tab" type="button" data-rv-tab="1"><span>02</span> Beiersdorf</button>
+          <button class="reviews__tab" type="button" data-rv-tab="2"><span>03</span> METRO</button>
+        </nav>
+      </div>
+    </section>
+
+    <div class="reviews-modal" id="rvModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="reviews-modal__bg" data-rv-close></div>
+      <div class="reviews-modal__panel" role="document">
+        <button class="reviews-modal__close" type="button" aria-label="Закрыть" data-rv-close></button>
+        <div class="reviews-modal__frame" id="rvFrame"></div>
+      </div>
     </div>
 
-  </div>
-</section>
+    <section class="team" id="team" data-theme="dark" aria-label="Команда Besson Agency">
+      <div class="team__inner">
+        <div class="team__head">
+          <div class="team__kicker">КОМАНДА</div>
+          <div class="team__headRow">
+            <h2 class="team__title">Люди, которые делают результат</h2>
+            <div class="team__controls" aria-label="Навигация по карточкам команды">
+              <button class="team-nav-btn" type="button" data-team-prev aria-label="Предыдущий сотрудник">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+              <button class="team-nav-btn" type="button" data-team-next aria-label="Следующий сотрудник">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
 
-
-<!-- VIDEO REVIEWS (B) -->
-<section class="reviews" id="reviews" data-theme="light">
-  <div class="reviews__inner">
-
-    <header class="reviews__head" data-rv>
-      <p class="reviews__kicker">Видео отзывы</p>
-      <h2 class="reviews__title">Клиенты о нас </h2>
-      <p class="reviews__lead" id="rvLead">
-        Коротко. По делу. Без рекламной пены.
-      </p>
-    </header>
-
-    <button class="reviews__card" type="button" id="rvOpen" data-rv aria-label="Открыть видео-отзыв">
-      <div class="reviews__thumb" id="rvThumb" aria-hidden="true"></div>
-
-      <span class="reviews__play" aria-hidden="true">
-        <span class="reviews__playRing"></span>
-        <span class="reviews__playTri"></span>
-      </span>
-
-      <span class="reviews__caption" aria-hidden="true">
-        <span class="reviews__quote" id="rvQuote">“Сильная режиссура процесса: всё под контролем.”</span>
-        <span class="reviews__meta" id="rvMeta">Head of Trade — METRO</span>
-      </span>
-    </button>
-
-    <nav class="reviews__tabs" aria-label="Выбор отзыва" data-rv>
-      <button class="reviews__tab is-active" type="button" data-rv-tab="0"><span>01</span> Nestlé</button>
-      <button class="reviews__tab" type="button" data-rv-tab="1"><span>02</span> Beiersdorf</button>
-      <button class="reviews__tab" type="button" data-rv-tab="2"><span>03</span> METRO</button>
-    </nav>
-
-  </div>
-</section>
-
-<!-- REVIEWS MODAL -->
-<div class="reviews-modal" id="rvModal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="reviews-modal__bg" data-rv-close></div>
-
-  <div class="reviews-modal__panel" role="document">
-    <button class="reviews-modal__close" type="button" aria-label="Закрыть" data-rv-close></button>
-    <div class="reviews-modal__frame" id="rvFrame"></div>
-  </div>
-</div>
-<!-- /VIDEO REVIEWS (B) -->
-
-    <section class="team" id="team" aria-label="Команда Besson Agency">
-  <div class="team__inner">
-    <div class="team__head">
-      <div class="team__kicker">КОМАНДА</div>
-
-      <div class="team__headRow">
-        <h2 class="team__title">Люди, которые делают результат</h2>
-
-        <!-- Навигация (премиальные стрелки) -->
-        <div class="team__controls" aria-label="Навигация по карточкам команды">
-          <button class="team-nav-btn" type="button" data-team-prev aria-label="Предыдущий сотрудник">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <button class="team-nav-btn" type="button" data-team-next aria-label="Следующий сотрудник">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
+        <div class="team__railWrap">
+          <div class="team__rail" id="teamRail" tabindex="0" aria-label="Список сотрудников">
+            <article class="team-card is-bw"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Юрий</div><div class="team-card__role">Основатель / Генеральный директор</div><div class="team-card__meta"><span>Москва</span><span class="team-card__dot"></span><span>Россия</span></div></div></article>
+            <article class="team-card is-colorpop"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Севара</div><div class="team-card__role">Директор филиала</div><div class="team-card__meta"><span>Ташкент</span><span class="team-card__dot"></span><span>Узбекистан</span></div></div></article>
+            <article class="team-card is-colorpop"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Людмила</div><div class="team-card__role">Управляющий директор</div><div class="team-card__meta"><span>Алматы</span><span class="team-card__dot"></span><span>Казахстан</span></div></div></article>
+            <article class="team-card is-colorpop"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Лариса</div><div class="team-card__role">Главный бухгалтер</div><div class="team-card__meta"><span>Алматы</span><span class="team-card__dot"></span><span>Казахстан</span></div></div></article>
+            <article class="team-card is-bw"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Виолетта</div><div class="team-card__role">Аккаунт менеджер</div><div class="team-card__meta"><span>Москва</span><span class="team-card__dot"></span><span>Россия</span></div></div></article>
+            <article class="team-card is-bw"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Анастасия</div><div class="team-card__role">Аккаунт менеджер</div><div class="team-card__meta"><span>Москва</span><span class="team-card__dot"></span><span>Россия</span></div></div></article>
+            <article class="team-card is-colorpop"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Зарина</div><div class="team-card__role">Аккаунт менеджер</div><div class="team-card__meta"><span>Алматы</span><span class="team-card__dot"></span><span>Казахстан</span></div></div></article>
+            <article class="team-card is-colorpop"><div class="team-card__media"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника"></div><div class="team-card__body"><div class="team-card__name">Камилла</div><div class="team-card__role">Аккаунт менеджер</div><div class="team-card__meta"><span>Ташкент</span><span class="team-card__dot"></span><span>Узбекистан</span></div></div></article>
+          </div>
+          <div class="team__dots" id="teamDots" aria-label="Пагинация по сотрудникам"></div>
         </div>
       </div>
+    </section>
 
-      
-
-    <!-- Полоса с карточками -->
-    <div class="team__railWrap">
-      <div class="team__rail" id="teamRail" tabindex="0" aria-label="Список сотрудников (горизонтальная прокрутка)">
-        <!-- Карточки. Для color-pop используй уже подготовленные изображения (селективный цвет) -->
-        <article class="team-card is-bw" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Юрий</div>
-            <div class="team-card__role">Основатель / Генеральный директор</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Москва</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Россия</span>
-            </div>
-          </div>
-        </article>
-
-<article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Севара</div>
-            <div class="team-card__role">Директор филиала</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Ташкент</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Узбекистан</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Людмила</div>
-            <div class="team-card__role">Управляющий директор</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Алматы</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Казахстан</span>
-            </div>
-          </div>
-        </article>
-        
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Лариса</div>
-            <div class="team-card__role">Главный бухгалтер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Алматы</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Казахстан</span>
-            </div>
-          </div>
-        </article>
-        
-
-        <article class="team-card is-bw" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Виолетта </div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Москва</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Россия</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="team-card is-bw" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Анастасия</div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Москва</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Россия</span>
-            </div>
-          </div>
-        </article>
-        
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Зарина</div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Алматы</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Казахстан</span>
-            </div>
-          </div>
-        </article>
-
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Ольга</div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Астана</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Казахстан</span>
-            </div>
-          </div>
-        </article>
-        
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Камилла</div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Ташкент</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Узбекистан</span>
-            </div>
-          </div>
-        </article>
-        
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Наина</div>
-            <div class="team-card__role">Аккаунт менеджер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Самарканд</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Узбекистан</span>
-            </div>
-          </div>
-        </article>
-        
-        <article class="team-card is-colorpop" aria-label="Сотрудник">
-          <div class="team-card__media">
-            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Портрет сотрудника">
-          </div>
-          <div class="team-card__body">
-            <div class="team-card__name">Наиль</div>
-            <div class="team-card__role">Старший дизайнер</div>
-            <div class="team-card__meta">
-              <span class="team-card__place">Алматы</span>
-              <span class="team-card__dot" aria-hidden="true"></span>
-              <span class="team-card__country">Казахстан</span>
-            </div>
-          </div>
-        </article>
+    <section class="howpath" id="how" data-theme="light" aria-labelledby="howpathTitle">
+      <div class="howpath__inner">
+        <header class="howpath__head">
+          <p class="howpath__kicker">Экспозиция · Процесс · 5 этапов</p>
+          <h2 class="howpath__title" id="howpathTitle">Как мы работаем</h2>
+        </header>
+        <div class="howpath__layout">
+          <aside class="howpath__rail" aria-hidden="true">
+            <div class="howpath__railNo" id="howRailNo">01</div>
+            <div class="howpath__railName" id="howRailName">Бриф</div>
+          </aside>
+          <ol class="howpath__list" role="list">
+            <li class="howpath__item is-active" data-no="01" data-name="Бриф" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">01</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Бриф</h3><p class="howpath__p">Собираем вводные, цели, ограничения и критерии успеха.</p></div></li>
+            <li class="howpath__item" data-no="02" data-name="Концепция" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">02</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Концепция</h3><p class="howpath__p">Делаем идею и структуру, которая держит внимание и цель.</p></div></li>
+            <li class="howpath__item" data-no="03" data-name="Подготовка" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">03</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Подготовка</h3><p class="howpath__p">Смета, команда, план-график, контроль рисков и качества.</p></div></li>
+            <li class="howpath__item" data-no="04" data-name="Реализация" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">04</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Реализация</h3><p class="howpath__p">Ведем процесс в день Х: темп, точность, управление сценарием.</p></div></li>
+            <li class="howpath__item" data-no="05" data-name="Отчет" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">05</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Отчет</h3><p class="howpath__p">Финализация, документы, выводы и улучшения на следующий цикл.</p></div></li>
+          </ol>
+        </div>
       </div>
+    </section>
 
-      <!-- “Колёсики” (премиальные точки) -->
-      <div class="team__dots" id="teamDots" aria-label="Пагинация по сотрудникам"></div>
-    </div>
-  </div>
-</section>
+    <section class="contact" id="contact" data-theme="dark" aria-labelledby="contactTitle">
+      <div class="contact__inner">
+        <header class="contact__head">
+          <h2 class="contact__title" id="contactTitle">Начать проект</h2>
+          <p class="contact__sub">Короткая заявка в 4 шага. Документы - по желанию.</p>
+        </header>
 
-      
-      
-      <!-- HOW WE WORK — Museum -->
-<section class="howpath" id="how" data-theme="light" aria-labelledby="howpathTitle">
-  <div class="howpath__inner">
+        <div class="msf" aria-label="Форма начала проекта">
+          <button class="msf__close" id="msfClose" type="button" aria-label="Закрыть форму"></button>
+          <div class="msf__card" id="msfCard">
+            <form class="msf-form" id="msfForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data" data-upload-endpoint="/api/upload-doc.php" autocomplete="off">
+              <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e" />
+              <input type="hidden" name="subject" value="Besson Agency - Начать проект" />
+              <input type="hidden" name="from_name" value="Besson Agency Website" />
+              <input type="hidden" name="type" value="start_project" />
+              <input type="hidden" name="botcheck" value="" />
+              <input type="hidden" name="message" id="msf_message_h" />
+              <input type="hidden" name="name" id="msf_name_h" />
+              <input type="hidden" name="email" id="msf_email_h" />
+              <input type="hidden" name="phone" id="msf_phone_h" />
+              <input type="hidden" name="phone_e164" id="msf_phone_e164_h" />
+              <input type="hidden" name="phone_country" id="msf_phone_country_h" />
+              <input type="hidden" name="phone_dial" id="msf_phone_dial_h" />
+              <input type="hidden" name="no_docs" id="msf_no_docs_h" value="0" />
+              <input type="hidden" name="doc_url" id="msf_doc_url" />
+              <input type="hidden" name="doc_name" id="msf_doc_name" />
+              <input type="hidden" name="doc_size" id="msf_doc_size" />
+              <input type="hidden" name="doc_type" id="msf_doc_type" />
+              <input type="hidden" name="personal_data_consent" id="msf_personal_consent_h" value="no" />
+              <input type="hidden" name="marketing_consent" id="msf_marketing_consent_h" value="no" />
 
-    <header class="howpath__head">
-      <p class="howpath__kicker">Экспозиция · Процесс · 5 этапов</p>
-      <h2 class="howpath__title" id="howpathTitle">Как мы работаем</h2>
-    </header>
-
-    <div class="howpath__layout">
-      <!-- Sticky museum rail (changes as you scroll) -->
-      <aside class="howpath__rail" aria-hidden="true">
-        <div class="howpath__railNo" id="howRailNo">01</div>
-        <div class="howpath__railName" id="howRailName">Бриф</div>
-      </aside>
-
-      <ol class="howpath__list" role="list">
-        <li class="howpath__item is-active" data-no="01" data-name="Бриф" tabindex="0">
-          <div class="howpath__plate" aria-hidden="true">
-            <span class="howpath__plateNo">01</span>
-            <span class="howpath__plateTag">Этап</span>
-          </div>
-          <div class="howpath__content">
-            <h3 class="howpath__h">Бриф</h3>
-            <p class="howpath__p">Собираем вводные, цели, ограничения и критерии успеха.</p>
-          </div>
-        </li>
-
-        <li class="howpath__item" data-no="02" data-name="Концепция" tabindex="0">
-          <div class="howpath__plate" aria-hidden="true">
-            <span class="howpath__plateNo">02</span>
-            <span class="howpath__plateTag">Этап</span>
-          </div>
-          <div class="howpath__content">
-            <h3 class="howpath__h">Концепция</h3>
-            <p class="howpath__p">Делаем идею и структуру, которая держит внимание и цель.</p>
-          </div>
-        </li>
-
-        <li class="howpath__item" data-no="03" data-name="Подготовка" tabindex="0">
-          <div class="howpath__plate" aria-hidden="true">
-            <span class="howpath__plateNo">03</span>
-            <span class="howpath__plateTag">Этап</span>
-          </div>
-          <div class="howpath__content">
-            <h3 class="howpath__h">Подготовка</h3>
-            <p class="howpath__p">Смета, команда, план-график, контроль рисков и качества.</p>
-          </div>
-        </li>
-
-        <li class="howpath__item" data-no="04" data-name="Реализация" tabindex="0">
-          <div class="howpath__plate" aria-hidden="true">
-            <span class="howpath__plateNo">04</span>
-            <span class="howpath__plateTag">Этап</span>
-          </div>
-          <div class="howpath__content">
-            <h3 class="howpath__h">Реализация</h3>
-            <p class="howpath__p">Ведём процесс в день Х: темп, точность, управление сценарием.</p>
-          </div>
-        </li>
-
-        <li class="howpath__item" data-no="05" data-name="Отчёт" tabindex="0">
-          <div class="howpath__plate" aria-hidden="true">
-            <span class="howpath__plateNo">05</span>
-            <span class="howpath__plateTag">Этап</span>
-          </div>
-          <div class="howpath__content">
-            <h3 class="howpath__h">Отчёт</h3>
-            <p class="howpath__p">Финализация, документы, выводы и улучшения на следующий цикл.</p>
-          </div>
-        </li>
-      </ol>
-    </div>
-
-  </div>
-</section>
-
-      
-      
-      
-
-  <!-- CONTACT (замени текущий #contact на этот блок) -->
-<section class="contact" id="contact" data-theme="dark" aria-labelledby="contactTitle">
-  <div class="contact__inner">
-    <header class="contact__head">
-      <h2 class="contact__title" id="contactTitle">Начать проект</h2>
-      <p class="contact__sub">Короткая заявка в 4 шага. Документы — по желанию.</p>
-    </header>
-
-    <div class="msf" aria-label="Форма начала проекта">
-      <div class="msf__card" id="msfCard">
-        <form
-          class="msf-form"
-          id="msfForm"
-          action="https://api.web3forms.com/submit"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          <!-- Web3Forms -->
-          <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e" />
-          <input type="hidden" name="subject" value="Besson Agency — Начать проект" />
-          <input type="hidden" name="from_name" value="Besson Agency Website" />
-          <input type="hidden" name="type" value="start_project" />
-          <input type="hidden" name="botcheck" value="" />
-
-          <!-- Optional: message summary -->
-          <input type="hidden" name="message" id="msf_message_h" />
-
-          <!-- Hidden mirrors -->
-          <input type="hidden" name="name" id="msf_name_h" />
-          <input type="hidden" name="email" id="msf_email_h" />
-
-          <input type="hidden" name="phone" id="msf_phone_h" />
-          <input type="hidden" name="phone_e164" id="msf_phone_e164_h" />
-          <input type="hidden" name="phone_country" id="msf_phone_country_h" />
-          <input type="hidden" name="phone_dial" id="msf_phone_dial_h" />
-
-          <input type="hidden" name="no_docs" id="msf_no_docs_h" value="0" />
-
-          <!-- Document link from PS.kz -->
-          <input type="hidden" name="doc_url" id="msf_doc_url" />
-          <input type="hidden" name="doc_name" id="msf_doc_name" />
-          <input type="hidden" name="doc_size" id="msf_doc_size" />
-          <input type="hidden" name="doc_type" id="msf_doc_type" />
-
-          <div class="msf__steps" id="msfSteps" aria-label="Шаги">
-            <button type="button" class="msf-step is-active" data-step="0" aria-current="step">
-              <span class="msf-step__num">1</span>
-            </button>
-            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine01"></span></span>
-
-            <button type="button" class="msf-step" data-step="1" disabled>
-              <span class="msf-step__num">2</span>
-            </button>
-            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine12"></span></span>
-
-            <button type="button" class="msf-step" data-step="2" disabled>
-              <span class="msf-step__num">3</span>
-            </button>
-            <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine23"></span></span>
-
-            <button type="button" class="msf-step" data-step="3" disabled>
-              <span class="msf-step__num">4</span>
-            </button>
-          </div>
-
-          <div class="msf__progress" aria-hidden="true">
-            <div class="msf__bar" id="msfBar" style="width: 25%"></div>
-          </div>
-
-          <div class="msf__panel" id="msfPanel">
-            <div class="msf__panelHead">
-              <label class="msf__label" id="msfLabel" for="msfTextInput">Имя</label>
-              <span class="msf__count" id="msfCount">1/4</span>
-            </div>
-
-            <!-- steps 1-2 -->
-            <div class="msf__field" id="msfFieldText">
-              <input
-                class="msf__input"
-                id="msfTextInput"
-                type="text"
-                placeholder="Ваше имя"
-                autocomplete="name"
-                inputmode="text"
-              />
-              <p class="msf__hint" id="msfHint">Как к вам обращаться?</p>
-            </div>
-
-            <!-- step 3: телефон -->
-            <div class="msf__field" id="msfFieldPhone" hidden>
-              <div class="msf-phone" id="msfPhone">
-                <button
-                  type="button"
-                  class="msf-phone__cc"
-                  id="msfCcBtn"
-                  aria-haspopup="listbox"
-                  aria-expanded="false"
-                  aria-controls="msfCcMenu"
-                >
-                  <span class="msf-phone__flag" id="msfCcFlag" aria-hidden="true">🇷🇺</span>
-                  <span class="msf-phone__code" id="msfCcCode">+7</span>
-                  <span class="msf-phone__chev" aria-hidden="true">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                      <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </span>
-                </button>
-
-                <input
-                  class="msf__input msf-phone__input"
-                  id="msfPhoneInput"
-                  type="tel"
-                  inputmode="tel"
-                  autocomplete="tel"
-                  placeholder="(999) 999-99-99"
-                />
+              <div class="msf__steps" id="msfSteps" aria-label="Шаги">
+                <button type="button" class="msf-step is-active" data-step="0" aria-current="step"><span class="msf-step__num">1</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine01"></span></span>
+                <button type="button" class="msf-step" data-step="1" disabled><span class="msf-step__num">2</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine12"></span></span>
+                <button type="button" class="msf-step" data-step="2" disabled><span class="msf-step__num">3</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine23"></span></span>
+                <button type="button" class="msf-step" data-step="3" disabled><span class="msf-step__num">4</span></button>
               </div>
 
-              <!-- Country overlay -->
-              <div class="msf-cc" id="msfCcMenu" hidden>
-                <div class="msf-cc__panel" role="dialog" aria-label="Выбор страны">
-                  <div class="msf-cc__top">
-                    <input class="msf-cc__search" id="msfCcSearch" type="text" placeholder="Страна или код" />
-                    <button type="button" class="msf-cc__close" id="msfCcClose" aria-label="Закрыть">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-                      </svg>
+              <div class="msf__progress" aria-hidden="true"><div class="msf__bar" id="msfBar" style="width:25%"></div></div>
+
+              <p class="msf__docsNotice" id="msfDocsNotice">
+                Тендерные документы можно прикрепить на последнем шаге. PDF / DOCX / ZIP до 50MB.
+              </p>
+
+              <div class="msf__panel" id="msfPanel">
+                <div class="msf__panelHead">
+                  <label class="msf__label" id="msfLabel" for="msfTextInput">Имя</label>
+                  <span class="msf__count" id="msfCount">1/4</span>
+                </div>
+
+                <div class="msf__field" id="msfFieldText">
+                  <input class="msf__input" id="msfTextInput" type="text" placeholder="Ваше имя" autocomplete="name" inputmode="text" />
+                  <p class="msf__hint" id="msfHint">Как к вам обращаться?</p>
+                </div>
+
+                <div class="msf__field" id="msfFieldPhone" hidden>
+                  <div class="msf-phone" id="msfPhone">
+                    <button type="button" class="msf-phone__cc" id="msfCcBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="msfCcMenu">
+                      <span class="msf-phone__flag" id="msfCcFlag" aria-hidden="true">RU</span>
+                      <span class="msf-phone__code" id="msfCcCode">+7</span>
+                      <span class="msf-phone__chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
                     </button>
+                    <input class="msf__input msf-phone__input" id="msfPhoneInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="(999) 999-99-99" />
                   </div>
-                  <div class="msf-cc__list" id="msfCcList" role="listbox" tabindex="-1"></div>
+
+                  <div class="msf-cc" id="msfCcMenu" hidden>
+                    <div class="msf-cc__panel" role="dialog" aria-label="Выбор страны">
+                      <div class="msf-cc__top">
+                        <input class="msf-cc__search" id="msfCcSearch" type="text" placeholder="Страна или код" />
+                        <button type="button" class="msf-cc__close" id="msfCcClose" aria-label="Закрыть">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+                        </button>
+                      </div>
+                      <div class="msf-cc__list" id="msfCcList" role="listbox" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <p class="msf__hint" id="msfPhoneHint">Выберите страну и введите номер.</p>
+                </div>
+
+                <div class="msf__field msf__field--docs" id="msfFieldDocs" hidden>
+                  <div class="msf__docsTop">
+                    <div class="msf__docsMeta">
+                      <span class="msf__docsLabel">Тендерные документы</span>
+                      <span class="msf__docsHint" id="msfDocsHint">PDF / DOCX / ZIP до 50MB</span>
+                    </div>
+                    <label class="msf__attachBtn" for="msfFile" id="msfAttachBtn">
+                      <span class="msf__attachIc" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 16V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M7 8l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg></span>
+                      <span class="msf__attachTx">Прикрепить</span>
+                    </label>
+                    <input id="msfFile" class="msf__file" type="file" accept=".pdf,.doc,.docx,.zip,.rar,.7z,.png,.jpg,.jpeg" />
+                  </div>
+                  <label class="msf__nodocs">
+                    <input class="msf__check" id="msfNoDocs" type="checkbox" />
+                    <span class="msf__checkUi" aria-hidden="true"></span>
+                    <span class="msf__nodocsTx">Документов нет</span>
+                  </label>
+                  <p class="msf__hint">Можно прикрепить документы или отметить "Документов нет".</p>
                 </div>
               </div>
 
-              <p class="msf__hint" id="msfPhoneHint">Выберите страну и введите номер.</p>
-            </div>
-
-            <!-- step 4: docs -->
-            <div class="msf__field msf__field--docs" id="msfFieldDocs" hidden>
-              <div class="msf__docsTop">
-                <div class="msf__docsMeta">
-                  <span class="msf__docsLabel">Тендерные документы</span>
-                  <span class="msf__docsHint" id="msfDocsHint">PDF / DOCX / ZIP до 50MB</span>
-                </div>
-
-                <label class="msf__attachBtn" for="msfFile" id="msfAttachBtn">
-                  <span class="msf__attachIc" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                      <path d="M12 16V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      <path d="M7 8l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      <path d="M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
+              <div class="msf-legal" aria-label="Согласия">
+                <label class="msf-legal__row">
+                  <input class="msf-legal__check" id="msfConsentPd" type="checkbox" autocomplete="off" />
+                  <span class="msf-legal__box" aria-hidden="true"></span>
+                  <span class="msf-legal__text">
+                    Согласен на обработку персональных данных по
+                    <a href="personal-data-consent.html" target="_blank" rel="noopener">согласию</a>
+                    и ознакомлен с
+                    <a href="privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a>.
                   </span>
-                  <span class="msf__attachTx">Прикрепить</span>
                 </label>
-
-                <input
-                  id="msfFile"
-                  class="msf__file"
-                  type="file"
-                  accept=".pdf,.doc,.docx,.zip,.rar,.7z,.png,.jpg,.jpeg"
-                />
+                <label class="msf-legal__row">
+                  <input class="msf-legal__check" id="msfConsentMarketing" type="checkbox" autocomplete="off" />
+                  <span class="msf-legal__box" aria-hidden="true"></span>
+                  <span class="msf-legal__text">
+                    Согласен получать рекламные и информационные сообщения.
+                    <a href="marketing-consent.html" target="_blank" rel="noopener">Подробнее</a>
+                  </span>
+                </label>
               </div>
 
-              <label class="msf__nodocs">
-                <input class="msf__check" id="msfNoDocs" type="checkbox" />
-                <span class="msf__checkUi" aria-hidden="true"></span>
-                <span class="msf__nodocsTx">Документов нет</span>
-              </label>
-
-              <p class="msf__hint">Можно прикрепить документы или отметить «Документов нет».</p>
-            </div>
+              <button class="msf__cta" id="msfCta" type="button" disabled>
+                <span class="msf__ctaLabel" id="msfCtaLabel">Продолжить</span>
+              </button>
+              <button class="msf__back" id="msfBack" type="button" hidden>Назад</button>
+              <p class="msf__status" id="msfStatus" aria-live="polite"></p>
+            </form>
           </div>
+        </div>
 
-          <button class="msf__cta" id="msfCta" type="button" disabled>
-            <span class="msf__ctaLabel" id="msfCtaLabel">Продолжить</span>
-
-            <!-- остаётся в HTML, но будет скрыто CSS-ом -->
-            <span class="msf__ctaArrow" aria-hidden="true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M7 17L17 7M17 7H8M17 7V16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-          </button>
-
-          <button class="msf__back" id="msfBack" type="button" hidden>Назад</button>
-          <p class="msf__status" id="msfStatus" aria-live="polite"></p>
-        </form>
+        <div class="contact-success" id="contactSuccess" hidden aria-live="polite" aria-atomic="true">
+          <div class="contact-success__ring" aria-hidden="true"></div>
+          <div class="contact-success__text" id="contactSuccessText">Приступаем к проекту</div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- SUCCESS (вне карточки, чтобы ничего не “схлопывалось”) -->
-    <div class="contact-success" id="contactSuccess" hidden aria-live="polite" aria-atomic="true">
-      <div class="contact-success__ring" aria-hidden="true"></div>
-      <div class="contact-success__text" id="contactSuccessText">Приступаем к проекту</div>
-    </div>
-  </div>
-</section>
+    <section class="offices-cards" id="offices" data-theme="light" aria-labelledby="officesTitle">
+      <div class="offices-cards__inner">
+        <header class="offices-cards__head">
+          <h2 class="offices-cards__title" id="officesTitle">Наши офисы</h2>
+          <p class="offices-cards__sub">Россия · Казахстан · Узбекистан</p>
+        </header>
+        <div class="offices-cards__grid" id="officesGrid">
+          <article class="office-card" data-city="Москва" data-country="Россия" data-address="Малый Демидовский пер, дом 3" data-coords="55.755864, 37.617698" data-phone="+7 (985) 017 - 88 - 17" data-messenger="telegram" data-link="https://t.me/"></article>
+          <article class="office-card" data-city="Алматы" data-country="Казахстан" data-address="Мынбаева 53" data-coords="43.238949, 76.889709" data-phone="+7 (705) 888 - 06 - 78" data-messenger="whatsapp" data-link="https://wa.me/77058880678"></article>
+          <article class="office-card" data-city="Ташкент" data-country="Узбекистан" data-address="Шахрисабзская 8/1" data-coords="41.299496, 69.240074" data-phone="+998 (90) 998 - 88 - 17" data-messenger="telegram" data-link="https://t.me/"></article>
+        </div>
+      </div>
+    </section>
 
-
-
-<!-- OUR OFFICES (cards) — вставь между #contact и footer -->
-<section class="offices-cards" id="offices" data-theme="dark" aria-labelledby="officesTitle">
-  <div class="offices-cards__inner">
-    <header class="offices-cards__head">
-      <h2 class="offices-cards__title" id="officesTitle">Наши офисы</h2>
-      <p class="offices-cards__sub">Россия · Казахстан · Узбекистан</p>
-    </header>
-
-    <div class="offices-cards__grid" id="officesGrid">
-      <!-- RU / Moscow -->
-      <article
-        class="office-card"
-        data-city="Москва"
-        data-country="Россия"
-        data-address="Малый Демидовский пер, дом 3"
-        data-coords="55.755864, 37.617698"
-        data-phone="+7 (985) 017 - 88 - 17"
-        data-messenger="telegram"
-        data-link="https://t.me/"
-      >
-        <button class="office-card__btn" type="button" aria-expanded="false">
-          <div class="office-card__frame">
-            <div class="office-card__bg" aria-hidden="true">
-              <div class="office-card__gridPattern"></div>
-
-              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
-                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
-                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
-                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
-                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
-                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
-                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
-                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
-              </svg>
-
-              <div class="office-card__buildings" aria-hidden="true">
-                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
-                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
-              </div>
-
-              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
-              <div class="office-card__shade" aria-hidden="true"></div>
-            </div>
-
-            <div class="office-card__content">
-              <div class="office-card__top">
-                <span class="office-card__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
-                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                  </svg>
-                </span>
-
-                <span class="office-card__status" aria-label="Статус">
-                  <span class="office-card__dot" aria-hidden="true"></span>
-                  <span class="office-card__statusText">Открыто</span>
-                </span>
-              </div>
-
-              <div class="office-card__bottom">
-                <h3 class="office-card__name">Москва, Россия</h3>
-                <p class="office-card__addr">Малый Демидовский пер, дом 3</p>
-                <p class="office-card__coords">55.755864, 37.617698</p>
-
-                <!-- Contacts (reveal) -->
-                <div class="office-card__contacts" aria-hidden="true">
-                  <p class="office-card__phone">+7 (985) 017 - 88 - 17</p>
-                  <div class="office-card__actions">
-                    <a class="office-action is-telegram" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Написать в Telegram">
-                      <span class="office-action__ic" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                          <path d="M21.8 4.2L3.9 11.1c-1.2.5-1.2 1.2-.2 1.5l4.6 1.4 1.8 5.5c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.2-2.1 4.6 3.4c.9.5 1.5.2 1.7-.8l3-14.2c.3-1.2-.4-1.7-1.3-1.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
-                          <path d="M9.2 13.8l10.7-6.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-                        </svg>
-                      </span>
-                      <span class="office-action__tx">Telegram</span>
-                    </a>
-                  </div>
-                </div>
-
-                <div class="office-card__underline" aria-hidden="true"></div>
-              </div>
-            </div>
+    <section class="news-section" id="news" data-theme="dark" aria-labelledby="newsTitle">
+      <div class="news-section__inner">
+        <header class="news-section__head">
+          <p class="news-section__kicker" id="newsKicker">Новости</p>
+          <h2 class="news-section__title" id="newsTitle">Новости агентства</h2>
+          <div class="news-section__lines" aria-hidden="true">
+            <span></span><span></span><span></span>
           </div>
+        </header>
 
-          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
-        </button>
-      </article>
-
-      <!-- KZ / Almaty -->
-      <article
-        class="office-card"
-        data-city="Алматы"
-        data-country="Казахстан"
-        data-address="Мынбаева 53"
-        data-coords="43.238949, 76.889709"
-        data-phone="+7 (705) 888 - 06 - 78"
-        data-messenger="whatsapp"
-        data-link="https://wa.me/77058880678"
-      >
-        <button class="office-card__btn" type="button" aria-expanded="false">
-          <div class="office-card__frame">
-            <div class="office-card__bg" aria-hidden="true">
-              <div class="office-card__gridPattern"></div>
-
-              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
-                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
-                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
-                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
-                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
-                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
-                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
-                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
-              </svg>
-
-              <div class="office-card__buildings" aria-hidden="true">
-                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
-                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
-              </div>
-
-              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
-              <div class="office-card__shade" aria-hidden="true"></div>
+        <div class="news-grid" id="newsGrid">
+          <article class="news-card" data-news-card="0" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80" alt="Event production">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Event</span><span>15 мин назад</span></div>
             </div>
-
-            <div class="office-card__content">
-              <div class="office-card__top">
-                <span class="office-card__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
-                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                  </svg>
-                </span>
-
-                <span class="office-card__status" aria-label="Статус">
-                  <span class="office-card__dot" aria-hidden="true"></span>
-                  <span class="office-card__statusText">Открыто</span>
-                </span>
-              </div>
-
-              <div class="office-card__bottom">
-                <h3 class="office-card__name">Алматы, Казахстан</h3>
-                <p class="office-card__addr">Мынбаева 53</p>
-                <p class="office-card__coords">43.238949, 76.889709</p>
-
-                <!-- Contacts (reveal) -->
-                <div class="office-card__contacts" aria-hidden="true">
-                  <p class="office-card__phone">+7 (705) 888 - 06 - 78</p>
-                  <div class="office-card__actions">
-                    <a class="office-action is-whatsapp" href="https://wa.me/77058880678" target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">
-                      <span class="office-action__ic" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                          <path d="M20 12.1c0 4.3-3.5 7.8-7.8 7.8-1.3 0-2.6-.3-3.7-.9L4 20l1.1-4.2c-.7-1.1-1.1-2.4-1.1-3.7 0-4.3 3.5-7.8 7.8-7.8S20 7.8 20 12.1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
-                          <path d="M9.2 9.1c.2-.5.5-.6.9-.5l.9.3c.2.1.3.2.3.4l-.1 1c0 .2-.1.3-.2.4l-.3.3c.5 1 1.4 1.9 2.4 2.4l.3-.3c.1-.1.2-.2.4-.2l1-.1c.2 0 .3.1.4.3l.3.9c.1.4 0 .7-.5.9-.6.2-1.4.2-2.2-.1-1.3-.5-2.9-2-3.4-3.4-.3-.8-.3-1.6-.1-2.2z" fill="currentColor" opacity="0.85"></path>
-                        </svg>
-                      </span>
-                      <span class="office-action__tx">WhatsApp</span>
-                    </a>
-                  </div>
-                </div>
-
-                <div class="office-card__underline" aria-hidden="true"></div>
-              </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Besson Agency</p>
+              <h3>Новый формат бренд-активаций для торговых сетей</h3>
             </div>
-          </div>
+          </article>
 
-          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
-        </button>
-      </article>
-
-      <!-- UZ / Tashkent -->
-      <article
-        class="office-card"
-        data-city="Ташкент"
-        data-country="Узбекистан"
-        data-address="Шахрисабзская 8/1"
-        data-coords="41.299496, 69.240074"
-        data-phone="+998 (90) 998 - 88 - 17"
-        data-messenger="telegram"
-        data-link="https://t.me/"
-      >
-        <button class="office-card__btn" type="button" aria-expanded="false">
-          <div class="office-card__frame">
-            <div class="office-card__bg" aria-hidden="true">
-              <div class="office-card__gridPattern"></div>
-
-              <svg class="office-card__map" viewBox="0 0 360 280" preserveAspectRatio="none" aria-hidden="true">
-                <line class="office-card__line is-main" style="--d:120ms" x1="0" y1="98" x2="360" y2="98"></line>
-                <line class="office-card__line is-main" style="--d:220ms" x1="0" y1="182" x2="360" y2="182"></line>
-                <line class="office-card__line is-mid"  style="--d:320ms" x1="108" y1="0" x2="108" y2="280"></line>
-                <line class="office-card__line is-mid"  style="--d:420ms" x1="252" y1="0" x2="252" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:520ms" x1="0" y1="56" x2="360" y2="56"></line>
-                <line class="office-card__line is-thin" style="--d:600ms" x1="0" y1="140" x2="360" y2="140"></line>
-                <line class="office-card__line is-thin" style="--d:680ms" x1="0" y1="224" x2="360" y2="224"></line>
-                <line class="office-card__line is-thin" style="--d:560ms" x1="72" y1="0" x2="72" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:640ms" x1="162" y1="0" x2="162" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:720ms" x1="198" y1="0" x2="198" y2="280"></line>
-                <line class="office-card__line is-thin" style="--d:780ms" x1="306" y1="0" x2="306" y2="280"></line>
-              </svg>
-
-              <div class="office-card__buildings" aria-hidden="true">
-                <span class="bld b1"></span><span class="bld b2"></span><span class="bld b3"></span>
-                <span class="bld b4"></span><span class="bld b5"></span><span class="bld b6"></span>
-              </div>
-
-              <div class="office-card__pin" aria-hidden="true"><span class="office-card__pinDot"></span></div>
-              <div class="office-card__shade" aria-hidden="true"></div>
+          <article class="news-card" data-news-card="1" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200&q=80" alt="BTL activation">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>BTL</span><span>41 мин назад</span></div>
             </div>
-
-            <div class="office-card__content">
-              <div class="office-card__top">
-                <span class="office-card__icon" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"></polygon>
-                    <line x1="9" y1="3" x2="9" y2="18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                    <line x1="15" y1="6" x2="15" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></line>
-                  </svg>
-                </span>
-
-                <span class="office-card__status" aria-label="Статус">
-                  <span class="office-card__dot" aria-hidden="true"></span>
-                  <span class="office-card__statusText">Открыто</span>
-                </span>
-              </div>
-
-              <div class="office-card__bottom">
-                <h3 class="office-card__name">Ташкент, Узбекистан</h3>
-                <p class="office-card__addr">Шахрисабзская 8/1</p>
-                <p class="office-card__coords">41.299496, 69.240074</p>
-
-                <!-- Contacts (reveal) -->
-                <div class="office-card__contacts" aria-hidden="true">
-                  <p class="office-card__phone">+998 (90) 998 - 88 - 17</p>
-                  <div class="office-card__actions">
-                    <a class="office-action is-telegram" href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Написать в Telegram">
-                      <span class="office-action__ic" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-                          <path d="M21.8 4.2L3.9 11.1c-1.2.5-1.2 1.2-.2 1.5l4.6 1.4 1.8 5.5c.2.6.1.8.7.8.5 0 .7-.2 1-.5l2.2-2.1 4.6 3.4c.9.5 1.5.2 1.7-.8l3-14.2c.3-1.2-.4-1.7-1.3-1.3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"></path>
-                          <path d="M9.2 13.8l10.7-6.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
-                        </svg>
-                      </span>
-                      <span class="office-action__tx">Telegram</span>
-                    </a>
-                  </div>
-                </div>
-
-                <div class="office-card__underline" aria-hidden="true"></div>
-              </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Central Asia</p>
+              <h3>Промо-команды в регионах: скорость запуска и контроль качества</h3>
             </div>
-          </div>
+          </article>
 
-          <span class="office-card__hint" aria-hidden="true">Нажмите, чтобы раскрыть</span>
-        </button>
+          <article class="news-card" data-news-card="2" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80" alt="Corporate event">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Production</span><span>1 час назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Portfolio</p>
+              <h3>Как мы собираем event-производство под ключ</h3>
+            </div>
+          </article>
+        </div>
+
+        <a class="news-section__all" id="newsAll" href="blog.html">Смотреть все</a>
+      </div>
+    </section>
+
+    <div class="news-modal" id="newsModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="news-modal__bg" data-news-close></div>
+      <article class="news-modal__panel" role="document">
+        <button class="news-modal__close" type="button" aria-label="Закрыть" data-news-close></button>
+        <div class="news-modal__media"><img id="newsModalImage" src="" alt=""></div>
+        <div class="news-modal__content">
+          <p class="news-modal__meta" id="newsModalMeta"></p>
+          <h3 id="newsModalTitle"></h3>
+          <div class="news-modal__text" id="newsModalText"></div>
+        </div>
       </article>
     </div>
-  </div>
-</section>
+  </main>
 
-    
-
-  <!-- FOOTER -->
-  <footer>
+  <footer data-theme="dark">
     <div class="footer-left">BESSON AGENCY</div>
-    <div class="footer-contact" style="margin-bottom:20px;line-height:1.8;">
-      <a href="mailto:hello@besson.asia"
-        style="display:flex;align-items:center;gap:10px;color:#f5f5f5;text-decoration:none;">
-        <svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18"
-          fill="none" stroke="currentColor" stroke-width="1.6"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
-          <polyline points="22,6 12,13 2,6"/>
-        </svg>
-        <span style="font-weight:500;letter-spacing:.03em;">hello@besson.asia</span>
+    <div class="footer-contact">
+      <a href="mailto:hello@besson.asia">
+        <svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2" /><polyline points="22,6 12,13 2,6" /></svg>
+        <span>hello@besson.asia</span>
       </a>
     </div>
-    
-    <!-- SOCIALS -->
     <div class="footer-socials" aria-label="Social links">
-      <a class="social" href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
-        <svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path class="social__path" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z"/>
-          <path class="social__path" d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
-          <path class="social__path" d="M17.5 6.5h.01"/>
-        </svg>
-      </a>
-
-      <a class="social" href="https://vk.com/" target="_blank" rel="noopener" aria-label="VK">
-        <svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path class="social__path" d="M4 7.2h3.1c.2 0 .4.1.5.3 1.1 2.3 2.2 4.4 3.6 5.9.5.5.9.4.9-.2V7.6c0-.2.2-.4.4-.4h3c.2 0 .4.2.4.4v3.8c0 .6.2.7.6.3 1.3-1.3 2.3-3 3.2-4.1.2-.2.3-.4.6-.4H20c.4 0 .6.4.4.7-1.1 1.9-2.6 3.9-4 5.4-.4.4-.4.7 0 1.1 1.7 1.7 3.3 3.6 4.1 4.9.2.3 0 .7-.4.7h-2.8c-.3 0-.5-.1-.7-.3-1-1.3-2.1-2.6-3.2-3.7-.5-.5-.8-.4-.8.2v3.4c0 .2-.2.4-.4.4h-1.2C6.9 20 4.8 16 3.6 8c0-.4.2-.8.4-.8Z"/>
-        </svg>
-      </a>
-
-      <a class="social" href="https://youtube.com/" target="_blank" rel="noopener" aria-label="YouTube">
-        <svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path class="social__path" d="M21 8.2a3 3 0 0 0-2.1-2.1C17.1 5.6 12 5.6 12 5.6s-5.1 0-6.9.5A3 3 0 0 0 3 8.2 31 31 0 0 0 2.6 12c0 1.1.1 2.4.4 3.8A3 3 0 0 0 5.1 18c1.8.5 6.9.5 6.9.5s5.1 0 6.9-.5A3 3 0 0 0 21 15.8c.3-1.4.4-2.7.4-3.8 0-1.1-.1-2.4-.4-3.8Z"/>
-          <path class="social__path" d="M10.3 14.9V9.1L15.3 12l-5 2.9Z"/>
-        </svg>
-      </a>
-
-      <a class="social" href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">
-        <svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path class="social__path" d="M4.5 9.2V20"/>
-          <path class="social__path" d="M4.5 6.2h.01"/>
-          <path class="social__path" d="M9 9.2V20"/>
-          <path class="social__path" d="M9 12.2c.6-1.6 1.9-2.4 3.6-2.4 2.6 0 4.4 1.7 4.4 5V20"/>
-        </svg>
-      </a>
+      <a class="social" href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" /><path class="social__path" d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /><path class="social__path" d="M17.5 6.5h.01" /></svg></a>
+      <a class="social" href="https://vk.com/" target="_blank" rel="noopener" aria-label="VK"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M4 7.2h3.1c.2 0 .4.1.5.3 1.1 2.3 2.2 4.4 3.6 5.9.5.5.9.4.9-.2V7.6c0-.2.2-.4.4-.4h3c.2 0 .4.2.4.4v3.8c0 .6.2.7.6.3 1.3-1.3 2.3-3 3.2-4.1.2-.2.3-.4.6-.4H20c.4 0 .6.4.4.7-1.1 1.9-2.6 3.9-4 5.4-.4.4-.4.7 0 1.1 1.7 1.7 3.3 3.6 4.1 4.9.2.3 0 .7-.4.7h-2.8c-.3 0-.5-.1-.7-.3-1-1.3-2.1-2.6-3.2-3.7-.5-.5-.8-.4-.8.2v3.4c0 .2-.2.4-.4.4h-1.2C6.9 20 4.8 16 3.6 8c0-.4.2-.8.4-.8Z" /></svg></a>
+      <a class="social" href="https://youtube.com/" target="_blank" rel="noopener" aria-label="YouTube"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M21 8.2a3 3 0 0 0-2.1-2.1C17.1 5.6 12 5.6 12 5.6s-5.1 0-6.9.5A3 3 0 0 0 3 8.2 31 31 0 0 0 2.6 12c0 1.1.1 2.4.4 3.8A3 3 0 0 0 5.1 18c1.8.5 6.9.5 6.9.5s5.1 0 6.9-.5A3 3 0 0 0 21 15.8c.3-1.4.4-2.7.4-3.8 0-1.1-.1-2.4-.4-3.8Z" /><path class="social__path" d="M10.3 14.9V9.1L15.3 12l-5 2.9Z" /></svg></a>
+      <a class="social" href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M4.5 9.2V20" /><path class="social__path" d="M4.5 6.2h.01" /><path class="social__path" d="M9 9.2V20" /><path class="social__path" d="M9 12.2c.6-1.6 1.9-2.4 3.6-2.4 2.6 0 4.4 1.7 4.4 5V20" /></svg></a>
     </div>
-
-
     <p>© <span id="year"></span> Besson Agency</p>
-    
-    
   </footer>
 
-  <!-- CONTACT PILL (place near the end of <body>, BEFORE premium cursor) -->
-<div
-  class="contact-pill"
-  id="contactPill"
-  role="button"
-  tabindex="0"
-  aria-label="Связаться"
-  aria-expanded="false"
->
-  <span class="contact-pill__label">СВЯЗАТЬСЯ</span>
+  <div class="project-modal-scrim" id="projectModalScrim" hidden></div>
 
-  <div class="contact-pill__icons" aria-hidden="true">
-    <!-- WhatsApp -->
-    <a
-      class="contact-pill__icon"
-      href="https://api.whatsapp.com/send/?phone=77058880678&text&type=phone_number&app_absent=0"
-      target="_blank"
-      rel="noopener"
-      aria-label="Написать в WhatsApp"
-    >
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16.001 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.256.588 4.367 1.615 6.205L3.2 28.8l6.746-1.767a12.73 12.73 0 0 0 6.055 1.541c7.06 0 12.8-5.74 12.8-12.8s-5.74-12.8-12.8-12.8z" fill="none" stroke="currentColor" stroke-width="1.6"></path>
-        <path d="M20.9 18.6c-.22-.11-1.32-.65-1.53-.72-.21-.07-.36-.11-.52.11s-.6.72-.73.87c-.13.15-.27.16-.5.05-.23-.11-.97-.36-1.84-1.12-.68-.61-1.14-1.36-1.28-1.59-.13-.23-.01-.35.1-.46.1-.1.23-.26.34-.39.11-.13.15-.23.23-.38.08-.15.04-.28-.02-.39-.06-.11-.52-1.24-.72-1.7-.19-.46-.38-.4-.52-.41l-.44-.01c-.15 0-.39.06-.6.28-.21.23-.8.78-.8 1.9 0 1.12.82 2.2.94 2.35.12.15 1.62 2.47 4 3.46.56.24 1 .38 1.34.48.56.18 1.07.15 1.47.09.45-.07 1.32-.54 1.51-1.06.19-.52.19-.97.13-1.06-.06-.09-.2-.15-.41-.25z" fill="currentColor"></path>
-      </svg>
-    </a>
-
-    <!-- Telegram -->
-    <a
-      class="contact-pill__icon"
-      href="https://t.me/yurymalcev"
-      target="_blank"
-      rel="noopener"
-      aria-label="Написать в Telegram"
-    >
-      <svg viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M27.6 4.8 4.3 13.6c-1.1.44-1.1 1.38-.2 1.68l5.9 1.94 2.3 7.12c.27.82.52 1.15 1.06 1.15.53 0 .77-.2 1.07-.75l2.57-4.2 6.03 4.44c1.1.6 1.9.29 2.17-1.02l3.93-18.46c.4-1.62-.62-2.35-1.77-1.88z" fill="none" stroke="currentColor" stroke-width="1.6"></path>
-        <path d="M13.2 23.4 14 18l9.4-9.15-11.9 7.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
-      </svg>
-    </a>
+  <div class="contact-pill" id="contactPill" role="button" tabindex="0" aria-label="Связаться" aria-expanded="false">
+    <span class="contact-pill__label">СВЯЗАТЬСЯ</span>
+    <div class="contact-pill__icons" aria-hidden="true">
+      <a class="contact-pill__icon" href="https://api.whatsapp.com/send/?phone=77058880678" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 4.2A11.6 11.6 0 0 0 6 21.7L4.8 27.2l5.6-1.4A11.6 11.6 0 1 0 16 4.2Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M12 10.8c.3-.5.6-.6 1-.5l1 .3c.2.1.4.3.4.5l-.1 1.1c0 .2-.1.4-.3.5l-.4.4c.7 1.2 1.7 2.2 3 2.9l.4-.4c.1-.2.3-.3.5-.3l1.1-.1c.2 0 .4.2.5.4l.3 1c.1.4 0 .8-.6 1.1-.7.3-1.7.2-2.6-.2-1.7-.7-3.6-2.5-4.3-4.2-.4-1-.4-1.9.1-2.5Z" fill="currentColor"/>
+        </svg>
+      </a>
+      <a class="contact-pill__icon" href="https://t.me/yurymalcev" target="_blank" rel="noopener" aria-label="Написать в Telegram">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M27.4 5.3 4.7 14c-1 .4-1 1.2-.1 1.5l5.8 1.8 2.2 7c.3.8.5 1.1 1.1 1.1.5 0 .8-.2 1.1-.7l2.5-4 5.9 4.3c1 .6 1.8.3 2.1-1l3.8-17.9c.4-1.5-.6-2.2-1.7-1.8Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M13.3 23.8 14 18.5l9.1-8.9-11.6 7.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
   </div>
-</div>
-<!-- /CONTACT PILL -->
 
- 
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie">
+    <div class="cookie-banner__text">
+      <strong>Cookies</strong>
+      <span>Мы используем cookies для работы сайта и аналитики. Подробнее - в <a href="privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a>.</span>
+    </div>
+    <div class="cookie-banner__actions">
+      <button class="cookie-banner__btn" type="button" id="cookieReject">Отклонить</button>
+      <button class="cookie-banner__btn is-primary" type="button" id="cookieAccept">Принять</button>
+    </div>
+  </div>
 
-
-  <!-- PREMIUM CURSOR -->
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="ru" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Besson Agency</title>
+  <meta name="color-scheme" content="dark light" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <button class="cta-float-left" id="startProjectHowBtn" type="button" aria-label="Начать проект - перейти к блоку Как мы работаем">
+    <span class="cta-float-left__orb" aria-hidden="true">
+      <svg class="cta-float-left__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M7 17L17 7M17 7H8M17 7V16" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </span>
+    <span class="cta-float-left__label">Начать проект</span>
+  </button>
+
+  <header class="nav" id="siteNav">
+    <a href="#top" class="brand__mark" id="navLogo">BESSON</a>
+
+    <nav class="nav__group" aria-label="Основное меню">
+      <a class="link" href="#about" data-nav-about>Об агентстве</a>
+      <a class="link" href="#work" data-nav-work>Проекты</a>
+      <a class="link" href="#news" data-nav-news>Новости</a>
+      <a class="link" href="vacancies.html" data-nav-vacancies>Вакансии</a>
+      <a class="link" href="#contact" data-nav-contact data-contact-open>Контакты</a>
+      <button class="nav-estimate" id="navEstimateBtn" type="button" data-estimate-open>Смета за 30 минут</button>
+
+      <div class="lang lang--desktop" id="langSwitch" aria-label="Язык сайта">
+        <button class="lang__trigger" id="langTrigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="langMenu">
+          <span id="langCurrent">RU</span>
+        </button>
+        <div class="lang__menu" id="langMenu" hidden>
+          <button class="lang__btn is-active" type="button" data-lang="ru" aria-pressed="true">RU</button>
+          <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+          <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+          <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+        </div>
+      </div>
+    </nav>
+
+    <button class="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="burger__line"></span>
+      <span class="burger__line"></span>
+    </button>
+
+    <nav class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <ul>
+        <li><a href="#about" data-nav-about>Об агентстве</a></li>
+        <li><a href="#work" data-nav-work>Проекты</a></li>
+        <li><a href="#news" data-nav-news>Новости</a></li>
+        <li><a href="vacancies.html" data-nav-vacancies>Вакансии</a></li>
+        <li><a href="#contact" data-nav-contact data-contact-open>Контакты</a></li>
+      </ul>
+      <div class="lang lang--mobile" id="langSwitchMobile" aria-label="Язык сайта">
+        <button class="lang__btn is-active" type="button" data-lang="ru" aria-pressed="true">RU</button>
+        <button class="lang__btn" type="button" data-lang="en" aria-pressed="false">EN</button>
+        <button class="lang__btn" type="button" data-lang="uz" aria-pressed="false">UZ</button>
+        <button class="lang__btn" type="button" data-lang="kz" aria-pressed="false">KZ</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="top" data-theme="dark">
+      <div id="nebulaBg" class="nebula-bg" data-palette="default" data-center-dim="1" aria-hidden="true"></div>
+      <div class="hero-video" id="heroVideoWrap" aria-hidden="true">
+        <video
+          class="hero-video__media"
+          id="heroPortfolioVideo"
+          muted
+          playsinline
+          autoplay
+          loop
+          preload="auto"
+          data-fallback-src="assets/video/showreel2.mp4"
+        >
+          <source src="assets/video/showreel2.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-video__veil" aria-hidden="true"></div>
+        <div class="hero-video__grain" aria-hidden="true"></div>
+      </div>
+
+      <div class="hero__content">
+        <div class="hero__name" id="logoText" aria-label="Besson Agency"></div>
+        <div class="hero__slogan" id="slogan">
+          <span>BTL</span><span>&amp;</span><span>EVENT Production</span>
+        </div>
+      </div>
+
+      <div class="hero__scroll" aria-hidden="true">
+        <div class="scroll-indicator">
+          <span class="scroll-indicator__mouse">
+            <span class="scroll-indicator__wheel"></span>
+          </span>
+        </div>
+      </div>
+      <div class="hero__reveal" aria-hidden="true"></div>
+    </section>
+
+    <section class="interlude" data-theme="light">
+      <h1 class="hero__title"><span class="swap" id="swap">Event.</span></h1>
+    </section>
+
+    <section class="stage" id="about" data-theme="light">
+      <h2 class="stage__title">
+        Мы создаем яркие концепции для мероприятий и бренд-активаций, организуем маркетинговые и корпоративные события. Производим POS материалы, реализуем BTL-проекты и усиливаем бренды через продуманные коммуникации.
+      </h2>
+    </section>
+
+    <section class="resources" id="resources" data-theme="light" aria-labelledby="resourcesTitle">
+      <div class="resources__inner">
+        <header class="resources__head">
+          <p class="resources__kicker" id="resourcesKicker">Преимущества и</p>
+          <h2 class="resources__title" id="resourcesTitle">Ресурсы</h2>
+        </header>
+
+        <div class="resources__body">
+          <div class="resources__grid" aria-label="Ресурсы агентства">
+          <article class="resource-card resource-card--since" data-resource-card data-target="2021" data-format="plain" data-prefix-key="" data-suffix="">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__pretext" data-resource-prefix-text="resourcesSincePrefix">С</span>
+              <span class="resource-card__value" data-count>2021</span>
+              <span class="resource-card__aftertext" data-resource-after-text="resourcesSinceAfter">года</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesSinceText">обслуживаем крупный международный бизнес</p>
+          </article>
+
+          <article class="resource-card resource-card--offices" data-resource-card data-target="3" data-prefix-key="" data-suffix="">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num resource-card__num--office">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>3</span>
+            </div>
+            <div class="resource-card__text resource-card__text--office">
+              <p class="resource-card__officeLine">
+                <span class="resource-card__officeMain" data-resource-text="resourcesLegalOfficesMain">ОФИСА</span>
+                <span class="resource-card__officeRegion" data-resource-text="resourcesLegalOfficesRegion">В ЕВРАЗИИ</span>
+              </p>
+              <p class="resource-card__officeSub" data-resource-text="resourcesLegalOfficesCountries">(Россия, Казахстан, Узбекистан)</p>
+            </div>
+          </article>
+
+          <article class="resource-card resource-card--accounts" data-resource-card data-target="10" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>10</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesAccountManagers">Аккаунт менеджеров с опытом работы от пяти лет с международным бизнесом</p>
+          </article>
+
+          <article class="resource-card resource-card--wide" data-resource-card data-target="100000" data-prefix-key="resourcesUpTo" data-suffix="$">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix">до</span>
+              <span class="resource-card__value" data-count>100 000</span><span class="resource-card__suffix">$</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesCredit">Кредитуем проекты на срок до 60 календарных дней</p>
+          </article>
+
+          <article class="resource-card" data-resource-card data-target="100" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>100</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesMechanics">Креативных промо механик</p>
+          </article>
+
+          <article class="resource-card" data-resource-card data-target="100" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>100</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesAnnualProjects">Ежегодных проектов</p>
+          </article>
+
+          <article class="resource-card" data-resource-card data-target="2000" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>2000</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesPromoters">Опытных промоутеров в базе</p>
+          </article>
+
+          <article class="resource-card resource-card--wide-sm" data-resource-card data-target="30" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>30</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesRepresentatives">Региональных представителей в крупных городах Центральной Азии</p>
+          </article>
+
+          <article class="resource-card resource-card--featured" data-resource-card data-target="300" data-prefix-key="" data-suffix="+">
+            <div class="resource-card__halo" aria-hidden="true"></div>
+            <div class="resource-card__num">
+              <span class="resource-card__prefix"></span>
+              <span class="resource-card__value" data-count>300</span><span class="resource-card__suffix">+</span>
+            </div>
+            <p class="resource-card__text" data-resource-text="resourcesHappyClients">Благодарных клиентов</p>
+          </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="globe-zone" data-theme="light">
+      <section class="globe-heading" data-theme="light" aria-labelledby="globeTitle">
+        <div class="globe-intro">
+          <p class="globe-intro__kicker" id="globeSub">Три офиса обслуживания</p>
+          <h2 class="globe-intro__title" id="globeTitle">Одно окно в Евразию</h2>
+        </div>
+      </section>
+
+      <section class="globe-bridge" id="globeBridge" data-theme="light" aria-hidden="true">
+        <div class="globe-dome" id="globeDome">
+          <canvas id="globeCanvas"></canvas>
+          <div class="globe-label" id="globeLabel" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <section class="work-switch" id="work" data-theme="dark" aria-label="Фильтр проектов">
+      <p class="work-switch__kicker" id="workSwitchKicker">Реализованные проекты</p>
+      <div class="work-switch__inner">
+        <button class="work-switch__btn is-active" type="button" data-work-filter="event" aria-pressed="true">EVENT</button>
+        <button class="work-switch__btn" type="button" data-work-filter="btl" aria-pressed="false">BTL</button>
+      </div>
+    </section>
+
+    <section id="workGrid" data-theme="dark">
+      <div class="wall" id="wall">
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+1" width="1600" height="900" alt="Project 1"><div class="tile__caption"><div><strong>Project 1</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+2" width="1600" height="900" alt="Project 2"><div class="tile__caption"><div><strong>Project 2</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+3" width="1600" height="900" alt="Project 3"><div class="tile__caption"><div><strong>Project 3</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+4" width="1600" height="900" alt="Project 4"><div class="tile__caption"><div><strong>Project 4</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+5" width="1600" height="900" alt="Project 5"><div class="tile__caption"><div><strong>Project 5</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+6" width="1600" height="900" alt="Project 6"><div class="tile__caption"><div><strong>Project 6</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+7" width="1600" height="900" alt="Project 7"><div class="tile__caption"><div><strong>Project 7</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+8" width="1600" height="900" alt="Project 8"><div class="tile__caption"><div><strong>Project 8</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+9" width="1600" height="900" alt="Project 9"><div class="tile__caption"><div><strong>Project 9</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+10" width="1600" height="900" alt="Project 10"><div class="tile__caption"><div><strong>Project 10</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+11" width="1600" height="900" alt="Project 11"><div class="tile__caption"><div><strong>Project 11</strong><br><small>Creative / Event</small></div></div></a>
+        <a class="tile" href="#"><img src="https://via.placeholder.com/1600x900/111111/ffffff?text=Project+12" width="1600" height="900" alt="Project 12"><div class="tile__caption"><div><strong>Project 12</strong><br><small>Creative / Event</small></div></div></a>
+      </div>
+    </section>
+
+    <section class="clients clients--marquee" id="clients" data-theme="light" aria-labelledby="clientsTitle">
+      <div class="clients__inner">
+        <header class="clients__head">
+          <p class="clients__kicker" id="clientsKicker">Наши клиенты</p>
+          <h2 class="clients__headline" id="clientsTitle">Компании, которые нам доверяют</h2>
+        </header>
+        <div class="logo-marquee" data-speed="80" data-speed-hover="32" aria-label="Логотипы клиентов">
+          <div class="logo-marquee__viewport">
+            <div class="logo-marquee__track">
+              <div class="logo-marquee__set">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/nestle.com" alt="Nestle" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/pepsico.com" alt="PepsiCo" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/astrazeneca.com" alt="AstraZeneca" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/avito.ru" alt="Avito" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/texnomart.uz" alt="Texnomart" loading="lazy">
+                <img class="logo-marquee__logo" src="https://logo.clearbit.com/centrum-air.com" alt="Centrum Air" loading="lazy">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews" id="reviews" data-theme="light">
+      <div class="reviews__inner">
+        <header class="reviews__head" data-rv>
+          <p class="reviews__kicker">Видео отзывы</p>
+          <h2 class="reviews__title">Клиенты о нас</h2>
+          <p class="reviews__lead" id="rvLead">Коротко. По делу. Без рекламной пены.</p>
+        </header>
+
+        <button class="reviews__card" type="button" id="rvOpen" data-rv aria-label="Открыть видео-отзыв">
+          <div class="reviews__thumb" id="rvThumb" aria-hidden="true"></div>
+          <span class="reviews__play" aria-hidden="true"><span class="reviews__playRing"></span><span class="reviews__playTri"></span></span>
+          <span class="reviews__caption" aria-hidden="true">
+            <span class="reviews__quote" id="rvQuote">"Сильная режиссура процесса: все под контролем."</span>
+            <span class="reviews__meta" id="rvMeta">Head of Trade - METRO</span>
+          </span>
+        </button>
+
+        <nav class="reviews__tabs" aria-label="Выбор отзыва" data-rv>
+          <button class="reviews__tab is-active" type="button" data-rv-tab="0"><span>01</span> Nestle</button>
+          <button class="reviews__tab" type="button" data-rv-tab="1"><span>02</span> Beiersdorf</button>
+          <button class="reviews__tab" type="button" data-rv-tab="2"><span>03</span> METRO</button>
+        </nav>
+      </div>
+    </section>
+
+    <div class="reviews-modal" id="rvModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="reviews-modal__bg" data-rv-close></div>
+      <div class="reviews-modal__panel" role="document">
+        <button class="reviews-modal__close" type="button" aria-label="Закрыть" data-rv-close></button>
+        <div class="reviews-modal__frame" id="rvFrame"></div>
+      </div>
+    </div>
+
+    <section class="team" id="team" data-theme="dark" aria-label="Команда Besson Agency">
+      <div class="team__inner">
+        <header class="team__head">
+          <p class="team__kicker">КОМАНДА</p>
+          <h2 class="team__title">Люди, которые делают результат</h2>
+        </header>
+
+        <div class="team-showcase" id="teamShowcase">
+          <div class="team-photo-grid" aria-label="Портреты команды">
+            <div class="team-photo-col">
+              <button class="team-photo-card team-photo-card--sm" type="button" data-team-member="yuri" data-team-name="Юрий" data-team-role="Основатель / Генеральный директор"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=80" alt="Юрий"></button>
+              <button class="team-photo-card team-photo-card--sm" type="button" data-team-member="larisa" data-team-name="Лариса" data-team-role="Главный бухгалтер"><img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Лариса"></button>
+              <button class="team-photo-card team-photo-card--sm" type="button" data-team-member="zarina" data-team-name="Зарина" data-team-role="Аккаунт менеджер"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Зарина"></button>
+            </div>
+            <div class="team-photo-col team-photo-col--shift-lg">
+              <button class="team-photo-card team-photo-card--lg" type="button" data-team-member="sevara" data-team-name="Севара" data-team-role="Директор филиала"><img src="https://images.unsplash.com/photo-1548142813-c348350df52b?auto=format&fit=crop&w=900&q=80" alt="Севара"></button>
+              <button class="team-photo-card team-photo-card--lg" type="button" data-team-member="violetta" data-team-name="Виолетта" data-team-role="Аккаунт менеджер"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=900&q=80" alt="Виолетта"></button>
+              <button class="team-photo-card team-photo-card--lg" type="button" data-team-member="kamilla" data-team-name="Камилла" data-team-role="Аккаунт менеджер"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Камилла"></button>
+            </div>
+            <div class="team-photo-col team-photo-col--shift-md">
+              <button class="team-photo-card team-photo-card--md" type="button" data-team-member="lyudmila" data-team-name="Людмила" data-team-role="Управляющий директор"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Людмила"></button>
+              <button class="team-photo-card team-photo-card--md" type="button" data-team-member="anastasia" data-team-name="Анастасия" data-team-role="Аккаунт менеджер"><img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=900&q=80" alt="Анастасия"></button>
+            </div>
+          </div>
+
+          <div class="team-side-photos" aria-label="Дополнительные сотрудники">
+            <figure class="team-side-photo" data-team-member="naina">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=500&q=80" alt="Наина">
+              <figcaption><strong>Наина</strong><span data-team-side-role="roleAccount">Аккаунт менеджер</span></figcaption>
+            </figure>
+            <figure class="team-side-photo" data-team-member="nail">
+              <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=500&q=80" alt="Наиль">
+              <figcaption><strong>Наиль</strong><span data-team-side-role="roleArtDirector">Арт директор</span></figcaption>
+            </figure>
+            <figure class="team-side-photo" data-team-member="daniel">
+              <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80" alt="Даниель">
+              <figcaption><strong>Даниель</strong><span data-team-side-role="roleDesigner">Старший дизайнер</span></figcaption>
+            </figure>
+          </div>
+
+          <div class="team-member-list" aria-label="Список сотрудников">
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="yuri"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Юрий</span><span class="team-member-row__social"><a href="#" aria-label="LinkedIn">in</a></span></span><span class="team-member-row__role">Основатель / Генеральный директор</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="sevara"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Севара</span><span class="team-member-row__social"><a href="#" aria-label="Instagram">ig</a></span></span><span class="team-member-row__role">Директор филиала</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="lyudmila"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Людмила</span><span class="team-member-row__social"><a href="#" aria-label="LinkedIn">in</a></span></span><span class="team-member-row__role">Управляющий директор</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="larisa"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Лариса</span></span><span class="team-member-row__role">Главный бухгалтер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="violetta"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Виолетта</span></span><span class="team-member-row__role">Аккаунт менеджер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="anastasia"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Анастасия</span></span><span class="team-member-row__role">Аккаунт менеджер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="zarina"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Зарина</span></span><span class="team-member-row__role">Аккаунт менеджер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="kamilla"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Камилла</span></span><span class="team-member-row__role">Аккаунт менеджер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="naina" data-role-key="roleAccount"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Наина</span></span><span class="team-member-row__role">Аккаунт менеджер</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="nail" data-role-key="roleArtDirector"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Наиль</span></span><span class="team-member-row__role">Арт директор</span></div>
+            <div class="team-member-row" role="button" tabindex="0" data-team-member="daniel" data-role-key="roleDesigner"><span class="team-member-row__mark"></span><span class="team-member-row__main"><span class="team-member-row__name">Даниель</span></span><span class="team-member-row__role">Старший дизайнер</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="howpath" id="how" data-theme="light" aria-labelledby="howpathTitle">
+      <div class="howpath__inner">
+        <header class="howpath__head">
+          <p class="howpath__kicker">Процесс · 5 этапов</p>
+          <h2 class="howpath__title" id="howpathTitle">Как мы работаем</h2>
+        </header>
+        <div class="howpath__layout">
+          <aside class="howpath__rail" aria-hidden="true">
+            <div class="howpath__railNo" id="howRailNo">01</div>
+            <div class="howpath__railName" id="howRailName">Бриф</div>
+          </aside>
+          <ol class="howpath__list" role="list">
+            <li class="howpath__item is-active" data-no="01" data-name="Бриф" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">01</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Бриф</h3><p class="howpath__p">Собираем вводные, изучаем цели, ограничения и критерии успеха</p></div></li>
+            <li class="howpath__item" data-no="02" data-name="Концепция" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">02</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Концепция</h3><p class="howpath__p">Ищем идею и создаем концепцию, которая удержит внимание</p></div></li>
+            <li class="howpath__item" data-no="03" data-name="Подготовка" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">03</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Подготовка</h3><p class="howpath__p">Смета, команда, график работ, контроль рисков и качества</p></div></li>
+            <li class="howpath__item" data-no="04" data-name="Реализация" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">04</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Реализация</h3><p class="howpath__p">Контролируем процессы в день Х: тайминг, риски, качество</p></div></li>
+            <li class="howpath__item" data-no="05" data-name="Отчет" tabindex="0"><div class="howpath__plate"><span class="howpath__plateNo">05</span><span class="howpath__plateTag">Этап</span></div><div class="howpath__content"><h3 class="howpath__h">Отчет</h3><p class="howpath__p">Финализация, отчетные документы, NPS и обратная связь для улучшения</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <div class="project-curtain" id="projectCurtain" data-theme="dark">
+      <section class="project-start" id="projectStart" data-theme="dark" aria-labelledby="projectStartTitle">
+        <div class="project-start__grid" aria-hidden="true"></div>
+        <div class="project-start__aurora" aria-hidden="true"></div>
+        <div class="project-start__word" aria-hidden="true">BESSON</div>
+        <div class="project-start__inner">
+          <p class="project-start__kicker" id="projectStartKicker">Финальный шаг</p>
+          <h2 class="project-start__title" id="projectStartTitle">Готовы начать проект?</h2>
+          <button class="project-start__arrow" type="button" aria-label="Прокрутить к форме">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M6 13l6 6 6-6" />
+            </svg>
+          </button>
+        </div>
+      </section>
+
+    <section class="contact" id="contact" data-theme="dark" aria-labelledby="contactTitle">
+      <div class="contact__inner">
+        <header class="contact__head">
+          <h2 class="contact__title" id="contactTitle">Начать проект</h2>
+          <p class="contact__sub">Короткая заявка в 4 шага. Документы - по желанию.</p>
+        </header>
+
+        <div class="msf" aria-label="Форма начала проекта">
+          <button class="msf__close" id="msfClose" type="button" aria-label="Закрыть форму"></button>
+          <div class="msf__card" id="msfCard">
+            <form class="msf-form" id="msfForm" action="https://api.web3forms.com/submit" method="POST" enctype="multipart/form-data" data-upload-endpoint="/api/upload-doc.php" autocomplete="off">
+              <input type="hidden" name="access_key" value="65638ee2-839d-4959-a4e8-9c354e48ad8e" />
+              <input type="hidden" name="subject" value="Besson Agency - Начать проект" />
+              <input type="hidden" name="from_name" value="Besson Agency Website" />
+              <input type="hidden" name="type" value="start_project" />
+              <input type="hidden" name="botcheck" value="" />
+              <input type="hidden" name="message" id="msf_message_h" />
+              <input type="hidden" name="name" id="msf_name_h" />
+              <input type="hidden" name="email" id="msf_email_h" />
+              <input type="hidden" name="phone" id="msf_phone_h" />
+              <input type="hidden" name="phone_e164" id="msf_phone_e164_h" />
+              <input type="hidden" name="phone_country" id="msf_phone_country_h" />
+              <input type="hidden" name="phone_dial" id="msf_phone_dial_h" />
+              <input type="hidden" name="no_docs" id="msf_no_docs_h" value="0" />
+              <input type="hidden" name="doc_url" id="msf_doc_url" />
+              <input type="hidden" name="doc_name" id="msf_doc_name" />
+              <input type="hidden" name="doc_size" id="msf_doc_size" />
+              <input type="hidden" name="doc_type" id="msf_doc_type" />
+              <input type="hidden" name="personal_data_consent" id="msf_personal_consent_h" value="no" />
+              <input type="hidden" name="marketing_consent" id="msf_marketing_consent_h" value="no" />
+
+              <div class="msf__steps" id="msfSteps" aria-label="Шаги">
+                <button type="button" class="msf-step is-active" data-step="0" aria-current="step"><span class="msf-step__num">1</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine01"></span></span>
+                <button type="button" class="msf-step" data-step="1" disabled><span class="msf-step__num">2</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine12"></span></span>
+                <button type="button" class="msf-step" data-step="2" disabled><span class="msf-step__num">3</span></button>
+                <span class="msf-step__line"><span class="msf-step__lineFill" id="msfLine23"></span></span>
+                <button type="button" class="msf-step" data-step="3" disabled><span class="msf-step__num">4</span></button>
+              </div>
+
+              <div class="msf__progress" aria-hidden="true"><div class="msf__bar" id="msfBar" style="width:25%"></div></div>
+
+              <p class="msf__docsNotice" id="msfDocsNotice">
+                К заявке можно прикрепить бриф или тендерные документы
+              </p>
+
+              <div class="msf__panel" id="msfPanel">
+                <div class="msf__panelHead">
+                  <label class="msf__label" id="msfLabel" for="msfTextInput">Имя</label>
+                  <span class="msf__count" id="msfCount">1/4</span>
+                </div>
+
+                <div class="msf__field" id="msfFieldText">
+                  <input class="msf__input" id="msfTextInput" type="text" placeholder="Ваше имя" autocomplete="name" inputmode="text" />
+                  <p class="msf__hint" id="msfHint">Как к вам обращаться?</p>
+                </div>
+
+                <div class="msf__field" id="msfFieldPhone" hidden>
+                  <div class="msf-phone" id="msfPhone">
+                    <button type="button" class="msf-phone__cc" id="msfCcBtn" aria-haspopup="dialog" aria-expanded="false" aria-controls="msfCcMenu">
+                      <span class="msf-phone__flag" id="msfCcFlag" aria-hidden="true">RU</span>
+                      <span class="msf-phone__code" id="msfCcCode">+7</span>
+                      <span class="msf-phone__chev" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+                    </button>
+                    <input class="msf__input msf-phone__input" id="msfPhoneInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="(999) 999-99-99" />
+                  </div>
+
+                  <div class="msf-cc" id="msfCcMenu" hidden>
+                    <div class="msf-cc__panel" role="dialog" aria-label="Выбор страны">
+                      <div class="msf-cc__top">
+                        <input class="msf-cc__search" id="msfCcSearch" type="text" placeholder="Страна или код" />
+                        <button type="button" class="msf-cc__close" id="msfCcClose" aria-label="Закрыть">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" /></svg>
+                        </button>
+                      </div>
+                      <div class="msf-cc__list" id="msfCcList" role="listbox" tabindex="-1"></div>
+                    </div>
+                  </div>
+                  <p class="msf__hint" id="msfPhoneHint">Выберите страну и введите номер.</p>
+                </div>
+
+                <div class="msf__field msf__field--docs" id="msfFieldDocs" hidden>
+                  <div class="msf__docsTop">
+                    <div class="msf__docsMeta">
+                      <span class="msf__docsLabel">Бриф или тендерные документы</span>
+                      <span class="msf__docsHint" id="msfDocsHint">PDF / DOCX / ZIP до 50MB</span>
+                    </div>
+                    <label class="msf__attachBtn" for="msfFile" id="msfAttachBtn">
+                      <span class="msf__attachIc" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 16V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><path d="M7 8l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /><path d="M4 21h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg></span>
+                      <span class="msf__attachTx">Прикрепить</span>
+                    </label>
+                    <input id="msfFile" class="msf__file" type="file" accept=".pdf,.doc,.docx,.zip,.rar,.7z,.png,.jpg,.jpeg" />
+                  </div>
+                  <label class="msf__nodocs">
+                    <input class="msf__check" id="msfNoDocs" type="checkbox" />
+                    <span class="msf__checkUi" aria-hidden="true"></span>
+                    <span class="msf__nodocsTx">Документов нет</span>
+                  </label>
+                  <p class="msf__hint">К заявке можно прикрепить бриф или тендерные документы</p>
+                </div>
+              </div>
+
+              <div class="msf-legal" aria-label="Согласия">
+                <label class="msf-legal__row">
+                  <input class="msf-legal__check" id="msfConsentPd" type="checkbox" autocomplete="off" />
+                  <span class="msf-legal__box" aria-hidden="true"></span>
+                  <span class="msf-legal__text">
+                    Согласен на обработку персональных данных по
+                    <a href="personal-data-consent.html" target="_blank" rel="noopener">согласию</a>
+                    и ознакомлен с
+                    <a href="privacy.html" target="_blank" rel="noopener">политикой конфиденциальности</a>.
+                  </span>
+                </label>
+                <label class="msf-legal__row">
+                  <input class="msf-legal__check" id="msfConsentMarketing" type="checkbox" autocomplete="off" />
+                  <span class="msf-legal__box" aria-hidden="true"></span>
+                  <span class="msf-legal__text">
+                    Согласен получать рекламные и информационные сообщения.
+                    <a href="marketing-consent.html" target="_blank" rel="noopener">Подробнее</a>
+                  </span>
+                </label>
+              </div>
+
+              <button class="msf__cta" id="msfCta" type="button" disabled>
+                <span class="msf__ctaLabel" id="msfCtaLabel">Продолжить</span>
+              </button>
+              <button class="msf__back" id="msfBack" type="button" hidden>Назад</button>
+              <p class="msf__status" id="msfStatus" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+
+        <div class="contact-success" id="contactSuccess" hidden aria-live="polite" aria-atomic="true">
+          <div class="contact-success__sparkles" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="contact-success__text" id="contactSuccessText">Уже собираем Ваш проект</div>
+          <div class="contact-success__beam" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <section class="offices-cards" id="offices" data-theme="light" aria-labelledby="officesTitle">
+      <div class="offices-cards__inner">
+        <header class="offices-cards__head">
+          <p class="offices-cards__sub">Россия · Казахстан · Узбекистан</p>
+          <h2 class="offices-cards__title" id="officesTitle">Наши офисы</h2>
+        </header>
+        <div class="offices-cards__grid" id="officesGrid">
+          <article class="office-card" data-city="Москва" data-country="Россия" data-address="Малый Демидовский пер, дом 3" data-coords="55.755864, 37.617698" data-phone="+7 (985) 017 - 88 - 17" data-messenger="telegram" data-link="https://t.me/"></article>
+          <article class="office-card" data-city="Алматы" data-country="Казахстан" data-address="Мынбаева 53" data-coords="43.238949, 76.889709" data-phone="+7 (705) 888 - 06 - 78" data-messenger="whatsapp" data-link="https://wa.me/77058880678"></article>
+          <article class="office-card" data-city="Ташкент" data-country="Узбекистан" data-address="Шахрисабзская 8/1" data-coords="41.299496, 69.240074" data-phone="+998 (90) 998 - 88 - 17" data-messenger="telegram" data-link="https://t.me/"></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="news-section" id="news" data-theme="dark" aria-labelledby="newsTitle">
+      <div class="news-section__inner">
+        <header class="news-section__head">
+          <p class="news-section__kicker" id="newsKicker">Новости</p>
+          <h2 class="news-section__title" id="newsTitle">Новости агентства</h2>
+          <div class="news-section__lines" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+        </header>
+
+        <div class="news-grid" id="newsGrid">
+          <article class="news-card" data-news-card="0" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80" alt="Event production">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Event</span><span>15 мин назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Besson Agency</p>
+              <h3>Новый формат бренд-активаций для торговых сетей</h3>
+            </div>
+          </article>
+
+          <article class="news-card" data-news-card="1" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200&q=80" alt="BTL activation">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>BTL</span><span>41 мин назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Central Asia</p>
+              <h3>Промо-команды в регионах: скорость запуска и контроль качества</h3>
+            </div>
+          </article>
+
+          <article class="news-card" data-news-card="2" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80" alt="Corporate event">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Production</span><span>1 час назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Portfolio</p>
+              <h3>Как мы собираем event-производство под ключ</h3>
+            </div>
+          </article>
+
+          <article class="news-card" data-news-card="3" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80" alt="Marketing meeting">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Strategy</span><span>2 часа назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Planning</p>
+              <h3>Как бриф превращается в рабочую механику проекта</h3>
+            </div>
+          </article>
+
+          <article class="news-card" data-news-card="4" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80" alt="Live event audience">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>Event</span><span>3 часа назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Production</p>
+              <h3>Почему тайминг решает качество большого события</h3>
+            </div>
+          </article>
+
+          <article class="news-card" data-news-card="5" tabindex="0">
+            <div class="news-card__media">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80" alt="Regional team">
+              <button class="news-card__save" type="button" aria-label="Сохранить новость"></button>
+              <div class="news-card__meta"><span>BTL</span><span>5 часов назад</span></div>
+            </div>
+            <div class="news-card__body">
+              <p class="news-card__tag">Team</p>
+              <h3>Региональная команда как преимущество для бренда</h3>
+            </div>
+          </article>
+        </div>
+
+        <div class="news-section__actions">
+          <a class="news-section__all" id="newsAll" href="blog.html">Смотреть все</a>
+          <div class="news-section__nav" aria-label="Навигация новостей">
+            <button class="news-section__arrow" type="button" data-news-prev aria-label="Предыдущие новости">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+            </button>
+            <button class="news-section__arrow" type="button" data-news-next aria-label="Следующие новости">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="news-modal" id="newsModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="news-modal__bg" data-news-close></div>
+      <article class="news-modal__panel" role="document">
+        <button class="news-modal__close" type="button" aria-label="Закрыть" data-news-close></button>
+        <div class="news-modal__media"><img id="newsModalImage" src="" alt=""></div>
+        <div class="news-modal__content">
+          <p class="news-modal__meta" id="newsModalMeta"></p>
+          <h3 id="newsModalTitle"></h3>
+          <div class="news-modal__text" id="newsModalText"></div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer data-theme="dark">
+    <div class="footer-left">BESSON GROUP</div>
+    <div class="footer-contact">
+      <a href="mailto:hello@besson.asia">
+        <svg class="mail-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2" /><polyline points="22,6 12,13 2,6" /></svg>
+        <span>hello@besson.asia</span>
+      </a>
+    </div>
+    <div class="footer-socials" aria-label="Social links">
+      <a class="social" href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Z" /><path class="social__path" d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" /><path class="social__path" d="M17.5 6.5h.01" /></svg></a>
+      <a class="social" href="https://vk.com/" target="_blank" rel="noopener" aria-label="VK"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M4 7.2h3.1c.2 0 .4.1.5.3 1.1 2.3 2.2 4.4 3.6 5.9.5.5.9.4.9-.2V7.6c0-.2.2-.4.4-.4h3c.2 0 .4.2.4.4v3.8c0 .6.2.7.6.3 1.3-1.3 2.3-3 3.2-4.1.2-.2.3-.4.6-.4H20c.4 0 .6.4.4.7-1.1 1.9-2.6 3.9-4 5.4-.4.4-.4.7 0 1.1 1.7 1.7 3.3 3.6 4.1 4.9.2.3 0 .7-.4.7h-2.8c-.3 0-.5-.1-.7-.3-1-1.3-2.1-2.6-3.2-3.7-.5-.5-.8-.4-.8.2v3.4c0 .2-.2.4-.4.4h-1.2C6.9 20 4.8 16 3.6 8c0-.4.2-.8.4-.8Z" /></svg></a>
+      <a class="social" href="https://youtube.com/" target="_blank" rel="noopener" aria-label="YouTube"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M21 8.2a3 3 0 0 0-2.1-2.1C17.1 5.6 12 5.6 12 5.6s-5.1 0-6.9.5A3 3 0 0 0 3 8.2 31 31 0 0 0 2.6 12c0 1.1.1 2.4.4 3.8A3 3 0 0 0 5.1 18c1.8.5 6.9.5 6.9.5s5.1 0 6.9-.5A3 3 0 0 0 21 15.8c.3-1.4.4-2.7.4-3.8 0-1.1-.1-2.4-.4-3.8Z" /><path class="social__path" d="M10.3 14.9V9.1L15.3 12l-5 2.9Z" /></svg></a>
+      <a class="social" href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="social__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path class="social__path" d="M4.5 9.2V20" /><path class="social__path" d="M4.5 6.2h.01" /><path class="social__path" d="M9 9.2V20" /><path class="social__path" d="M9 12.2c.6-1.6 1.9-2.4 3.6-2.4 2.6 0 4.4 1.7 4.4 5V20" /></svg></a>
+    </div>
+    <p class="footer-copy">BESSON GROUP © <span id="year"></span>. All rights reserved.</p>
+    <p class="footer-note">Copying, distribution, or use of site materials without prior written permission is prohibited.</p>
+  </footer>
+
+  <div class="project-modal-scrim" id="projectModalScrim" hidden></div>
+
+  <div class="contacts-modal" id="contactsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="contactsModalTitle">
+    <div class="contacts-modal__bg" data-contacts-close></div>
+    <div class="contacts-modal__panel" role="document">
+      <button class="contacts-modal__close" type="button" aria-label="Закрыть" data-contacts-close></button>
+      <h2 class="contacts-modal__title" id="contactsModalTitle"><span>Связаться</span><span>с нами</span></h2>
+      <div class="contacts-modal__mailGrid">
+        <a class="contacts-modal__mail" href="mailto:hello@besson.asia">
+          <span>Для партнеров</span>
+          <strong>hello@besson.asia</strong>
+        </a>
+        <a class="contacts-modal__mail" href="mailto:y.malcev@besson.asia">
+          <span>Для клиентов</span>
+          <strong>y.malcev@besson.asia</strong>
+        </a>
+      </div>
+      <div class="contacts-modal__offices">
+        <article class="contacts-office">
+          <div><h3>Москва</h3><a href="tel:+79850178817">+7 (985) 017-88-17</a><div class="contacts-office__messengers"><a class="contacts-icon contacts-icon--wpp" href="https://wa.me/79850178817" target="_blank" rel="noopener" aria-label="WhatsApp">WPP</a><a class="contacts-icon contacts-icon--tg" href="https://t.me/yurymalcev" target="_blank" rel="noopener" aria-label="Telegram">TG</a><a class="contacts-icon contacts-icon--max" href="https://max.ru/" target="_blank" rel="noopener" aria-label="MAX">MAX</a></div></div>
+          <button class="contacts-office__details" type="button" data-requisites="moscow">Реквизиты филиала</button>
+          <p class="contacts-office__req" data-req-panel="moscow" hidden>Реквизиты московского юридического лица: карточку компании отправим по запросу на почту клиента.</p>
+        </article>
+        <article class="contacts-office">
+          <div><h3>Алматы</h3><a href="tel:+77058880678">+7 (705) 888-06-78</a><div class="contacts-office__messengers"><a class="contacts-icon contacts-icon--tg" href="https://t.me/" target="_blank" rel="noopener" aria-label="Telegram">TG</a><a class="contacts-icon contacts-icon--wpp" href="https://wa.me/77058880678" target="_blank" rel="noopener" aria-label="WhatsApp">WPP</a></div></div>
+          <button class="contacts-office__details" type="button" data-requisites="almaty">Реквизиты филиала</button>
+          <p class="contacts-office__req" data-req-panel="almaty" hidden>Реквизиты юридического лица в Алматы: карточку компании отправим по запросу на почту клиента.</p>
+        </article>
+        <article class="contacts-office">
+          <div><h3>Ташкент</h3><a href="tel:+998909988817">+998 (90) 998-88-17</a><div class="contacts-office__messengers"><a class="contacts-icon contacts-icon--tg" href="https://t.me/" target="_blank" rel="noopener" aria-label="Telegram">TG</a></div></div>
+          <button class="contacts-office__details" type="button" data-requisites="tashkent">Реквизиты филиала</button>
+          <p class="contacts-office__req" data-req-panel="tashkent" hidden>Реквизиты юридического лица в Ташкенте: карточку компании отправим по запросу на почту клиента.</p>
+        </article>
+      </div>
+      <div class="contacts-modal__socials" aria-label="Социальные сети">
+        <a class="contacts-social contacts-social--ig" href="https://instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+        <a class="contacts-social contacts-social--hh" href="https://hh.ru/" target="_blank" rel="noopener" aria-label="HH">HH</a>
+        <a class="contacts-social contacts-social--vk" href="https://vk.com/" target="_blank" rel="noopener" aria-label="VK">VK</a>
+        <a class="contacts-social contacts-social--in" href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">IN</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="contact-pill" id="contactPill" role="button" tabindex="0" aria-label="Связаться" aria-expanded="false">
+    <span class="contact-pill__label">СВЯЗАТЬСЯ</span>
+    <div class="contact-pill__icons" aria-hidden="true">
+      <a class="contact-pill__icon" href="https://api.whatsapp.com/send/?phone=77058880678" target="_blank" rel="noopener" aria-label="Написать в WhatsApp">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 4.2A11.6 11.6 0 0 0 6 21.7L4.8 27.2l5.6-1.4A11.6 11.6 0 1 0 16 4.2Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M12 10.8c.3-.5.6-.6 1-.5l1 .3c.2.1.4.3.4.5l-.1 1.1c0 .2-.1.4-.3.5l-.4.4c.7 1.2 1.7 2.2 3 2.9l.4-.4c.1-.2.3-.3.5-.3l1.1-.1c.2 0 .4.2.5.4l.3 1c.1.4 0 .8-.6 1.1-.7.3-1.7.2-2.6-.2-1.7-.7-3.6-2.5-4.3-4.2-.4-1-.4-1.9.1-2.5Z" fill="currentColor"/>
+        </svg>
+      </a>
+      <a class="contact-pill__icon" href="https://t.me/yurymalcev" target="_blank" rel="noopener" aria-label="Написать в Telegram">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M27.4 5.3 4.7 14c-1 .4-1 1.2-.1 1.5l5.8 1.8 2.2 7c.3.8.5 1.1 1.1 1.1.5 0 .8-.2 1.1-.7l2.5-4 5.9 4.3c1 .6 1.8.3 2.1-1l3.8-17.9c.4-1.5-.6-2.2-1.7-1.8Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M13.3 23.8 14 18.5l9.1-8.9-11.6 7.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie">
+    <div class="cookie-banner__text">
+      <strong>Cookies</strong>
+      <span>Мы используем cookies для работы сайта и аналитики. Подробнее - в <a href="privacy.html" target="_blank" rel="noopener">политике конфиденциальности</a> и <a href="cookie-policy.html" target="_blank" rel="noopener">политике cookies</a>.</span>
+    </div>
+    <div class="cookie-banner__actions">
+      <button class="cookie-banner__btn" type="button" id="cookieReject">Отклонить</button>
+      <button class="cookie-banner__btn is-primary" type="button" id="cookieAccept">Принять</button>
+    </div>
+  </div>
+
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+  <script defer src="script.js"></script>
+</body>
+</html>

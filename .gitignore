@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+dist/
+.env
+.env.*
+uploads/*
+!uploads/.htaccess
+assets/video/*.mp4
